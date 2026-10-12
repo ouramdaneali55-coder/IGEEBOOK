@@ -60,7 +60,6 @@ button { font-family:inherit; }
 @keyframes lightboxIn { from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); } }
 @keyframes logoFloat { 0%,100% { transform:translateY(0) rotate(0); } 50% { transform:translateY(-8px) rotate(-2deg); } }
 
-/* ===== NEW AUTH ANIMATIONS ===== */
 @keyframes authGradientShift {
     0% { background-position:0% 50%; }
     50% { background-position:100% 50%; }
@@ -99,15 +98,12 @@ button { font-family:inherit; }
 .loading-bar { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,#1877f2,#42b72a,#e91e63,#ff9800,#1877f2); background-size:300% 100%; animation:gradient 2s ease infinite; z-index:9999; width:0; transition:width .3s ease; }
 .loading-bar.active { width:100%; }
 
-/* ===== LOGO IGEE 3D ===== */
 .igee-logo-3d {
     width: 52px; height: 52px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; position: relative;
     background: linear-gradient(180deg, #4A90E2 0%, #1877F2 50%, #0C5CBF 100%);
-    box-shadow: 0 4px 12px rgba(24,119,242,.4),
-                inset 0 2px 4px rgba(255,255,255,.3),
-                inset 0 -2px 4px rgba(0,0,0,.2);
+    box-shadow: 0 4px 12px rgba(24,119,242,.4), inset 0 2px 4px rgba(255,255,255,.3), inset 0 -2px 4px rgba(0,0,0,.2);
     overflow: hidden;
     transition: transform .25s ease;
 }
@@ -119,15 +115,12 @@ button { font-family:inherit; }
 .igee-logo-3d svg { width: 100%; height: 100%; position: relative; z-index: 1; }
 .igee-logo-3d:hover { transform: scale(1.08) rotate(-3deg); }
 
-/* ===== LOGO BOOK 3D ===== */
 .book-logo-3d {
     width: 52px; height: 52px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; position: relative;
     background: linear-gradient(180deg, #4A90E2 0%, #1877F2 50%, #0C5CBF 100%);
-    box-shadow: 0 4px 12px rgba(24,119,242,.4),
-                inset 0 2px 4px rgba(255,255,255,.3),
-                inset 0 -2px 4px rgba(0,0,0,.2);
+    box-shadow: 0 4px 12px rgba(24,119,242,.4), inset 0 2px 4px rgba(255,255,255,.3), inset 0 -2px 4px rgba(0,0,0,.2);
     overflow: hidden;
     transition: transform .25s ease;
 }
@@ -145,9 +138,7 @@ button { font-family:inherit; }
 }
 .auth-logo-3d {
     width: 100px; height: 100px; border-radius: 22px;
-    box-shadow: 0 8px 24px rgba(24,119,242,.5),
-                inset 0 3px 6px rgba(255,255,255,.35),
-                inset 0 -3px 6px rgba(0,0,0,.25);
+    box-shadow: 0 8px 24px rgba(24,119,242,.5), inset 0 3px 6px rgba(255,255,255,.35), inset 0 -3px 6px rgba(0,0,0,.25);
     animation: logoFloat 3s ease-in-out infinite;
 }
 .auth-logo-3d::before { border-radius: 22px 22px 50% 50%; }
@@ -195,9 +186,7 @@ button { font-family:inherit; }
     background:#fff; padding:30px; border-radius:12px;
     box-shadow:0 10px 30px rgba(0,0,0,.2);
     width:420px; max-width:100%; position:relative; z-index:2;
-    animation:
-        boxRise 0.95s cubic-bezier(.34,1.56,.64,1) both,
-        boxBreathe 3.4s ease-in-out 1.4s infinite;
+    animation: boxRise 0.95s cubic-bezier(.34,1.56,.64,1) both, boxBreathe 3.4s ease-in-out 1.4s infinite;
 }
 .auth-box h2 { text-align:center; margin-bottom:22px; color:#1877f2; font-size:24px; }
 
@@ -236,23 +225,14 @@ button { font-family:inherit; }
 .auth-box button:disabled::before { display:none; }
 
 .auth-box .link { text-align:center; margin-top:16px; color:#65676b; font-size:14px; }
-.auth-box .link a {
-    color:#1877f2; font-weight:bold; position:relative; text-decoration:none;
-    display:inline-block;
-}
-.auth-box .link a::after {
-    content:''; position:absolute; left:0; bottom:-2px;
-    width:0; height:2px; background:#1877f2;
-    transition: width .3s ease;
-    border-radius:2px;
-}
+.auth-box .link a { color:#1877f2; font-weight:bold; position:relative; text-decoration:none; display:inline-block; }
+.auth-box .link a::after { content:''; position:absolute; left:0; bottom:-2px; width:0; height:2px; background:#1877f2; transition: width .3s ease; border-radius:2px; }
 .auth-box .link a:hover::after { width:100%; }
 
 .error-msg {
     background:#ffebe8; color:#c92a2a; padding:10px; border-radius:6px;
     margin-bottom:12px; font-size:14px; text-align:center;
-    animation: errorSlide .45s cubic-bezier(.34,1.56,.64,1) both,
-               errorPulse 1.8s ease-in-out .45s infinite;
+    animation: errorSlide .45s cubic-bezier(.34,1.56,.64,1) both, errorPulse 1.8s ease-in-out .45s infinite;
     border:1px solid rgba(201,42,42,.15);
 }
 
@@ -336,121 +316,26 @@ button { font-family:inherit; }
 .chat-window-input input { flex:1; padding:8px 14px; border-radius:20px; border:none; outline:none; background:var(--bg-input); color:var(--text-primary); font-size:14px; }
 .chat-window-input button { background:transparent; border:none; cursor:pointer; font-size:20px; color:#1877f2; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
 
-/* ===== CHAT MESSAGE REACTIONS & REPLY (Facebook style) ===== */
-.chat-msg-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    max-width: 78%;
-    align-self: flex-start;
-    margin-bottom: 8px;
-}
+.chat-msg-wrapper { position: relative; display: flex; flex-direction: column; max-width: 78%; align-self: flex-start; margin-bottom: 8px; }
 .chat-msg-wrapper.sent { align-self: flex-end; }
 .chat-msg-wrapper .chat-msg { max-width: 100%; }
-.chat-msg-actions {
-    display: flex;
-    gap: 4px;
-    margin-top: 2px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .15s ease;
-}
-.chat-msg-wrapper:hover .chat-msg-actions,
-.chat-msg-wrapper.show-actions .chat-msg-actions {
-    opacity: 1;
-    pointer-events: auto;
-}
+.chat-msg-actions { display: flex; gap: 4px; margin-top: 2px; opacity: 0; pointer-events: none; transition: opacity .15s ease; }
+.chat-msg-wrapper:hover .chat-msg-actions, .chat-msg-wrapper.show-actions .chat-msg-actions { opacity: 1; pointer-events: auto; }
 .chat-msg-wrapper.sent .chat-msg-actions { justify-content: flex-end; }
-.chat-msg-action-btn {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    padding: 0;
-    transition: .2s;
-    color: var(--text-secondary);
-}
+.chat-msg-action-btn { background: var(--bg-card); border: 1px solid var(--border); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; padding: 0; transition: .2s; color: var(--text-secondary); }
 .chat-msg-action-btn:hover { background: var(--bg-hover); transform: scale(1.1); color: var(--text-primary); }
-.chat-msg-reactions {
-    display: flex;
-    gap: 2px;
-    margin-top: -8px;
-    margin-left: 10px;
-    align-self: flex-start;
-    z-index: 2;
-}
+.chat-msg-reactions { display: flex; gap: 2px; margin-top: -8px; margin-left: 10px; align-self: flex-start; z-index: 2; }
 .chat-msg-reactions.sent { align-self: flex-end; margin-right: 10px; margin-left: 0; }
-.chat-reaction-badge {
-    background: var(--bg-card);
-    border: 1.5px solid var(--bg-card);
-    border-radius: 12px;
-    padding: 2px 6px;
-    font-size: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.18);
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    font-weight: 600;
-    cursor: pointer;
-    animation: popIn .2s ease;
-}
+.chat-reaction-badge { background: var(--bg-card); border: 1.5px solid var(--bg-card); border-radius: 12px; padding: 2px 6px; font-size: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.18); line-height: 1; display: flex; align-items: center; gap: 2px; font-weight: 600; cursor: pointer; animation: popIn .2s ease; }
 .chat-reaction-badge .count { font-size: 10px; color: var(--text-secondary); }
-.chat-reaction-picker {
-    position: fixed;
-    background: var(--bg-card);
-    border-radius: 30px;
-    box-shadow: 0 8px 30px rgba(0,0,0,.28);
-    padding: 6px 8px;
-    display: flex;
-    gap: 2px;
-    z-index: 10000;
-    animation: popIn .18s ease;
-    border: 1px solid var(--border);
-}
-.chat-reaction-picker button {
-    width: 40px; height: 40px;
-    border: none;
-    background: transparent;
-    font-size: 24px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: transform .2s;
-    display: flex; align-items: center; justify-content: center;
-    padding: 0;
-}
+.chat-reaction-picker { position: fixed; background: var(--bg-card); border-radius: 30px; box-shadow: 0 8px 30px rgba(0,0,0,.28); padding: 6px 8px; display: flex; gap: 2px; z-index: 10000; animation: popIn .18s ease; border: 1px solid var(--border); }
+.chat-reaction-picker button { width: 40px; height: 40px; border: none; background: transparent; font-size: 24px; cursor: pointer; border-radius: 50%; transition: transform .2s; display: flex; align-items: center; justify-content: center; padding: 0; }
 .chat-reaction-picker button:hover { transform: scale(1.35) translateY(-4px); }
-.chat-reply-quote {
-    background: rgba(24,119,242,.15);
-    border-left: 3px solid #1877f2;
-    padding: 5px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    margin-bottom: 5px;
-    color: var(--text-secondary);
-    line-height: 1.35;
-    white-space: normal;
-    word-break: break-word;
-}
-.chat-msg.sent .chat-reply-quote {
-    background: rgba(255,255,255,.2);
-    border-left-color: rgba(255,255,255,.85);
-    color: rgba(255,255,255,.9);
-}
+.chat-reply-quote { background: rgba(24,119,242,.15); border-left: 3px solid #1877f2; padding: 5px 8px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; color: var(--text-secondary); line-height: 1.35; white-space: normal; word-break: break-word; }
+.chat-msg.sent .chat-reply-quote { background: rgba(255,255,255,.2); border-left-color: rgba(255,255,255,.85); color: rgba(255,255,255,.9); }
 .chat-reply-quote strong { color: var(--text-primary); font-size: 11px; display: block; margin-bottom: 1px; }
 .chat-msg.sent .chat-reply-quote strong { color: #fff; }
-.chat-reply-preview {
-    display: flex;
-    gap: 8px;
-    padding: 8px 12px;
-    background: var(--bg-card);
-    border-top: 1px solid var(--border);
-    align-items: center;
-    animation: slideUp .2s ease;
-}
+.chat-reply-preview { display: flex; gap: 8px; padding: 8px 12px; background: var(--bg-card); border-top: 1px solid var(--border); align-items: center; animation: slideUp .2s ease; }
 .crp-bar { width: 3px; height: 32px; background: #1877f2; border-radius: 3px; flex-shrink: 0; }
 .crp-content { flex: 1; min-width: 0; }
 .crp-content strong { font-size: 12px; color: #1877f2; display: block; }
@@ -540,20 +425,9 @@ button { font-family:inherit; }
     transition:.25s cubic-bezier(.68,-.55,.27,1.55);
     z-index:60;
 }
-.reaction-picker.active {
-    opacity:1; pointer-events:auto; visibility:visible;
-    transform:translateY(-8px) scale(1);
-}
-.reaction-picker .reaction-btn {
-    width:44px; height:44px; border-radius:50%;
-    border:none; cursor:pointer; font-size:24px;
-    background:transparent; transition:.2s;
-    display:flex; align-items:center; justify-content:center;
-    transform:scale(1);
-}
-.reaction-picker .reaction-btn:hover {
-    transform:scale(1.4) translateY(-6px);
-}
+.reaction-picker.active { opacity:1; pointer-events:auto; visibility:visible; transform:translateY(-8px) scale(1); }
+.reaction-picker .reaction-btn { width:44px; height:44px; border-radius:50%; border:none; cursor:pointer; font-size:24px; background:transparent; transition:.2s; display:flex; align-items:center; justify-content:center; transform:scale(1); }
+.reaction-picker .reaction-btn:hover { transform:scale(1.4) translateY(-6px); }
 
 .comments { padding:10px 15px 14px; background:var(--bg-comments); }
 .comment { display:flex; gap:8px; margin-bottom:10px; align-items:flex-start; position:relative; }
@@ -749,50 +623,59 @@ button { font-family:inherit; }
 .hidden { display:none !important; }
 #install-btn { position:fixed; bottom:90px; right:24px; background:linear-gradient(135deg,#1877f2,#42b72a); color:#fff; border:none; padding:12px 20px; border-radius:25px; font-weight:bold; cursor:pointer; box-shadow:0 4px 12px rgba(24,119,242,.4); z-index:9998; display:none; }
 
-/* ===== BOTTOM NAV (Facebook-like mobile) — hidden on desktop ===== */
 .mobile-bottom-nav { display: none; }
 
-/* ===================================================================
-   ===================== MOBILE STYLES ==============================
-   =================================================================== */
+/* ===== COMMENT REACTIONS & REPLY ===== */
+.comment-main-row { display:flex; gap:8px; align-items:flex-start; flex:1; min-width:0; }
+.comment-wrapper { display:flex; flex-direction:column; flex:1; min-width:0; }
+.comment-actions-inline { display: flex; gap: 4px; margin-left: 4px; margin-top: 3px; opacity: 0; transition: opacity .15s ease; }
+.comment:hover .comment-actions-inline,
+.comment.show-actions .comment-actions-inline { opacity: 1; }
+.comment-action-btn { background: transparent; border: none; font-size: 11.5px; color: var(--text-secondary); cursor: pointer; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+.comment-action-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.comment-reactions { display: flex; gap: 2px; margin-left: 4px; margin-top: -6px; margin-bottom: 4px; z-index: 2; position: relative; align-self: flex-start; }
+.comment-reaction-badge { background: var(--bg-card); border-radius: 10px; padding: 1px 5px; font-size: 11px; box-shadow: 0 1px 3px rgba(0,0,0,.15); display: flex; align-items: center; gap: 2px; font-weight: 600; cursor: pointer; animation: popIn .2s ease; }
+.comment-reaction-badge .count { font-size: 10px; color: var(--text-secondary); }
+.comment-reply-quote { background: rgba(24,119,242,.1); border-left: 2px solid #1877f2; padding: 3px 6px; border-radius: 4px; font-size: 11.5px; margin-bottom: 4px; color: var(--text-secondary); line-height: 1.3; }
+.comment-reply-quote strong { color: #1877f2; font-size: 11px; display: block; }
+.comment-reply-preview-comment { display: flex; gap: 8px; padding: 6px 10px; background: var(--bg-card); border-radius: 8px; margin-bottom: 6px; align-items: center; animation: slideUp .2s ease; border-left: 3px solid #1877f2; }
+.crp-content-comment { flex: 1; min-width: 0; }
+.crp-content-comment strong { font-size: 11px; color: #1877f2; display: block; }
+.crp-text-comment { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.crp-close-comment { background: none; border: none; cursor: pointer; color: var(--text-tertiary); font-size: 14px; padding: 2px 6px; border-radius: 50%; }
+.crp-close-comment:hover { background: var(--bg-hover); }
+.comment-reaction-picker { position: fixed; background: var(--bg-card); border-radius: 30px; box-shadow: 0 8px 30px rgba(0,0,0,.28); padding: 4px 6px; display: flex; gap: 2px; z-index: 10000; animation: popIn .18s ease; border: 1px solid var(--border); }
+.comment-reaction-picker button { width: 34px; height: 34px; border: none; background: transparent; font-size: 20px; cursor: pointer; border-radius: 50%; transition: transform .2s; display: flex; align-items: center; justify-content: center; padding: 0; }
+.comment-reaction-picker button:hover { transform: scale(1.35) translateY(-3px); }
+
 @media (max-width: 1100px) {
     .container { grid-template-columns:240px 1fr; }
     .sidebar-right { display:none; }
 }
 
 @media (max-width: 800px) {
-    /* -------- LAYOUT -------- */
     .container { grid-template-columns:1fr; padding:0; margin:0 0 70px 0; gap:0; max-width:100%; }
     .sidebar { display:none !important; }
     .feed { width:100%; padding:0; }
 
-    /* -------- NAVBAR — compact -------- */
     .navbar { height:52px; padding:0 12px; box-shadow:0 1px 2px var(--shadow); }
     .navbar .logo { gap:0; }
     .navbar .igee-logo-3d { width:40px; height:40px; border-radius:11px; }
     .navbar .search { display:none; }
     .navbar .nav-icons { gap:2px; }
     .navbar .nav-icons a,
-    .navbar .nav-icons button {
-        width:38px; height:38px; font-size:17px;
-        background:transparent;
-    }
+    .navbar .nav-icons button { width:38px; height:38px; font-size:17px; background:transparent; }
     .navbar .nav-icons a:hover,
     .navbar .nav-icons button:hover { background:var(--bg-hover); transform:none; }
     .navbar .user-avatar { width:36px; height:36px; border-width:1.5px; }
-    /* Hide home icon (bottom nav handles it) & profile icon & logout */
     .navbar .nav-icons a[title="Home"] { display:none; }
     .navbar .nav-icons a[title="Profile"] { display:none; }
     .navbar .nav-icons #logout-btn { display:none; }
 
-    /* -------- Posts & Cards — full bleed like Facebook -------- */
     .create-post, .post, .empty-state, .activity-item, .attendees-list,
     .page-header-card, .activity-header, .activity-tabs, .groups-tabs {
-        border-radius:0;
-        margin-bottom:8px;
-        box-shadow:none;
-        border-top:1px solid var(--border);
-        border-bottom:1px solid var(--border);
+        border-radius:0; margin-bottom:8px; box-shadow:none;
+        border-top:1px solid var(--border); border-bottom:1px solid var(--border);
     }
     .post:hover { box-shadow:none; }
     .post-header { padding:10px 12px; }
@@ -807,28 +690,23 @@ button { font-family:inherit; }
     .reaction-picker .reaction-btn { width:36px; height:36px; font-size:20px; }
     .reaction-picker .reaction-btn:hover { transform:scale(1.2) translateY(-3px); }
 
-    /* -------- Feed full width -------- */
     .create-post { padding:12px; }
     .create-post textarea { font-size:15px; }
 
-    /* -------- Page header cards (Events / Groups / Clubs) -------- */
     .page-header-card { padding:16px; flex-direction:column; align-items:flex-start; gap:12px; }
     .page-header-card .icon-big { width:48px; height:48px; font-size:24px; }
     .page-header-card h1 { font-size:22px; }
     .page-header-card .btn-create { width:100%; justify-content:center; padding:11px; }
 
-    /* -------- Clubs hero -------- */
     .clubs-hero { border-radius:0; padding:24px 16px; margin-bottom:8px; }
     .clubs-hero h1 { font-size:24px; }
     .clubs-hero .trophy { font-size:48px; }
     .clubs-hero p { font-size:14px; }
 
-    /* -------- Grids single column -------- */
     .events-grid, .groups-grid { grid-template-columns:1fr; gap:8px; padding:0; }
     .event-card, .group-card, .club-display-card { border-radius:0; box-shadow:none; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
     .event-card:hover, .group-card:hover, .club-display-card:hover { transform:none; box-shadow:none; }
 
-    /* -------- Event detail -------- */
     .event-detail-cover { border-radius:0; height:200px; }
     .event-detail-card { border-radius:0; padding:20px 16px 24px; }
     .event-detail-card h1 { font-size:22px; }
@@ -836,7 +714,6 @@ button { font-family:inherit; }
     .group-detail-card { border-radius:0; padding:20px 16px 24px; }
     .group-detail-card h1 { font-size:22px; }
 
-    /* -------- Activity -------- */
     .activity-header { padding:18px 16px; gap:14px; }
     .activity-header .icon-big { width:48px; height:48px; font-size:24px; }
     .activity-header h1 { font-size:22px; }
@@ -844,7 +721,6 @@ button { font-family:inherit; }
     .activity-tabs::-webkit-scrollbar { display:none; }
     .activity-tab { padding:9px 14px; font-size:13px; }
 
-    /* -------- CHAT SIDEBAR & WINDOWS — full screen -------- */
     .chat-sidebar { width:100%; top:52px; height:calc(100vh - 52px - 58px); }
     #chat-windows-container { right:0; left:0; bottom:58px; gap:0; }
     .chat-window { width:100%; height:calc(100vh - 52px - 58px); border-radius:0; }
@@ -852,13 +728,10 @@ button { font-family:inherit; }
     .chat-window-header { padding:10px 14px; }
     .chat-window-body { padding:12px 14px; }
 
-    /* -------- Hide floating chat button (bottom nav replaces it) -------- */
     .chat-fab { display:none !important; }
 
-    /* -------- Notifications panel -------- */
     .notif-panel { width:100vw; max-width:100vw; right:-12px; top:52px; border-radius:0; max-height:calc(100vh - 52px - 58px); }
 
-    /* -------- Auth page -------- */
     .auth-logo-3d { width:78px; height:78px; border-radius:18px; }
     .auth-logos-row { gap:14px; margin-bottom:14px; }
     .auth-slogan { font-size:13.5px; margin-bottom:20px; padding:0 12px; }
@@ -868,70 +741,16 @@ button { font-family:inherit; }
     .auth-box button { padding:13px; font-size:15px; }
     .auth-box button:hover { transform:none; box-shadow:none; }
 
-    /* -------- Toast -------- */
     #toast-container { bottom:74px; right:12px; left:12px; align-items:stretch; }
     .toast { max-width:100%; }
-
-    /* -------- Install button -------- */
     #install-btn { bottom:74px; right:12px; padding:10px 16px; font-size:13px; }
 
-    /* -------- BOTTOM NAVIGATION BAR -------- */
-    .mobile-bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        height: 58px;
-        background: var(--bg-card);
-        border-top: 1px solid var(--border);
-        z-index: 950;
-        box-shadow: 0 -1px 6px var(--shadow);
-        justify-content: space-around;
-        align-items: stretch;
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-    .mobile-bottom-nav .mbn-item {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-        color: var(--text-secondary);
-        text-decoration: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 10.5px;
-        font-family: inherit;
-        padding: 6px 4px;
-        position: relative;
-        transition: color .15s;
-        font-weight: 500;
-    }
-    .mobile-bottom-nav .mbn-item .mbn-icon {
-        font-size: 22px; line-height: 1; position: relative;
-        display: flex; align-items: center; justify-content: center;
-    }
+    .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 58px; background: var(--bg-card); border-top: 1px solid var(--border); z-index: 950; box-shadow: 0 -1px 6px var(--shadow); justify-content: space-around; align-items: stretch; padding-bottom: env(safe-area-inset-bottom); }
+    .mobile-bottom-nav .mbn-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-secondary); text-decoration: none; background: none; border: none; cursor: pointer; font-size: 10.5px; font-family: inherit; padding: 6px 4px; position: relative; transition: color .15s; font-weight: 500; }
+    .mobile-bottom-nav .mbn-item .mbn-icon { font-size: 22px; line-height: 1; position: relative; display: flex; align-items: center; justify-content: center; }
     .mobile-bottom-nav .mbn-item.active { color: #1877f2; font-weight: 700; }
-    .mobile-bottom-nav .mbn-item.active .mbn-icon::after {
-        content: '';
-        position: absolute;
-        bottom: -6px; left: 50%;
-        transform: translateX(-50%);
-        width: 22px; height: 3px;
-        background: #1877f2;
-        border-radius: 2px;
-    }
-    .mobile-bottom-nav .mbn-item .mbn-badge {
-        position: absolute; top: -4px; right: -10px;
-        background: #e41e3f; color: #fff;
-        font-size: 10px; font-weight: bold;
-        min-width: 17px; height: 17px;
-        border-radius: 9px;
-        display: flex; align-items: center; justify-content: center;
-        padding: 0 4px;
-        border: 2px solid var(--bg-card);
-    }
+    .mobile-bottom-nav .mbn-item.active .mbn-icon::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 22px; height: 3px; background: #1877f2; border-radius: 2px; }
+    .mobile-bottom-nav .mbn-item .mbn-badge { position: absolute; top: -4px; right: -10px; background: #e41e3f; color: #fff; font-size: 10px; font-weight: bold; min-width: 17px; height: 17px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid var(--bg-card); }
 }
 
 @media (max-width: 400px) {
@@ -942,9 +761,7 @@ button { font-family:inherit; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .auth-page, .auth-page::after, .auth-box, .auth-box input, .auth-box button, .auth-logo-3d {
-        animation: none !important;
-    }
+    .auth-page, .auth-page::after, .auth-box, .auth-box input, .auth-box button, .auth-logo-3d { animation: none !important; }
 }
 </style>
 </head>
@@ -1024,7 +841,6 @@ const db = getFirestore(app);
 let messaging = null;
 try { messaging = getMessaging(app); } catch(e) {}
 
-/* ===== LOGO SVG IGEE ===== */
 const IGEE_LOGO_SVG = `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="igeeBlue" x1="0%" y1="0%" x2="0%" y2="100%">
 <stop offset="0%" stop-color="#4A90E2"/><stop offset="50%" stop-color="#1877F2"/><stop offset="100%" stop-color="#0C5CBF"/>
@@ -1033,7 +849,6 @@ const IGEE_LOGO_SVG = `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/
 <text x="256" y="295" font-family="'Segoe UI',Arial,sans-serif" font-size="170" font-weight="900" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" letter-spacing="-6">IGEE</text>
 </svg>`;
 
-/* ===== LOGO SVG BOOK ===== */
 const BOOK_LOGO_SVG = `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="bookBlue" x1="0%" y1="0%" x2="0%" y2="100%">
 <stop offset="0%" stop-color="#4A90E2"/><stop offset="50%" stop-color="#1877F2"/><stop offset="100%" stop-color="#0C5CBF"/>
@@ -1044,16 +859,7 @@ const BOOK_LOGO_SVG = `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/
 
 const IGEE_FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%234A90E2'/%3E%3Cstop offset='50%25' stop-color='%231877F2'/%3E%3Cstop offset='100%25' stop-color='%230C5CBF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='16' y='16' width='480' height='480' rx='110' fill='url(%23b)'/%3E%3Ctext x='256' y='295' font-family='Arial' font-size='170' font-weight='900' fill='white' text-anchor='middle' dominant-baseline='middle' letter-spacing='-8'%3EIGEE%3C/text%3E%3C/svg%3E";
 
-const manifest = {
-    name: "IGEE Social",
-    short_name: "IGEE",
-    description: "The internal network of IGEE Institute",
-    start_url: ".",
-    display: "standalone",
-    background_color: "#1877f2",
-    theme_color: "#1877f2",
-    icons: [{ src: IGEE_FAVICON, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }]
-};
+const manifest = { name: "IGEE Social", short_name: "IGEE", description: "The internal network of IGEE Institute", start_url: ".", display: "standalone", background_color: "#1877f2", theme_color: "#1877f2", icons: [{ src: IGEE_FAVICON, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }] };
 const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
 const manifestUrl = URL.createObjectURL(manifestBlob);
 const linkEl = document.createElement('link'); linkEl.rel = 'manifest'; linkEl.href = manifestUrl; document.head.appendChild(linkEl);
@@ -1081,8 +887,8 @@ const REACTIONS = {
     'sad': { emoji: '😢', label: 'Sad', color: '#ffb400' }
 };
 
-/* Emoji reactions for chat messages (Facebook Messenger style) */
 const CHAT_REACTIONS = ['❤️', '👍', '😂', '😮', '😢', '🙏'];
+const COMMENT_REACTIONS = ['❤️', '👍', '😂', '😮', '😢', '🙏'];
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const showLoading = () => document.getElementById('loading-bar')?.classList.add('active');
@@ -1224,9 +1030,6 @@ function toggleNotifPanel() { document.getElementById('notif-panel')?.classList.
 function closeNotifPanel() { document.getElementById('notif-panel')?.classList.remove('active'); }
 async function markAllNotifsRead() { const n = (window._notifs||[]).filter(x=>!x.read); if (!n.length) return; try { const b = writeBatch(db); n.forEach(x=>b.update(doc(db,'notifications',x.id),{read:true})); await b.commit(); toast('All marked as read','success'); } catch(e) {} }
 
-/* ============================================================
-   CHAT — with reactions & reply (Facebook Messenger style)
-   ============================================================ */
 const Chat = {
     openWindows:{}, listeners:{},
     async openSidebar(){ document.getElementById('chat-sidebar')?.classList.add('active'); loadChatConversations(); },
@@ -1262,18 +1065,14 @@ const Chat = {
         const body = document.querySelector(`.chat-window-body[data-conv="${convId}"]`); if (!body) return;
         const q = query(collection(db,'conversations',convId,'messages'),orderBy('createdAt','asc'));
         this.listeners[convId] = onSnapshot(q, (snap) => {
-            if (snap.empty) {
-                body.innerHTML = '<p style="text-align:center;color:#90949c;font-size:13px;padding:20px">No messages yet. Say hi! 👋</p>';
-                return;
-            }
+            if (snap.empty) { body.innerHTML = '<p style="text-align:center;color:#90949c;font-size:13px;padding:20px">No messages yet. Say hi! 👋</p>'; return; }
             body.innerHTML = snap.docs.map(d => {
                 const m = d.data();
                 const sent = m.senderId === currentUser.uid;
                 const reactions = m.reactions || {};
                 const counts = {};
                 Object.values(reactions).forEach(e => counts[e] = (counts[e]||0)+1);
-                const reactionHTML = Object.keys(counts).length ?
-                    `<div class="chat-msg-reactions ${sent?'sent':''}">${Object.entries(counts).map(([e,c]) => `<span class="chat-reaction-badge" data-msg-id="${d.id}">${e}${c>1?`<span class="count">${c}</span>`:''}</span>`).join('')}</div>` : '';
+                const reactionHTML = Object.keys(counts).length ? `<div class="chat-msg-reactions ${sent?'sent':''}">${Object.entries(counts).map(([e,c]) => `<span class="chat-reaction-badge" data-msg-id="${d.id}">${e}${c>1?`<span class="count">${c}</span>`:''}</span>`).join('')}</div>` : '';
                 const replyHTML = m.replyTo ? `<div class="chat-reply-quote"><strong>${esc(m.replyTo.senderName)}</strong>${esc((m.replyTo.text||'').substring(0,80))}</div>` : '';
                 return `<div class="chat-msg-wrapper ${sent?'sent':'received'}" data-msg-id="${d.id}">
                     <div class="chat-msg ${sent?'sent':'received'}">${replyHTML}${linkify(m.text)}<span class="time">${timeAgo(m.createdAt)}</span></div>
@@ -1285,19 +1084,11 @@ const Chat = {
                 </div>`;
             }).join('');
             body.scrollTop = body.scrollHeight;
-            // Attach listeners
-            body.querySelectorAll('[data-action="react"]').forEach(btn => {
-                btn.addEventListener('click', (e) => { e.stopPropagation(); Chat.showReactionPicker(btn, convId, btn.dataset.msg); });
-            });
-            body.querySelectorAll('[data-action="reply"]').forEach(btn => {
-                btn.addEventListener('click', (e) => { e.stopPropagation(); Chat.replyToMessage(convId, otherId, btn.dataset.msg); });
-            });
-            // Long-press on mobile to reveal action buttons
+            body.querySelectorAll('[data-action="react"]').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); Chat.showReactionPicker(btn, convId, btn.dataset.msg); }); });
+            body.querySelectorAll('[data-action="reply"]').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); Chat.replyToMessage(convId, otherId, btn.dataset.msg); }); });
             body.querySelectorAll('.chat-msg-wrapper').forEach(w => {
                 let pressTimer;
-                w.addEventListener('touchstart', () => {
-                    pressTimer = setTimeout(() => { w.classList.add('show-actions'); }, 450);
-                }, { passive: true });
+                w.addEventListener('touchstart', () => { pressTimer = setTimeout(() => { w.classList.add('show-actions'); }, 450); }, { passive: true });
                 w.addEventListener('touchend', () => clearTimeout(pressTimer));
                 w.addEventListener('touchmove', () => clearTimeout(pressTimer));
                 w.addEventListener('click', (ev) => { if (ev.target.closest('.chat-msg-action-btn') || ev.target.closest('.chat-msg-reactions')) return; document.querySelectorAll('.chat-msg-wrapper.show-actions').forEach(x => { if (x !== w) x.classList.remove('show-actions'); }); });
@@ -1318,13 +1109,7 @@ const Chat = {
         if (top < 8) top = rect.bottom + 8;
         picker.style.top = top + 'px';
         picker.style.left = left + 'px';
-        picker.querySelectorAll('button').forEach(b => {
-            b.addEventListener('click', async (ev) => {
-                ev.stopPropagation();
-                await Chat.setMessageReaction(convId, msgId, b.dataset.emoji);
-                picker.remove();
-            });
-        });
+        picker.querySelectorAll('button').forEach(b => { b.addEventListener('click', async (ev) => { ev.stopPropagation(); await Chat.setMessageReaction(convId, msgId, b.dataset.emoji); picker.remove(); }); });
         setTimeout(() => {
             const close = (ev) => { if (!picker.contains(ev.target)) { picker.remove(); document.removeEventListener('click', close); document.removeEventListener('touchstart', close); } };
             document.addEventListener('click', close);
@@ -1354,7 +1139,6 @@ const Chat = {
             if (!win) return;
             const input = win.querySelector('.chat-input-field');
             const inputBar = win.querySelector('.chat-window-input');
-            // Remove existing reply preview
             win.querySelectorAll('.chat-reply-preview').forEach(p => p.remove());
             const preview = document.createElement('div');
             preview.className = 'chat-reply-preview';
@@ -1364,12 +1148,7 @@ const Chat = {
             input.dataset.replyToText = (msg.text||'').substring(0,100);
             input.dataset.replyToSender = senderName;
             input.focus();
-            preview.querySelector('.crp-close').addEventListener('click', () => {
-                preview.remove();
-                delete input.dataset.replyToId;
-                delete input.dataset.replyToText;
-                delete input.dataset.replyToSender;
-            });
+            preview.querySelector('.crp-close').addEventListener('click', () => { preview.remove(); delete input.dataset.replyToId; delete input.dataset.replyToText; delete input.dataset.replyToSender; });
         } catch(e) {}
     },
     async sendMessage(convId, otherId, inputEl) {
@@ -1385,9 +1164,7 @@ const Chat = {
         const win = inputEl.closest('.chat-window');
         win.querySelectorAll('.chat-reply-preview').forEach(p => p.remove());
         const msgData = { senderId: currentUser.uid, text, createdAt: serverTimestamp(), reactions: {} };
-        if (replyToId) {
-            msgData.replyTo = { id: replyToId, text: replyToText, senderName: replyToSender };
-        }
+        if (replyToId) { msgData.replyTo = { id: replyToId, text: replyToText, senderName: replyToSender }; }
         try {
             await addDoc(collection(db,'conversations',convId,'messages'), msgData);
             await updateDoc(doc(db,'conversations',convId), { lastMessage:text, lastMessageAt:serverTimestamp(), [`unread.${otherId}`]:increment(1) });
@@ -1464,7 +1241,6 @@ function watchUnreadMessages(uid) {
     });
 }
 
-/* ===== AUTH PAGES ===== */
 function renderLogin() {
     document.getElementById('app').innerHTML = `<div class="auth-page">
         <div class="auth-logos-row">
@@ -1517,7 +1293,6 @@ function renderRegister() {
     });
 }
 
-/* ===== HOME ===== */
 function renderHome() {
     if (!currentUserData) return;
     const me = currentUserData;
@@ -1595,20 +1370,110 @@ function loadCommentsRealtime(postId) {
     onSnapshot(q, async (snap) => {
         const comments = snap.docs.map(d => ({ id:d.id, ...d.data() })); comments.sort((a,b) => (a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));
         const html = [];
-        for (const c of comments) { const u = await getDoc(doc(db,'users',c.userId)); const author = u.exists()?u.data():{prenom:'?',nom:'?'}; const isMine = c.userId === currentUser.uid;
-            html.push(`<div class="comment" data-comment-id="${c.id}"><img class="hover-target" data-uid="${c.userId}" src="${author.photo||initialsAvatar(author.prenom,author.nom)}"><div class="bubble"><span class="name hover-target" data-uid="${c.userId}">${esc(author.prenom+' '+author.nom)}<span class="time">${timeAgo(c.createdAt)}</span></span>${linkify(c.contenu)}${isMine?`<button class="comment-del-btn" data-comment="${c.id}">✕</button>`:''}</div></div>`); }
+        for (const c of comments) {
+            const u = await getDoc(doc(db,'users',c.userId));
+            const author = u.exists()?u.data():{prenom:'?',nom:'?'};
+            const isMine = c.userId === currentUser.uid;
+            const reactions = c.reactions || {};
+            const counts = {};
+            Object.values(reactions).forEach(e => counts[e] = (counts[e]||0)+1);
+            const reactionHTML = Object.keys(counts).length ?
+                `<div class="comment-reactions">${Object.entries(counts).map(([e,ct]) => `<span class="comment-reaction-badge">${e}${ct>1?`<span class="count">${ct}</span>`:''}</span>`).join('')}</div>` : '';
+            const replyHTML = c.replyTo ? `<div class="comment-reply-quote"><strong>${esc(c.replyTo.senderName||'')}</strong>${esc((c.replyTo.text||'').substring(0,80))}</div>` : '';
+            html.push(`<div class="comment" data-comment-id="${c.id}"><div class="comment-main-row"><img class="hover-target" data-uid="${c.userId}" src="${author.photo||initialsAvatar(author.prenom,author.nom)}"><div class="comment-wrapper"><div class="bubble"><span class="name hover-target" data-uid="${c.userId}">${esc(author.prenom+' '+author.nom)}<span class="time">${timeAgo(c.createdAt)}</span></span>${replyHTML}${linkify(c.contenu)}${isMine?`<button class="comment-del-btn" data-comment="${c.id}">✕</button>`:''}</div><div class="comment-actions-inline"><button class="comment-action-btn" data-action="react-comment" data-comment="${c.id}" title="Réagir">😊 Réagir</button><button class="comment-action-btn" data-action="reply-comment" data-comment="${c.id}" title="Répondre">↩ Répondre</button></div>${reactionHTML}</div></div></div>`);
+        }
         container.innerHTML = html.join('') || '<p style="font-size:13px;color:var(--text-secondary)">No comments</p>';
         const pe = document.querySelector(`.post[data-post-id="${postId}"]`); if (pe) { const s = pe.querySelector('.post-stats div:last-child'); if (s) s.textContent = `${comments.length} comment${comments.length>1?'s':''}`; }
         container.querySelectorAll('.comment-del-btn').forEach(btn => { btn.onclick = async (e) => { e.stopPropagation(); const ok = await confirmDialog('Delete this comment?', 'This cannot be undone.', 'Delete'); if (!ok) return; try { await deleteDoc(doc(db,'comments',btn.dataset.comment)); toast('Comment deleted','success'); } catch {} }; });
+        container.querySelectorAll('[data-action="react-comment"]').forEach(btn => {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); showCommentReactionPicker(btn, postId, btn.dataset.comment); });
+        });
+        container.querySelectorAll('[data-action="reply-comment"]').forEach(btn => {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); replyToComment(postId, btn.dataset.comment); });
+        });
+        container.querySelectorAll('.comment').forEach(cm => {
+            let pt;
+            cm.addEventListener('touchstart', () => { pt = setTimeout(() => cm.classList.add('show-actions'), 450); }, { passive: true });
+            cm.addEventListener('touchend', () => clearTimeout(pt));
+            cm.addEventListener('touchmove', () => clearTimeout(pt));
+        });
     });
 }
+
+/* ===== Comment Reactions & Reply helpers ===== */
+function showCommentReactionPicker(btnEl, postId, commentId) {
+    document.querySelectorAll('.comment-reaction-picker').forEach(p => p.remove());
+    const picker = document.createElement('div');
+    picker.className = 'comment-reaction-picker';
+    picker.innerHTML = COMMENT_REACTIONS.map(e => `<button data-emoji="${e}">${e}</button>`).join('');
+    document.body.appendChild(picker);
+    const rect = btnEl.getBoundingClientRect();
+    const pw = 6 * 38;
+    let left = rect.left + rect.width/2 - pw/2;
+    left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
+    let top = rect.top - 48;
+    if (top < 8) top = rect.bottom + 8;
+    picker.style.top = top + 'px';
+    picker.style.left = left + 'px';
+    picker.querySelectorAll('button').forEach(b => {
+        b.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            await setCommentReaction(postId, commentId, b.dataset.emoji);
+            picker.remove();
+        });
+    });
+    setTimeout(() => {
+        const close = (ev) => { if (!picker.contains(ev.target)) { picker.remove(); document.removeEventListener('click', close); document.removeEventListener('touchstart', close); } };
+        document.addEventListener('click', close);
+        document.addEventListener('touchstart', close);
+    }, 60);
+}
+async function setCommentReaction(postId, commentId, emoji) {
+    try {
+        const ref = doc(db, 'comments', commentId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return;
+        const reactions = snap.data().reactions || {};
+        if (reactions[currentUser.uid] === emoji) { delete reactions[currentUser.uid]; }
+        else { reactions[currentUser.uid] = emoji; }
+        await updateDoc(ref, { reactions });
+    } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+async function replyToComment(postId, commentId) {
+    try {
+        const ref = doc(db, 'comments', commentId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return;
+        const c = snap.data();
+        const uSnap = await getDoc(doc(db, 'users', c.userId));
+        const senderName = uSnap.exists() ? `${uSnap.data().prenom} ${uSnap.data().nom}` : 'User';
+        const form = document.querySelector(`.comment-form[data-post="${postId}"]`);
+        if (!form) return;
+        form.parentElement.querySelectorAll('.comment-reply-preview-comment').forEach(p => p.remove());
+        const preview = document.createElement('div');
+        preview.className = 'comment-reply-preview-comment';
+        preview.innerHTML = `<div class="crp-content-comment"><strong>↩ Répondre à ${esc(senderName)}</strong><div class="crp-text-comment">${esc((c.contenu||'').substring(0,80))}</div></div><button class="crp-close-comment" title="Annuler">✕</button>`;
+        form.parentElement.insertBefore(preview, form);
+        const input = form.querySelector('input');
+        input.dataset.replyToId = commentId;
+        input.dataset.replyToText = (c.contenu||'').substring(0,80);
+        input.dataset.replyToSender = senderName;
+        input.focus();
+        preview.querySelector('.crp-close-comment').addEventListener('click', () => {
+            preview.remove();
+            delete input.dataset.replyToId;
+            delete input.dataset.replyToText;
+            delete input.dataset.replyToSender;
+        });
+    } catch(e) {}
+}
+
 function attachHoverCards() {
     if (window._hoverDelegationAttached) return; window._hoverDelegationAttached = true;
     document.addEventListener('mouseover', (e) => { const t = e.target.closest ? e.target.closest('.hover-target') : null; if (!t || !t.dataset.uid) return; clearTimeout(hoverCard.timer); clearTimeout(hoverCard.hideTimer); hoverCard.timer = setTimeout(() => hoverCard.show(t, t.dataset.uid), 400); });
     document.addEventListener('mouseout', (e) => { const t = e.target.closest ? e.target.closest('.hover-target') : null; if (!t) return; const r = e.relatedTarget; if (r && r.closest && r.closest('.hover-card')) return; clearTimeout(hoverCard.timer); hoverCard.scheduleHide(); });
 }
 
-/* ===== SAVED ===== */
 async function renderSaved() {
     const me = currentUserData; if (!me) return;
     const savedIds = me.savedPosts || [];
@@ -1636,7 +1501,6 @@ async function renderSaved() {
     attachLightboxListeners();
 }
 
-/* ===== ACTIVITY LOG ===== */
 async function renderActivityLog() {
     const me = currentUserData; if (!me) return;
     document.getElementById('app').innerHTML = `
@@ -1702,7 +1566,6 @@ function activityItemHTML(item, idx) {
     return `<div class="activity-item"><div class="act-icon-wrap"><img class="act-avatar" src="${avatar}"><span class="act-badge ${cls}">${badge}</span></div><div class="act-body"><div class="act-title">${title}<span class="type-label">${label}</span></div>${content?`<div class="act-content">${content}</div>`:''}<div class="act-meta"><span>🕐 ${relTime}</span>${meta.map(m=>`<span>${m}</span>`).join('')}</div><div class="act-actions"><button class="act-action-btn act-delete danger" data-id="${delId}" data-type="${type}">🗑️ Remove</button></div></div></div>`;
 }
 
-/* ===== PROFILE ===== */
 async function renderProfile(userId) {
     const me = currentUserData; if (!me) return;
     const isMe = userId === currentUser.uid;
@@ -1737,7 +1600,6 @@ async function renderProfile(userId) {
     if (!isMe) document.getElementById('msg-user-btn')?.addEventListener('click', () => openConversationWithUser(userId));
 }
 
-/* ===== EVENTS ===== */
 async function renderEvents() {
     const me = currentUserData; if (!me) return;
     document.getElementById('app').innerHTML = `
@@ -1813,7 +1675,6 @@ async function renderEventDetail(eventId) {
     document.getElementById('delete-event-btn')?.addEventListener('click', async () => { const ok = await confirmDialog('Delete event?', 'Cannot be undone.', 'Delete'); if (!ok) return; try { await deleteDoc(doc(db,'events',eventId)); toast('Deleted','success'); Router.navigate('/events'); } catch {} });
 }
 
-/* ===== GROUPS ===== */
 async function renderGroups() {
     const me = currentUserData; if (!me) return;
     document.getElementById('app').innerHTML = `
@@ -1909,7 +1770,6 @@ async function renderGroupDetail(groupId) {
     document.getElementById('delete-group-btn')?.addEventListener('click', async () => { const ok = await confirmDialog('Delete group?', 'Cannot be undone.', 'Delete'); if (!ok) return; try { await deleteDoc(doc(db,'groups',groupId)); toast('Deleted','success'); Router.navigate('/groups'); } catch {} });
 }
 
-/* ===== CLUBS ===== */
 async function renderClubs() {
     const me = currentUserData; if (!me) return;
     document.getElementById('app').innerHTML = `
@@ -1951,10 +1811,6 @@ function clubDisplayCardHTML(g) {
     return `<div class="club-display-card" data-id="${g.id}"><div class="cdc-cover" style="background:${clubInfo.bg};"><div class="cdc-emoji">${clubInfo.emoji}</div><div class="cdc-badge">🏆 Official</div></div><div class="cdc-body"><div class="cdc-title">${esc(g.name)}</div><div class="cdc-desc">${esc(g.description||'Official club of IGEE Institute')}</div><div class="cdc-stats"><div class="cdc-stat"><span>👥</span> ${members.length} member${members.length!==1?'s':''}</div><div class="cdc-stat"><span>${g.privacy==='private'?'🔒':'🌐'}</span> ${g.privacy==='private'?'Private':'Public'}</div></div></div></div>`;
 }
 
-/* ============================================================
-   NAVBAR — No more "IGEE Social" text, only the logo
-   + Mobile bottom navigation (Facebook-like)
-   ============================================================ */
 function navbarHTML(me, active) {
     const currentTheme = document.body.getAttribute('data-theme') || 'light';
     return `<div class="navbar">
@@ -2082,8 +1938,29 @@ function attachPostEvents() {
     document.querySelectorAll('.comment-form').forEach(form => {
         form.onsubmit = async (e) => {
             e.preventDefault();
-            const pid = form.dataset.post; const input = form.querySelector('input'); const contenu = input.value.trim(); if (!contenu) return;
-            try { await addDoc(collection(db,'comments'), { postId: pid, userId: currentUser.uid, contenu, createdAt: serverTimestamp() }); input.value = ''; const z = document.querySelector(`.comments[data-comments="${pid}"]`); if (z) z.style.display = ''; const ps = await getDoc(doc(db,'posts',pid)); if (ps.exists() && ps.data().userId !== currentUser.uid) { await createNotification({ userId:ps.data().userId, type:'comment', fromUserId:currentUser.uid, postId:pid, message:'commented', preview: contenu.substring(0,60) }); } } catch(err) {}
+            const pid = form.dataset.post;
+            const input = form.querySelector('input');
+            const contenu = input.value.trim();
+            if (!contenu) return;
+            const replyToId = input.dataset.replyToId;
+            const replyToText = input.dataset.replyToText;
+            const replyToSender = input.dataset.replyToSender;
+            const commentData = { postId: pid, userId: currentUser.uid, contenu, reactions: {}, createdAt: serverTimestamp() };
+            if (replyToId) { commentData.replyTo = { id: replyToId, text: replyToText, senderName: replyToSender }; }
+            try {
+                await addDoc(collection(db,'comments'), commentData);
+                input.value = '';
+                delete input.dataset.replyToId;
+                delete input.dataset.replyToText;
+                delete input.dataset.replyToSender;
+                form.parentElement.querySelectorAll('.comment-reply-preview-comment').forEach(p => p.remove());
+                const z = document.querySelector(`.comments[data-comments="${pid}"]`);
+                if (z) z.style.display = '';
+                const ps = await getDoc(doc(db,'posts',pid));
+                if (ps.exists() && ps.data().userId !== currentUser.uid) {
+                    await createNotification({ userId:ps.data().userId, type:'comment', fromUserId:currentUser.uid, postId:pid, message:'commented', preview: contenu.substring(0,60) });
+                }
+            } catch(err) {}
         };
     });
     document.querySelectorAll('.post-menu-btn').forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); const pid = btn.dataset.post; const dd = document.querySelector(`.post-dropdown[data-dropdown="${pid}"]`); document.querySelectorAll('.post-dropdown.active').forEach(d => { if (d !== dd) d.classList.remove('active'); }); dd.classList.toggle('active'); }; });
