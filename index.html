@@ -189,11 +189,7 @@ button { font-family:inherit; }
     pointer-events: none;
     z-index: 1;
 }
-.auth-title {
-    font-size:48px; color:#fff; font-weight:bold; margin-bottom:8px;
-    text-shadow:2px 2px 12px rgba(0,0,0,.3); position:relative; z-index:2; text-align:center;
-}
-.auth-slogan { color:#fff; margin-bottom:25px; font-size:16px; opacity:.95; position:relative; z-index:2; text-align:center; }
+.auth-slogan { color:#fff; margin-top:4px; margin-bottom:25px; font-size:16px; opacity:.95; position:relative; z-index:2; text-align:center; }
 
 .auth-box {
     background:#fff; padding:30px; border-radius:12px;
@@ -865,7 +861,6 @@ button { font-family:inherit; }
     /* -------- Auth page -------- */
     .auth-logo-3d { width:78px; height:78px; border-radius:18px; }
     .auth-logos-row { gap:14px; margin-bottom:14px; }
-    .auth-title { font-size:30px; margin-bottom:4px; }
     .auth-slogan { font-size:13.5px; margin-bottom:20px; padding:0 12px; }
     .auth-box { padding:22px 18px; width:100%; max-width:440px; }
     .auth-box h2 { font-size:20px; margin-bottom:18px; }
@@ -1476,7 +1471,6 @@ function renderLogin() {
             <div class="igee-logo-3d auth-logo-3d">${IGEE_LOGO_SVG}</div>
             <div class="book-logo-3d auth-logo-3d">${BOOK_LOGO_SVG}</div>
         </div>
-        <div class="auth-title">IGEE Social</div>
         <div class="auth-slogan">The internal network of IGEE Institute</div>
         <div class="auth-box"><h2>Login</h2><div id="auth-msg"></div>
             <form id="login-form">
@@ -1500,7 +1494,6 @@ function renderRegister() {
             <div class="igee-logo-3d auth-logo-3d">${IGEE_LOGO_SVG}</div>
             <div class="book-logo-3d auth-logo-3d">${BOOK_LOGO_SVG}</div>
         </div>
-        <div class="auth-title">IGEE Social</div>
         <div class="auth-slogan">Create your internal account</div>
         <div class="auth-box"><h2>Create an Account</h2><div id="auth-msg"></div>
             <form id="reg-form">
