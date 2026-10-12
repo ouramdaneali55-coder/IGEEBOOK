@@ -442,10 +442,65 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .comment-reaction-picker{position:fixed;background:var(--bg-card);border-radius:30px;box-shadow:0 8px 30px rgba(0,0,0,.28);padding:4px 6px;display:flex;gap:2px;z-index:10000;animation:popIn .18s ease;border:1px solid var(--border);}
 .comment-reaction-picker button{width:34px;height:34px;border:none;background:transparent;font-size:20px;cursor:pointer;border-radius:50%;transition:transform .2s;display:flex;align-items:center;justify-content:center;padding:0;}
 .comment-reaction-picker button:hover{transform:scale(1.35) translateY(-3px);}
+
+/* ============ ANNOUNCEMENTS BOARD ============ */
+.announcements-hero{background:linear-gradient(135deg,#1877f2 0%,#0c5cbf 50%,#1877f2 100%);background-size:200% 200%;animation:gradient 6s ease infinite;border-radius:16px;padding:36px 30px;margin-bottom:24px;color:#fff;text-align:center;box-shadow:0 12px 40px rgba(24,119,242,.3);}
+.announcements-hero .hero-icon{font-size:64px;margin-bottom:10px;display:inline-block;animation:bounce 2s ease infinite;}
+.announcements-hero h1{font-size:36px;margin-bottom:10px;text-shadow:2px 2px 12px rgba(0,0,0,.15);}
+.announcements-hero p{font-size:15px;opacity:.95;max-width:620px;margin:0 auto;line-height:1.5;}
+.announcements-toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--bg-card);border-radius:12px;padding:12px 16px;box-shadow:0 1px 3px var(--shadow);margin-bottom:20px;}
+.announcements-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.announcements-filter{padding:8px 16px;border-radius:20px;border:none;background:var(--bg-input);color:var(--text-secondary);font-weight:600;font-size:13px;cursor:pointer;transition:.2s;}
+.announcements-filter:hover{background:var(--bg-hover);}
+.announcements-filter.active{background:linear-gradient(135deg,#1877f2,#0c5cbf);color:#fff;}
+.announcements-filter.urgent.active{background:linear-gradient(135deg,#d93025,#b8271d);}
+.announcements-filter.high.active{background:linear-gradient(135deg,#ff9800,#f57c00);}
+.announcements-filter.pinned.active{background:linear-gradient(135deg,#ffd700,#ff9800);color:#fff;}
+.btn-create-ann{background:linear-gradient(135deg,#1877f2,#0c5cbf);color:#fff;border:none;padding:11px 22px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;transition:.2s;}
+.btn-create-ann:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(24,119,242,.4);}
+.announcements-list{display:flex;flex-direction:column;gap:14px;}
+.announcement-card{background:var(--bg-card);border-radius:12px;padding:20px 22px 20px 26px;box-shadow:0 1px 3px var(--shadow);position:relative;border-left:5px solid #1877f2;transition:.25s;overflow:hidden;}
+.announcement-card:hover{box-shadow:0 6px 22px var(--shadow);transform:translateY(-2px);}
+.announcement-card.urgent{border-left-color:#d93025;background:linear-gradient(90deg,rgba(217,48,37,.06) 0%,var(--bg-card) 40%);}
+.announcement-card.high{border-left-color:#ff9800;background:linear-gradient(90deg,rgba(255,152,0,.06) 0%,var(--bg-card) 40%);}
+.announcement-card.normal{border-left-color:#1877f2;}
+.announcement-priority{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:bold;padding:4px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:.4px;}
+.announcement-priority.normal{background:rgba(24,119,242,.15);color:#1877f2;}
+.announcement-priority.high{background:rgba(255,152,0,.2);color:#e65100;}
+.announcement-priority.urgent{background:rgba(217,48,37,.15);color:#d93025;}
+.announcement-pin-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:bold;padding:4px 10px;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9800);color:#fff;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 8px rgba(255,152,0,.35);}
+.announcement-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+.announcement-title{font-size:19px;font-weight:bold;margin-bottom:8px;line-height:1.35;color:var(--text-primary);}
+.announcement-content{font-size:15px;line-height:1.6;color:var(--text-primary);white-space:pre-wrap;word-wrap:break-word;margin-bottom:12px;}
+.announcement-content img{max-width:100%;border-radius:10px;margin-top:10px;max-height:420px;object-fit:cover;display:block;}
+.announcement-content a{color:#1877f2;text-decoration:underline;word-break:break-all;font-weight:500;}
+.announcement-meta{display:flex;gap:16px;font-size:12.5px;color:var(--text-secondary);align-items:center;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border-soft);}
+.announcement-meta img{width:30px;height:30px;border-radius:50%;object-fit:cover;}
+.announcement-author{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--text-primary);}
+.announcement-actions-row{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}
+.announcement-pin-btn{background:transparent;border:1px solid var(--border);color:var(--text-secondary);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px;transition:.2s;}
+.announcement-pin-btn:hover{background:var(--bg-hover);}
+.announcement-pin-btn.active{background:linear-gradient(135deg,#ffd700,#ff9800);color:#fff;border-color:#ff9800;}
+.announcement-delete-btn{background:transparent;border:1px solid var(--border);color:#d93025;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px;transition:.2s;}
+.announcement-delete-btn:hover{background:#ffebe8;border-color:#d93025;}
+.home-announcement-banner{border-radius:12px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;cursor:pointer;animation:boxRise .6s ease;color:#fff;transition:.25s;}
+.home-announcement-banner.urgent{background:linear-gradient(135deg,#d93025,#b8271d);box-shadow:0 6px 22px rgba(217,48,37,.35);}
+.home-announcement-banner.high{background:linear-gradient(135deg,#ff9800,#f57c00);box-shadow:0 6px 22px rgba(255,152,0,.35);}
+.home-announcement-banner.normal{background:linear-gradient(135deg,#1877f2,#0c5cbf);box-shadow:0 6px 22px rgba(24,119,242,.35);}
+.home-announcement-banner:hover{transform:translateY(-2px);}
+.home-announcement-banner .hab-icon{font-size:32px;flex-shrink:0;animation:bounce 2s ease infinite;}
+.home-announcement-banner .hab-body{flex:1;min-width:0;}
+.home-announcement-banner .hab-label{font-size:11px;text-transform:uppercase;font-weight:bold;opacity:.85;letter-spacing:.5px;margin-bottom:3px;}
+.home-announcement-banner .hab-title{font-size:15px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.home-announcement-banner .hab-arrow{font-size:22px;flex-shrink:0;opacity:.9;}
+.announcements-empty{background:var(--bg-card);border-radius:12px;padding:60px 30px;text-align:center;color:var(--text-secondary);box-shadow:0 1px 3px var(--shadow);}
+.announcements-empty .emoji{font-size:64px;margin-bottom:14px;display:inline-block;}
+.announcements-empty h3{font-size:18px;color:var(--text-primary);margin-bottom:8px;}
+
 @media (max-width:1100px){.container{grid-template-columns:240px 1fr;}.sidebar-right{display:none;}}
-@media (max-width:800px){.container{grid-template-columns:1fr;padding:0;margin:0 0 70px 0;gap:0;max-width:100%;}.sidebar{display:none !important;}.feed{width:100%;padding:0;}.navbar{height:52px;padding:0 12px;box-shadow:0 1px 2px var(--shadow);}.navbar .logo{gap:0;}.navbar .igee-logo-3d{width:40px;height:40px;border-radius:11px;}.navbar .search{display:none;}.navbar .nav-icons{gap:2px;}.navbar .nav-icons a,.navbar .nav-icons button{width:38px;height:38px;font-size:17px;background:transparent;}.navbar .nav-icons a:hover,.navbar .nav-icons button:hover{background:var(--bg-hover);transform:none;}.navbar .user-avatar{width:36px;height:36px;border-width:1.5px;}.navbar .nav-icons a[title="Home"]{display:none;}.navbar .nav-icons a[title="Profile"]{display:none;}.navbar .nav-icons #logout-btn{display:none;}.create-post,.post,.empty-state,.activity-item,.attendees-list,.page-header-card,.activity-header,.activity-tabs,.groups-tabs{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.post:hover{box-shadow:none;}.post-header{padding:10px 12px;}.post-header img{width:38px;height:38px;}.post-content{padding:0 12px 10px;font-size:15px;}.post-content img{border-radius:6px;}.post-stats{padding:6px 12px;font-size:12px;}.post-actions button{font-size:12.5px;padding:9px 2px;gap:4px;font-weight:600;}.comments{padding:8px 12px 10px;}.comment-form input{font-size:14px;padding:10px 14px;}.reaction-picker{left:2px;padding:4px 6px;gap:0;}.reaction-picker .reaction-btn{width:36px;height:36px;font-size:20px;}.reaction-picker .reaction-btn:hover{transform:scale(1.2) translateY(-3px);}.create-post{padding:12px;}.create-post textarea{font-size:15px;}.page-header-card{padding:16px;flex-direction:column;align-items:flex-start;gap:12px;}.page-header-card .icon-big{width:48px;height:48px;font-size:24px;}.page-header-card h1{font-size:22px;}.page-header-card .btn-create{width:100%;justify-content:center;padding:11px;}.clubs-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.clubs-hero h1{font-size:24px;}.clubs-hero .trophy{font-size:48px;}.clubs-hero p{font-size:14px;}.events-grid,.groups-grid{grid-template-columns:1fr;gap:8px;padding:0;}.event-card,.group-card,.club-display-card{border-radius:0;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.event-card:hover,.group-card:hover,.club-display-card:hover{transform:none;box-shadow:none;}.event-detail-cover{border-radius:0;height:200px;}.event-detail-card{border-radius:0;padding:20px 16px 24px;}.event-detail-card h1{font-size:22px;}.group-detail-cover{border-radius:0;height:180px;}.group-detail-card{border-radius:0;padding:20px 16px 24px;}.group-detail-card h1{font-size:22px;}.activity-header{padding:18px 16px;gap:14px;}.activity-header .icon-big{width:48px;height:48px;font-size:24px;}.activity-header h1{font-size:22px;}.activity-tabs{padding:6px;overflow-x:auto;scrollbar-width:none;}.activity-tabs::-webkit-scrollbar{display:none;}.activity-tab{padding:9px 14px;font-size:13px;}.chat-sidebar{width:100%;top:52px;height:calc(100vh - 52px - 58px);}#chat-windows-container{right:0;left:0;bottom:58px;gap:0;}.chat-window{width:100%;height:calc(100vh - 52px - 58px);border-radius:0;}.chat-window.minimized{height:52px;}.chat-window-header{padding:10px 14px;}.chat-window-body{padding:12px 14px;}.chat-fab{display:none !important;}.notif-panel{width:100vw;max-width:100vw;right:-12px;top:52px;border-radius:0;max-height:calc(100vh - 52px - 58px);}.auth-logo-3d{width:78px;height:78px;border-radius:18px;}.auth-logos-row{gap:14px;margin-bottom:14px;}.auth-slogan{font-size:13.5px;margin-bottom:20px;padding:0 12px;}.auth-box{padding:22px 18px;width:100%;max-width:440px;}.auth-box h2{font-size:20px;margin-bottom:18px;}.auth-box input{padding:13px 14px;font-size:15px;}.auth-box button{padding:13px;font-size:15px;}.auth-box button:hover{transform:none;box-shadow:none;}#toast-container{bottom:74px;right:12px;left:12px;align-items:stretch;}.toast{max-width:100%;}#install-btn{bottom:74px;right:12px;padding:10px 16px;font-size:13px;}.mobile-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--bg-card);border-top:1px solid var(--border);z-index:950;box-shadow:0 -1px 6px var(--shadow);justify-content:space-around;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);}.mobile-bottom-nav .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-secondary);text-decoration:none;background:none;border:none;cursor:pointer;font-size:10.5px;font-family:inherit;padding:6px 4px;position:relative;transition:color .15s;font-weight:500;}.mobile-bottom-nav .mbn-item .mbn-icon{font-size:22px;line-height:1;position:relative;display:flex;align-items:center;justify-content:center;}.mobile-bottom-nav .mbn-item.active{color:#1877f2;font-weight:700;}.mobile-bottom-nav .mbn-item.active .mbn-icon::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:22px;height:3px;background:#1877f2;border-radius:2px;}.mobile-bottom-nav .mbn-item .mbn-badge{position:absolute;top:-4px;right:-10px;background:#e41e3f;color:#fff;font-size:10px;font-weight:bold;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg-card);}}
+@media (max-width:800px){.container{grid-template-columns:1fr;padding:0;margin:0 0 70px 0;gap:0;max-width:100%;}.sidebar{display:none !important;}.feed{width:100%;padding:0;}.navbar{height:52px;padding:0 12px;box-shadow:0 1px 2px var(--shadow);}.navbar .logo{gap:0;}.navbar .igee-logo-3d{width:40px;height:40px;border-radius:11px;}.navbar .search{display:none;}.navbar .nav-icons{gap:2px;}.navbar .nav-icons a,.navbar .nav-icons button{width:38px;height:38px;font-size:17px;background:transparent;}.navbar .nav-icons a:hover,.navbar .nav-icons button:hover{background:var(--bg-hover);transform:none;}.navbar .user-avatar{width:36px;height:36px;border-width:1.5px;}.navbar .nav-icons a[title="Home"]{display:none;}.navbar .nav-icons a[title="Profile"]{display:none;}.navbar .nav-icons #logout-btn{display:none;}.create-post,.post,.empty-state,.activity-item,.attendees-list,.page-header-card,.activity-header,.activity-tabs,.groups-tabs{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.post:hover{box-shadow:none;}.post-header{padding:10px 12px;}.post-header img{width:38px;height:38px;}.post-content{padding:0 12px 10px;font-size:15px;}.post-content img{border-radius:6px;}.post-stats{padding:6px 12px;font-size:12px;}.post-actions button{font-size:12.5px;padding:9px 2px;gap:4px;font-weight:600;}.comments{padding:8px 12px 10px;}.comment-form input{font-size:14px;padding:10px 14px;}.reaction-picker{left:2px;padding:4px 6px;gap:0;}.reaction-picker .reaction-btn{width:36px;height:36px;font-size:20px;}.reaction-picker .reaction-btn:hover{transform:scale(1.2) translateY(-3px);}.create-post{padding:12px;}.create-post textarea{font-size:15px;}.page-header-card{padding:16px;flex-direction:column;align-items:flex-start;gap:12px;}.page-header-card .icon-big{width:48px;height:48px;font-size:24px;}.page-header-card h1{font-size:22px;}.page-header-card .btn-create{width:100%;justify-content:center;padding:11px;}.clubs-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.clubs-hero h1{font-size:24px;}.clubs-hero .trophy{font-size:48px;}.clubs-hero p{font-size:14px;}.events-grid,.groups-grid{grid-template-columns:1fr;gap:8px;padding:0;}.event-card,.group-card,.club-display-card{border-radius:0;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.event-card:hover,.group-card:hover,.club-display-card:hover{transform:none;box-shadow:none;}.event-detail-cover{border-radius:0;height:200px;}.event-detail-card{border-radius:0;padding:20px 16px 24px;}.event-detail-card h1{font-size:22px;}.group-detail-cover{border-radius:0;height:180px;}.group-detail-card{border-radius:0;padding:20px 16px 24px;}.group-detail-card h1{font-size:22px;}.activity-header{padding:18px 16px;gap:14px;}.activity-header .icon-big{width:48px;height:48px;font-size:24px;}.activity-header h1{font-size:22px;}.activity-tabs{padding:6px;overflow-x:auto;scrollbar-width:none;}.activity-tabs::-webkit-scrollbar{display:none;}.activity-tab{padding:9px 14px;font-size:13px;}.chat-sidebar{width:100%;top:52px;height:calc(100vh - 52px - 58px);}#chat-windows-container{right:0;left:0;bottom:58px;gap:0;}.chat-window{width:100%;height:calc(100vh - 52px - 58px);border-radius:0;}.chat-window.minimized{height:52px;}.chat-window-header{padding:10px 14px;}.chat-window-body{padding:12px 14px;}.chat-fab{display:none !important;}.notif-panel{width:100vw;max-width:100vw;right:-12px;top:52px;border-radius:0;max-height:calc(100vh - 52px - 58px);}.auth-logo-3d{width:78px;height:78px;border-radius:18px;}.auth-logos-row{gap:14px;margin-bottom:14px;}.auth-slogan{font-size:13.5px;margin-bottom:20px;padding:0 12px;}.auth-box{padding:22px 18px;width:100%;max-width:440px;}.auth-box h2{font-size:20px;margin-bottom:18px;}.auth-box input{padding:13px 14px;font-size:15px;}.auth-box button{padding:13px;font-size:15px;}.auth-box button:hover{transform:none;box-shadow:none;}#toast-container{bottom:74px;right:12px;left:12px;align-items:stretch;}.toast{max-width:100%;}#install-btn{bottom:74px;right:12px;padding:10px 16px;font-size:13px;}.mobile-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--bg-card);border-top:1px solid var(--border);z-index:950;box-shadow:0 -1px 6px var(--shadow);justify-content:space-around;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);}.mobile-bottom-nav .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-secondary);text-decoration:none;background:none;border:none;cursor:pointer;font-size:10.5px;font-family:inherit;padding:6px 4px;position:relative;transition:color .15s;font-weight:500;}.mobile-bottom-nav .mbn-item .mbn-icon{font-size:22px;line-height:1;position:relative;display:flex;align-items:center;justify-content:center;}.mobile-bottom-nav .mbn-item.active{color:#1877f2;font-weight:700;}.mobile-bottom-nav .mbn-item.active .mbn-icon::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:22px;height:3px;background:#1877f2;border-radius:2px;}.mobile-bottom-nav .mbn-item .mbn-badge{position:absolute;top:-4px;right:-10px;background:#e41e3f;color:#fff;font-size:10px;font-weight:bold;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg-card);}.announcements-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.announcements-hero h1{font-size:24px;}.announcements-hero .hero-icon{font-size:48px;}.announcements-hero p{font-size:14px;}.announcements-toolbar{border-radius:0;padding:12px;margin-bottom:8px;}.announcement-card{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.announcement-card:hover{transform:none;box-shadow:none;}.announcement-title{font-size:17px;}.announcement-content{font-size:14px;}.home-announcement-banner{border-radius:0;margin-bottom:8px;}}
 @media (max-width:400px){.navbar .nav-icons button#theme-toggle-btn{display:none;}.mobile-bottom-nav .mbn-item span:not(.mbn-icon):not(.mbn-badge){font-size:10px;}.chat-msg{font-size:13.5px;}.post-actions button{font-size:12px;}}
-@media (prefers-reduced-motion:reduce){.auth-page,.auth-page::after,.auth-box,.auth-box input,.auth-box button,.auth-logo-3d{animation:none !important;}}
+@media (prefers-reduced-motion:reduce){.auth-page,.auth-page::after,.auth-box,.auth-box input,.auth-box button,.auth-logo-3d,.announcements-hero,.announcements-hero .hero-icon,.home-announcement-banner .hab-icon{animation:none !important;}}
 </style>
 </head>
 <body>
@@ -884,7 +939,6 @@ const hoverCard = {
 let currentUser = null;
 let currentUserData = null;
 
-// ✅✅✅ CORRECTION APPLIQUÉE ICI ✅✅✅
 const Router = {
     routes: {},
     register(path, handler) { this.routes[path] = handler; },
@@ -905,7 +959,7 @@ const Router = {
 async function loadUserData(uid) {
     const snap = await getDoc(doc(db,'users',uid));
     if (snap.exists()) return { id: uid, ...snap.data() };
-    const initial = { prenom: currentUser.displayName?.split(' ')[0] || 'User', nom: currentUser.displayName?.split(' ').slice(1).join(' ') || 'IGEE', email: currentUser.email, photo: null, bio: 'Member of IGEE Institute', savedPosts: [], createdAt: serverTimestamp() };
+    const initial = { prenom: currentUser.displayName?.split(' ')[0] || 'User', nom: currentUser.displayName?.split(' ').slice(1).join(' ') || 'IGEE', email: currentUser.email, photo: null, bio: 'Member of IGEE Institute', savedPosts: [], isAdmin: false, createdAt: serverTimestamp() };
     await setDoc(doc(db,'users',uid), initial); return { id: uid, ...initial };
 }
 async function setupNotifications() { if (!messaging) return; try { const p = await Notification.requestPermission(); if (p !== 'granted') return; const t = await getToken(messaging, { vapidKey: VAPID_KEY }); if (t && currentUser) await setDoc(doc(db,'fcmTokens',currentUser.uid), { token: t, updatedAt: serverTimestamp() }, { merge: true }); onMessage(messaging, (pl) => toast((pl.notification?.title||'IGEE') + ' : ' + (pl.notification?.body||''))); } catch(e) {} }
@@ -971,7 +1025,7 @@ function renderRegister() {
         if (!email.endsWith('@igee.com')) return msg.innerHTML = '<div class="error-msg">Use your IGEE email (@igee.com)</div>';
         if (password.length < 6) return msg.innerHTML = '<div class="error-msg">Password too short</div>';
         btn.disabled = true; btn.textContent = 'Creating account...';
-        try { const cred = await createUserWithEmailAndPassword(auth, email, password); await updateProfile(cred.user, { displayName: `${prenom} ${nom}` }); await setDoc(doc(db,'users',cred.user.uid), { prenom, nom, email, photo: null, bio: 'Member of IGEE Institute', savedPosts: [], createdAt: serverTimestamp() }); toast('Account created!', 'success'); } catch(err) { msg.innerHTML = '<div class="error-msg">' + (err.code === 'auth/email-already-in-use' ? 'This email is already used' : 'Error: ' + err.message) + '</div>'; }
+        try { const cred = await createUserWithEmailAndPassword(auth, email, password); await updateProfile(cred.user, { displayName: `${prenom} ${nom}` }); await setDoc(doc(db,'users',cred.user.uid), { prenom, nom, email, photo: null, bio: 'Member of IGEE Institute', savedPosts: [], isAdmin: false, createdAt: serverTimestamp() }); toast('Account created!', 'success'); } catch(err) { msg.innerHTML = '<div class="error-msg">' + (err.code === 'auth/email-already-in-use' ? 'This email is already used' : 'Error: ' + err.message) + '</div>'; }
         btn.disabled = false; btn.textContent = 'Sign Up';
     });
 }
@@ -984,6 +1038,7 @@ function renderHome() {
         <div class="container">
             ${sidebarLeftHTML(me, 'home')}
             <div class="feed">
+                <div id="home-ann-banner-wrap"></div>
                 <div class="create-post"><form id="create-post-form"><textarea name="contenu" placeholder="What's on your mind, ${esc(me.prenom)}?" id="post-textarea"></textarea><div class="actions"><div class="left"><label class="file-btn" for="post-image">📷</label><input type="file" id="post-image" accept="image/*" style="display:none"><span class="file-name" id="file-name"></span></div><button type="submit" id="publish-btn">Post</button></div></form></div>
                 <div id="posts-feed"><div class="loading">Loading feed...</div></div>
             </div>
@@ -992,6 +1047,7 @@ function renderHome() {
     attachHomeEvents();
     loadPostsRealtime();
     loadMembersRealtime();
+    loadHomeAnnouncementBanner();
 }
 
 function loadPostsRealtime() {
@@ -1082,7 +1138,6 @@ function loadCommentsRealtime(postId) {
         });
     });
 }
-/* ===== Comment Reactions & Reply helpers ===== */
 function showCommentReactionPicker(btnEl, postId, commentId) {
     document.querySelectorAll('.comment-reaction-picker').forEach(p => p.remove());
     const picker = document.createElement('div');
@@ -1492,6 +1547,177 @@ function clubDisplayCardHTML(g) {
     const clubInfo = getClubIdentity(g.name) || { emoji:'🏆', bg:'linear-gradient(135deg,#ffd700,#ff9800)' };
     return `<div class="club-display-card" data-id="${g.id}"><div class="cdc-cover" style="background:${clubInfo.bg};"><div class="cdc-emoji">${clubInfo.emoji}</div><div class="cdc-badge">🏆 Official</div></div><div class="cdc-body"><div class="cdc-title">${esc(g.name)}</div><div class="cdc-desc">${esc(g.description||'Official club of IGEE Institute')}</div><div class="cdc-stats"><div class="cdc-stat"><span>👥</span> ${members.length} member${members.length!==1?'s':''}</div><div class="cdc-stat"><span>${g.privacy==='private'?'🔒':'🌐'}</span> ${g.privacy==='private'?'Private':'Public'}</div></div></div></div>`;
 }
+
+/* ============ ANNOUNCEMENTS BOARD ============ */
+let _allAnnouncements = [];
+let _annRealtimeUnsub = null;
+
+const ANN_PRIORITY = {
+    normal: { label: 'Normal',    icon: '📢', cls: 'normal' },
+    high:   { label: 'Important', icon: '⚠️', cls: 'high'   },
+    urgent: { label: 'Urgent',    icon: '🚨', cls: 'urgent' }
+};
+
+async function renderAnnouncements() {
+    const me = currentUserData; if (!me) return;
+    const isAdmin = !!me.isAdmin;
+    document.getElementById('app').innerHTML = `
+        ${navbarHTML(me, 'announcements')}
+        <div class="container" style="grid-template-columns:280px 1fr;">
+            ${sidebarLeftHTML(me, 'announcements')}
+            <div>
+                <div class="announcements-hero">
+                    <div class="hero-icon">📢</div>
+                    <h1>Announcements</h1>
+                    <p>Official announcements from the IGEE administration and staff</p>
+                </div>
+                <div class="announcements-toolbar">
+                    <div class="announcements-filters">
+                        <button class="announcements-filter active" data-ann-filter="all">📋 All</button>
+                        <button class="announcements-filter urgent" data-ann-filter="urgent">🚨 Urgent</button>
+                        <button class="announcements-filter high" data-ann-filter="high">⚠️ Important</button>
+                        <button class="announcements-filter pinned" data-ann-filter="pinned">📌 Pinned</button>
+                    </div>
+                    ${isAdmin ? `<button class="btn-create-ann" id="create-ann-btn">+ New Announcement</button>` : ''}
+                </div>
+                <div class="announcements-list" id="announcements-list"><div class="loading">Loading...</div></div>
+            </div>
+        </div>`;
+    attachHomeEvents(true);
+    document.getElementById('create-ann-btn')?.addEventListener('click', createAnnouncement);
+    document.querySelectorAll('[data-ann-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-ann-filter]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderAnnouncementsList(btn.dataset.annFilter);
+        });
+    });
+    loadAnnouncementsRealtime();
+}
+
+function loadAnnouncementsRealtime() {
+    const list = document.getElementById('announcements-list'); if (!list) return;
+    if (_annRealtimeUnsub) _annRealtimeUnsub();
+    const q = query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(100));
+    _annRealtimeUnsub = onSnapshot(q, (snap) => {
+        _allAnnouncements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAnnouncementsList('all');
+    }, () => {
+        list.innerHTML = `<div class="announcements-empty"><div class="emoji">📢</div><h3>Cannot load announcements</h3><p>Please check your connection.</p></div>`;
+    });
+}
+
+function renderAnnouncementsList(filter) {
+    const list = document.getElementById('announcements-list'); if (!list) return;
+    let items = [..._allAnnouncements];
+    if (filter === 'urgent') items = items.filter(a => a.priority === 'urgent');
+    else if (filter === 'high') items = items.filter(a => a.priority === 'high');
+    else if (filter === 'pinned') items = items.filter(a => a.pinned);
+    items.sort((a, b) => {
+        if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
+        const pOrder = { urgent: 0, high: 1, normal: 2 };
+        const pa = pOrder[a.priority] ?? 2, pb = pOrder[b.priority] ?? 2;
+        if (pa !== pb) return pa - pb;
+        return (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0);
+    });
+    if (!items.length) {
+        list.innerHTML = `<div class="announcements-empty"><div class="emoji">📢</div><h3>No announcements ${filter !== 'all' ? 'in this category' : 'yet'}</h3><p>${currentUserData.isAdmin ? 'Click "New Announcement" to create the first one.' : 'Check back later for updates.'}</p></div>`;
+        return;
+    }
+    const isAdmin = !!currentUserData.isAdmin;
+    list.innerHTML = items.map(a => {
+        const p = ANN_PRIORITY[a.priority] || ANN_PRIORITY.normal;
+        const author = { prenom: a.creatorPrenom || 'IGEE', nom: a.creatorNom || 'Admin', photo: a.creatorPhoto };
+        const avatar = author.photo || initialsAvatar(author.prenom, author.nom);
+        return `<div class="announcement-card ${p.cls}" data-ann-id="${a.id}">
+            <div class="announcement-head">
+                <span class="announcement-priority ${p.cls}">${p.icon} ${p.label}</span>
+                ${a.pinned ? '<span class="announcement-pin-badge">📌 Pinned</span>' : ''}
+            </div>
+            <div class="announcement-title">${esc(a.title)}</div>
+            <div class="announcement-content">${linkify(a.content)}${a.image ? `<img src="${a.image}">` : ''}</div>
+            <div class="announcement-meta">
+                <div class="announcement-author"><img src="${avatar}"><span>${esc(author.prenom + ' ' + author.nom)}</span></div>
+                <span>🕐 ${timeAgo(a.createdAt)}</span>
+                ${isAdmin ? `<div class="announcement-actions-row">
+                    <button class="announcement-pin-btn ${a.pinned ? 'active' : ''}" data-ann-pin="${a.id}" data-pin="${a.pinned ? '1' : '0'}">${a.pinned ? '📌 Unpin' : '📌 Pin'}</button>
+                    <button class="announcement-delete-btn" data-ann-del="${a.id}">🗑️ Delete</button>
+                </div>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+    list.querySelectorAll('[data-ann-del]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const ok = await confirmDialog('Delete this announcement?', 'This action cannot be undone.', 'Delete');
+            if (!ok) return;
+            try { await deleteDoc(doc(db, 'announcements', btn.dataset.annDel)); toast('Announcement deleted', 'success'); } catch(err) { toast('Error: ' + err.message, 'error'); }
+        });
+    });
+    list.querySelectorAll('[data-ann-pin]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const isPinned = btn.dataset.pin === '1';
+            try { await updateDoc(doc(db, 'announcements', btn.dataset.annPin), { pinned: !isPinned }); toast(!isPinned ? '📌 Pinned' : 'Unpinned', 'success'); } catch(err) { toast('Error: ' + err.message, 'error'); }
+        });
+    });
+}
+
+async function createAnnouncement() {
+    const me = currentUserData;
+    if (!me?.isAdmin) return toast('Only admins can create announcements', 'error');
+    const data = await openFormModal('📢 New Announcement', `
+        <label>Title *</label>
+        <input type="text" name="title" placeholder="e.g. Exam Schedule Updated" required maxlength="120">
+        <label>Priority *</label>
+        <select name="priority" required>
+            <option value="normal">📢 Normal</option>
+            <option value="high">⚠️ Important</option>
+            <option value="urgent">🚨 Urgent</option>
+        </select>
+        <label>Content *</label>
+        <textarea name="content" placeholder="Write your announcement..." required></textarea>
+        <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-primary);">
+            <input type="checkbox" name="pinned" style="width:auto;margin:0;"> 📌 Pin at the top
+        </label>
+        <div class="btn-row">
+            <button type="button" class="btn-cancel" onclick="document.getElementById('form-modal').classList.remove('active');">Cancel</button>
+            <button type="submit" class="btn-submit">Publish</button>
+        </div>`);
+    if (!data || !data.title?.trim() || !data.content?.trim()) return;
+    try {
+        await addDoc(collection(db, 'announcements'), {
+            title: data.title.trim(),
+            content: data.content.trim(),
+            priority: data.priority || 'normal',
+            pinned: data.pinned === 'on',
+            image: null,
+            creatorId: currentUser.uid,
+            creatorPrenom: me.prenom,
+            creatorNom: me.nom,
+            creatorPhoto: me.photo || null,
+            createdAt: serverTimestamp()
+        });
+        toast('Announcement published! 📢', 'success');
+    } catch(err) { toast('Error: ' + err.message, 'error'); }
+}
+
+/* Home page banner for latest pinned/urgent announcement */
+let _homeAnnUnsub = null;
+function loadHomeAnnouncementBanner() {
+    const wrap = document.getElementById('home-ann-banner-wrap'); if (!wrap) return;
+    if (_homeAnnUnsub) _homeAnnUnsub();
+    const q = query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(20));
+    _homeAnnUnsub = onSnapshot(q, (snap) => {
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const top = items.find(a => a.pinned) || items.find(a => a.priority === 'urgent') || items.find(a => a.priority === 'high');
+        if (!top) { wrap.innerHTML = ''; return; }
+        const p = ANN_PRIORITY[top.priority] || ANN_PRIORITY.normal;
+        wrap.innerHTML = `<div class="home-announcement-banner ${p.cls}" id="home-ann-banner"><div class="hab-icon">${p.icon}</div><div class="hab-body"><div class="hab-label">${top.pinned ? '📌 Pinned Announcement' : p.label + ' Announcement'}</div><div class="hab-title">${esc(top.title)}</div></div><div class="hab-arrow">›</div></div>`;
+        document.getElementById('home-ann-banner')?.addEventListener('click', () => Router.navigate('/announcements'));
+    }, () => { wrap.innerHTML = ''; });
+}
+
 function navbarHTML(me, active) {
     const currentTheme = document.body.getAttribute('data-theme') || 'light';
     return `<div class="navbar">
@@ -1540,6 +1766,7 @@ function sidebarLeftHTML(me, active) {
         <a href="#/groups" class="menu-item ${active==='groups'?'active':''}"><span class="icon">👥</span> IGEE Groups</a>
         <a href="#/events" class="menu-item ${active==='events'?'active':''}"><span class="icon">📅</span> Events</a>
         <a href="#/clubs" class="menu-item clubs-item ${active==='clubs'?'active':''}"><span class="icon">🏆</span> <strong>Official Clubs</strong></a>
+        <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}" style="${active==='announcements'?'background:rgba(24,119,242,.15);color:#1877f2;':''}"><span class="icon">📢</span> Announcements</a>
     </div>`;
 }
 function sidebarRightHTML() { return `<div class="sidebar sidebar-right"><h3>IGEE Members</h3><div id="members-list"><div class="loading">Loading...</div></div></div>`; }
@@ -1707,6 +1934,7 @@ Router.register('/event', (id) => { if (!currentUser) Router.navigate('/'); else
 Router.register('/groups', () => { if (!currentUser) Router.navigate('/'); else renderGroups(); });
 Router.register('/group', (id) => { if (!currentUser) Router.navigate('/'); else renderGroupDetail(id); });
 Router.register('/clubs', () => { if (!currentUser) Router.navigate('/'); else renderClubs(); });
+Router.register('/announcements', () => { if (!currentUser) Router.navigate('/'); else renderAnnouncements(); });
 
 window.addEventListener('hashchange', () => Router.handle());
 
@@ -1726,6 +1954,8 @@ onAuthStateChanged(auth, async (user) => {
         currentUser = null; currentUserData = null;
         if (window._unreadMsgsUnsub) window._unreadMsgsUnsub();
         if (window._notifUnsub) window._notifUnsub();
+        if (_annRealtimeUnsub) _annRealtimeUnsub();
+        if (_homeAnnUnsub) _homeAnnUnsub();
         Chat.closeAll(); Router.navigate('/');
     }
 });
