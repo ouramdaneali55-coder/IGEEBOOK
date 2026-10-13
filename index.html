@@ -532,8 +532,6 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .library-empty{background:var(--bg-card);border-radius:12px;padding:60px 30px;text-align:center;color:var(--text-secondary);box-shadow:0 1px 3px var(--shadow);}
 .library-empty .emoji{font-size:64px;margin-bottom:14px;display:inline-block;}
 .library-empty h3{font-size:18px;color:var(--text-primary);margin-bottom:8px;}
-
-/* Book Detail Modal */
 .book-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:10001;padding:20px;backdrop-filter:blur(4px);animation:fadeIn .2s ease;}
 .book-detail-overlay.active{display:flex;}
 .book-detail{background:var(--bg-card);border-radius:16px;max-width:820px;width:100%;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:popIn .3s ease;}
@@ -562,8 +560,35 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .btn-download{background:var(--bg-hover);color:var(--text-primary);}
 .btn-delete-book{background:#ffebe8;color:#d93025;}
 
+/* ============ MOBILE DRAWER MENU ============ */
+.mobile-menu-btn{display:none;width:40px;height:40px;border-radius:50%;background:var(--bg-input);color:var(--text-primary);border:none;cursor:pointer;font-size:22px;align-items:center;justify-content:center;flex-shrink:0;margin-right:8px;line-height:1;}
+.mobile-menu-btn:hover{background:var(--bg-hover);}
+.mobile-drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1500;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease;backdrop-filter:blur(2px);}
+.mobile-drawer-overlay.active{opacity:1;visibility:visible;}
+.mobile-drawer{position:fixed;top:0;left:0;bottom:0;width:290px;max-width:82vw;background:var(--bg-card);z-index:1501;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:6px 0 30px rgba(0,0,0,.3);display:flex;flex-direction:column;}
+.mobile-drawer.active{transform:translateX(0);}
+.mobile-drawer-header{display:flex;align-items:center;gap:12px;padding:20px 16px;background:linear-gradient(135deg,#1877f2,#0c5cbf);color:#fff;position:relative;flex-shrink:0;}
+.mobile-drawer-header img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.5);flex-shrink:0;}
+.mobile-drawer-header .info{flex:1;min-width:0;padding-right:32px;}
+.mobile-drawer-header .info .name{font-weight:bold;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mobile-drawer-header .info .email{font-size:12px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.mobile-drawer-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;font-size:16px;color:#fff;display:flex;align-items:center;justify-content:center;line-height:1;}
+.mobile-drawer-close:hover{background:rgba(255,255,255,.35);}
+.mobile-drawer-menu{padding:10px 8px;flex:1;}
+.mobile-drawer-menu .menu-item{padding:13px 14px;font-size:15px;border-radius:8px;margin-bottom:2px;transform:none;}
+.mobile-drawer-menu .menu-item:hover{transform:none;}
+.mobile-drawer-menu .menu-item .icon{font-size:22px;width:30px;text-align:center;}
+.mobile-drawer-menu .menu-item.clubs-item{border-left:3px solid #ff9800;}
+.mobile-drawer-menu .menu-item.clubs-item.active{background:linear-gradient(135deg,#ff9800,#f57c00);color:#fff;}
+.mobile-drawer-footer{padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;}
+.mobile-drawer-logout{width:100%;padding:12px 16px;background:transparent;border:none;cursor:pointer;font-size:15px;font-family:inherit;color:#d93025;font-weight:600;display:flex;align-items:center;gap:12px;border-radius:8px;text-align:left;}
+.mobile-drawer-logout:hover{background:#ffebe8;}
+.mobile-drawer-logout .icon{font-size:22px;width:30px;text-align:center;}
+
 @media (max-width:1100px){.container{grid-template-columns:240px 1fr;}.sidebar-right{display:none;}}
-@media (max-width:800px){.container{grid-template-columns:1fr;padding:0;margin:0 0 70px 0;gap:0;max-width:100%;}.sidebar{display:none !important;}.feed{width:100%;padding:0;}.navbar{height:52px;padding:0 12px;box-shadow:0 1px 2px var(--shadow);}.navbar .logo{gap:0;}.navbar .igee-logo-3d{width:40px;height:40px;border-radius:11px;}.navbar .search{display:none;}.navbar .nav-icons{gap:2px;}.navbar .nav-icons a,.navbar .nav-icons button{width:38px;height:38px;font-size:17px;background:transparent;}.navbar .nav-icons a:hover,.navbar .nav-icons button:hover{background:var(--bg-hover);transform:none;}.navbar .user-avatar{width:36px;height:36px;border-width:1.5px;}.navbar .nav-icons a[title="Home"]{display:none;}.navbar .nav-icons a[title="Profile"]{display:none;}.navbar .nav-icons #logout-btn{display:none;}.create-post,.post,.empty-state,.activity-item,.attendees-list,.page-header-card,.activity-header,.activity-tabs,.groups-tabs{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.post:hover{box-shadow:none;}.post-header{padding:10px 12px;}.post-header img{width:38px;height:38px;}.post-content{padding:0 12px 10px;font-size:15px;}.post-content img{border-radius:6px;}.post-stats{padding:6px 12px;font-size:12px;}.post-actions button{font-size:12.5px;padding:9px 2px;gap:4px;font-weight:600;}.comments{padding:8px 12px 10px;}.comment-form input{font-size:14px;padding:10px 14px;}.reaction-picker{left:2px;padding:4px 6px;gap:0;}.reaction-picker .reaction-btn{width:36px;height:36px;font-size:20px;}.reaction-picker .reaction-btn:hover{transform:scale(1.2) translateY(-3px);}.create-post{padding:12px;}.create-post textarea{font-size:15px;}.page-header-card{padding:16px;flex-direction:column;align-items:flex-start;gap:12px;}.page-header-card .icon-big{width:48px;height:48px;font-size:24px;}.page-header-card h1{font-size:22px;}.page-header-card .btn-create{width:100%;justify-content:center;padding:11px;}.clubs-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.clubs-hero h1{font-size:24px;}.clubs-hero .trophy{font-size:48px;}.clubs-hero p{font-size:14px;}.events-grid,.groups-grid{grid-template-columns:1fr;gap:8px;padding:0;}.event-card,.group-card,.club-display-card{border-radius:0;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.event-card:hover,.group-card:hover,.club-display-card:hover{transform:none;box-shadow:none;}.event-detail-cover{border-radius:0;height:200px;}.event-detail-card{border-radius:0;padding:20px 16px 24px;}.event-detail-card h1{font-size:22px;}.group-detail-cover{border-radius:0;height:180px;}.group-detail-card{border-radius:0;padding:20px 16px 24px;}.group-detail-card h1{font-size:22px;}.activity-header{padding:18px 16px;gap:14px;}.activity-header .icon-big{width:48px;height:48px;font-size:24px;}.activity-header h1{font-size:22px;}.activity-tabs{padding:6px;overflow-x:auto;scrollbar-width:none;}.activity-tabs::-webkit-scrollbar{display:none;}.activity-tab{padding:9px 14px;font-size:13px;}.chat-sidebar{width:100%;top:52px;height:calc(100vh - 52px - 58px);}#chat-windows-container{right:0;left:0;bottom:58px;gap:0;}.chat-window{width:100%;height:calc(100vh - 52px - 58px);border-radius:0;}.chat-window.minimized{height:52px;}.chat-window-header{padding:10px 14px;}.chat-window-body{padding:12px 14px;}.chat-fab{display:none !important;}.notif-panel{width:100vw;max-width:100vw;right:-12px;top:52px;border-radius:0;max-height:calc(100vh - 52px - 58px);}.auth-logo-3d{width:78px;height:78px;border-radius:18px;}.auth-logos-row{gap:14px;margin-bottom:14px;}.auth-slogan{font-size:13.5px;margin-bottom:20px;padding:0 12px;}.auth-box{padding:22px 18px;width:100%;max-width:440px;}.auth-box h2{font-size:20px;margin-bottom:18px;}.auth-box input{padding:13px 14px;font-size:15px;}.auth-box button{padding:13px;font-size:15px;}.auth-box button:hover{transform:none;box-shadow:none;}#toast-container{bottom:74px;right:12px;left:12px;align-items:stretch;}.toast{max-width:100%;}#install-btn{bottom:74px;right:12px;padding:10px 16px;font-size:13px;}.mobile-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--bg-card);border-top:1px solid var(--border);z-index:950;box-shadow:0 -1px 6px var(--shadow);justify-content:space-around;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);}.mobile-bottom-nav .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-secondary);text-decoration:none;background:none;border:none;cursor:pointer;font-size:10.5px;font-family:inherit;padding:6px 4px;position:relative;transition:color .15s;font-weight:500;}.mobile-bottom-nav .mbn-item .mbn-icon{font-size:22px;line-height:1;position:relative;display:flex;align-items:center;justify-content:center;}.mobile-bottom-nav .mbn-item.active{color:#1877f2;font-weight:700;}.mobile-bottom-nav .mbn-item.active .mbn-icon::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:22px;height:3px;background:#1877f2;border-radius:2px;}.mobile-bottom-nav .mbn-item .mbn-badge{position:absolute;top:-4px;right:-10px;background:#e41e3f;color:#fff;font-size:10px;font-weight:bold;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg-card);}.announcements-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.announcements-hero h1{font-size:24px;}.announcements-hero .hero-icon{font-size:48px;}.announcements-hero p{font-size:14px;}.announcements-toolbar{border-radius:0;padding:12px;margin-bottom:8px;}.announcement-card{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.announcement-card:hover{transform:none;box-shadow:none;}.announcement-title{font-size:17px;}.announcement-content{font-size:14px;}.home-announcement-banner{border-radius:0;margin-bottom:8px;}.library-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.library-hero h1{font-size:24px;}.library-hero .hero-icon{font-size:48px;}.library-hero p{font-size:14px;}.library-toolbar{border-radius:0;padding:12px;margin-bottom:8px;}.library-search-wrap{padding:0 10px;}.library-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}.library-card{border-radius:10px;}.book-detail{border-radius:12px;}.book-detail-header{padding:20px;gap:16px;}.book-detail-cover{width:120px;}.book-detail-info h2{font-size:18px;}.book-detail-body{padding:0 20px 20px;}}
+@media (max-width:800px){
+.mobile-menu-btn{display:flex;}
+.container{grid-template-columns:1fr;padding:0;margin:0 0 70px 0;gap:0;max-width:100%;}.sidebar{display:none !important;}.feed{width:100%;padding:0;}.navbar{height:52px;padding:0 8px;box-shadow:0 1px 2px var(--shadow);}.navbar .logo{gap:0;flex:1;}.navbar .igee-logo-3d{width:40px;height:40px;border-radius:11px;}.navbar .search{display:none;}.navbar .nav-icons{gap:2px;}.navbar .nav-icons a,.navbar .nav-icons button{width:38px;height:38px;font-size:17px;background:transparent;}.navbar .nav-icons a:hover,.navbar .nav-icons button:hover{background:var(--bg-hover);transform:none;}.navbar .user-avatar{width:36px;height:36px;border-width:1.5px;}.navbar .nav-icons a[title="Home"]{display:none;}.navbar .nav-icons a[title="Profile"]{display:none;}.navbar .nav-icons #logout-btn{display:none;}.create-post,.post,.empty-state,.activity-item,.attendees-list,.page-header-card,.activity-header,.activity-tabs,.groups-tabs{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.post:hover{box-shadow:none;}.post-header{padding:10px 12px;}.post-header img{width:38px;height:38px;}.post-content{padding:0 12px 10px;font-size:15px;}.post-content img{border-radius:6px;}.post-stats{padding:6px 12px;font-size:12px;}.post-actions button{font-size:12.5px;padding:9px 2px;gap:4px;font-weight:600;}.comments{padding:8px 12px 10px;}.comment-form input{font-size:14px;padding:10px 14px;}.reaction-picker{left:2px;padding:4px 6px;gap:0;}.reaction-picker .reaction-btn{width:36px;height:36px;font-size:20px;}.reaction-picker .reaction-btn:hover{transform:scale(1.2) translateY(-3px);}.create-post{padding:12px;}.create-post textarea{font-size:15px;}.page-header-card{padding:16px;flex-direction:column;align-items:flex-start;gap:12px;}.page-header-card .icon-big{width:48px;height:48px;font-size:24px;}.page-header-card h1{font-size:22px;}.page-header-card .btn-create{width:100%;justify-content:center;padding:11px;}.clubs-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.clubs-hero h1{font-size:24px;}.clubs-hero .trophy{font-size:48px;}.clubs-hero p{font-size:14px;}.events-grid,.groups-grid{grid-template-columns:1fr;gap:8px;padding:0;}.event-card,.group-card,.club-display-card{border-radius:0;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.event-card:hover,.group-card:hover,.club-display-card:hover{transform:none;box-shadow:none;}.event-detail-cover{border-radius:0;height:200px;}.event-detail-card{border-radius:0;padding:20px 16px 24px;}.event-detail-card h1{font-size:22px;}.group-detail-cover{border-radius:0;height:180px;}.group-detail-card{border-radius:0;padding:20px 16px 24px;}.group-detail-card h1{font-size:22px;}.activity-header{padding:18px 16px;gap:14px;}.activity-header .icon-big{width:48px;height:48px;font-size:24px;}.activity-header h1{font-size:22px;}.activity-tabs{padding:6px;overflow-x:auto;scrollbar-width:none;}.activity-tabs::-webkit-scrollbar{display:none;}.activity-tab{padding:9px 14px;font-size:13px;}.chat-sidebar{width:100%;top:52px;height:calc(100vh - 52px - 58px);}#chat-windows-container{right:0;left:0;bottom:58px;gap:0;}.chat-window{width:100%;height:calc(100vh - 52px - 58px);border-radius:0;}.chat-window.minimized{height:52px;}.chat-window-header{padding:10px 14px;}.chat-window-body{padding:12px 14px;}.chat-fab{display:none !important;}.notif-panel{width:100vw;max-width:100vw;right:-12px;top:52px;border-radius:0;max-height:calc(100vh - 52px - 58px);}.auth-logo-3d{width:78px;height:78px;border-radius:18px;}.auth-logos-row{gap:14px;margin-bottom:14px;}.auth-slogan{font-size:13.5px;margin-bottom:20px;padding:0 12px;}.auth-box{padding:22px 18px;width:100%;max-width:440px;}.auth-box h2{font-size:20px;margin-bottom:18px;}.auth-box input{padding:13px 14px;font-size:15px;}.auth-box button{padding:13px;font-size:15px;}.auth-box button:hover{transform:none;box-shadow:none;}#toast-container{bottom:74px;right:12px;left:12px;align-items:stretch;}.toast{max-width:100%;}#install-btn{bottom:74px;right:12px;padding:10px 16px;font-size:13px;}.mobile-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--bg-card);border-top:1px solid var(--border);z-index:950;box-shadow:0 -1px 6px var(--shadow);justify-content:space-around;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);}.mobile-bottom-nav .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-secondary);text-decoration:none;background:none;border:none;cursor:pointer;font-size:10.5px;font-family:inherit;padding:6px 4px;position:relative;transition:color .15s;font-weight:500;}.mobile-bottom-nav .mbn-item .mbn-icon{font-size:22px;line-height:1;position:relative;display:flex;align-items:center;justify-content:center;}.mobile-bottom-nav .mbn-item.active{color:#1877f2;font-weight:700;}.mobile-bottom-nav .mbn-item.active .mbn-icon::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:22px;height:3px;background:#1877f2;border-radius:2px;}.mobile-bottom-nav .mbn-item .mbn-badge{position:absolute;top:-4px;right:-10px;background:#e41e3f;color:#fff;font-size:10px;font-weight:bold;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg-card);}.announcements-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.announcements-hero h1{font-size:24px;}.announcements-hero .hero-icon{font-size:48px;}.announcements-hero p{font-size:14px;}.announcements-toolbar{border-radius:0;padding:12px;margin-bottom:8px;}.announcement-card{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.announcement-card:hover{transform:none;box-shadow:none;}.announcement-title{font-size:17px;}.announcement-content{font-size:14px;}.home-announcement-banner{border-radius:0;margin-bottom:8px;}.library-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.library-hero h1{font-size:24px;}.library-hero .hero-icon{font-size:48px;}.library-hero p{font-size:14px;}.library-toolbar{border-radius:0;padding:12px;margin-bottom:8px;}.library-search-wrap{padding:0 10px;}.library-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}.library-card{border-radius:10px;}.book-detail{border-radius:12px;}.book-detail-header{padding:20px;gap:16px;}.book-detail-cover{width:120px;}.book-detail-info h2{font-size:18px;}.book-detail-body{padding:0 20px 20px;}}
 @media (max-width:400px){.navbar .nav-icons button#theme-toggle-btn{display:none;}.mobile-bottom-nav .mbn-item span:not(.mbn-icon):not(.mbn-badge){font-size:10px;}.chat-msg{font-size:13.5px;}.post-actions button{font-size:12px;}.library-grid{grid-template-columns:repeat(2,1fr);gap:8px;padding:8px;}.book-title{font-size:12.5px;}.library-filter{padding:7px 10px;font-size:11.5px;}}
 @media (prefers-reduced-motion:reduce){.auth-page,.auth-page::after,.auth-box,.auth-box input,.auth-box button,.auth-logo-3d,.announcements-hero,.announcements-hero .hero-icon,.home-announcement-banner .hab-icon,.library-hero,.library-hero .hero-icon{animation:none !important;}}
 </style>
@@ -1015,7 +1040,7 @@ const Router = {
     register(path, handler) { this.routes[path] = handler; },
     navigate(path) { const newHash = '#' + path; if (window.location.hash === newHash) { this.handle(); } else { window.location.hash = newHash; } },
     async handle() {
-        showLoading(); closeNotifPanel();
+        showLoading(); closeNotifPanel(); closeMobileDrawer();
         const hash = window.location.hash.replace(/^#/, '') || '/';
         try {
             if (hash.startsWith('/profile/')) { await Router.routes['/profile'](hash.split('/')[2]); return; }
@@ -1935,12 +1960,10 @@ async function createBook() {
     if (coverFile && coverFile.size > 500 * 1024) return toast('Image trop volumineuse (max 500 KB)', 'error');
     showLoading();
     try {
-        // Upload PDF to Firebase Storage
         const pdfPath = `books/${currentUser.uid}/${Date.now()}_${pdfFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
         const pdfRef = storageRef(storage, pdfPath);
         await uploadBytes(pdfRef, pdfFile, { contentType: 'application/pdf' });
         const pdfUrl = await getDownloadURL(pdfRef);
-        // Upload cover if provided
         let coverUrl = null;
         if (coverFile && coverFile.size) {
             const coverPath = `books/${currentUser.uid}/covers/${Date.now()}_${coverFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
@@ -2028,9 +2051,47 @@ async function openBookDetail(book) {
     });
 }
 
+function mobileDrawerHTML(me, active) {
+    return `<div class="mobile-drawer-overlay" id="mobile-drawer-overlay"></div>
+    <div class="mobile-drawer" id="mobile-drawer">
+        <div class="mobile-drawer-header">
+            <img src="${me.photo||initialsAvatar(me.prenom,me.nom)}">
+            <div class="info">
+                <div class="name">${esc(me.prenom + ' ' + me.nom)}</div>
+                <div class="email">${esc(me.email || '')}</div>
+            </div>
+            <button class="mobile-drawer-close" id="mobile-drawer-close">✕</button>
+        </div>
+        <div class="mobile-drawer-menu">
+            <a href="#/profile/${me.id}" class="menu-item ${active==='profile'?'active':''}"><span class="icon">👤</span> Mon Profil</a>
+            <a href="#/home" class="menu-item ${active==='home'?'active':''}"><span class="icon">📰</span> News Feed</a>
+            <div class="menu-item" id="mobile-drawer-messages"><span class="icon">💬</span> Messages</div>
+            <a href="#/library" class="menu-item ${active==='library'?'active':''}"><span class="icon">📚</span> Bibliothèque</a>
+            <a href="#/saved" class="menu-item ${active==='saved'?'active':''}"><span class="icon">🔖</span> Saved Posts</a>
+            <a href="#/activity" class="menu-item ${active==='activity'?'active':''}"><span class="icon">📊</span> Activity Log</a>
+            <a href="#/groups" class="menu-item ${active==='groups'?'active':''}"><span class="icon">👥</span> IGEE Groups</a>
+            <a href="#/events" class="menu-item ${active==='events'?'active':''}"><span class="icon">📅</span> Events</a>
+            <a href="#/clubs" class="menu-item clubs-item ${active==='clubs'?'active':''}"><span class="icon">🏆</span> Official Clubs</a>
+            <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}"><span class="icon">📢</span> Announcements</a>
+        </div>
+        <div class="mobile-drawer-footer">
+            <button class="mobile-drawer-logout" id="mobile-drawer-logout"><span class="icon">🚪</span> Déconnexion</button>
+        </div>
+    </div>`;
+}
+function closeMobileDrawer() {
+    document.getElementById('mobile-drawer')?.classList.remove('active');
+    document.getElementById('mobile-drawer-overlay')?.classList.remove('active');
+}
+function openMobileDrawer() {
+    document.getElementById('mobile-drawer')?.classList.add('active');
+    document.getElementById('mobile-drawer-overlay')?.classList.add('active');
+}
+
 function navbarHTML(me, active) {
     const currentTheme = document.body.getAttribute('data-theme') || 'light';
     return `<div class="navbar">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" title="Menu">☰</button>
         <a href="#/home" class="logo" title="IGEE Social">
             <div class="igee-logo-3d">${IGEE_LOGO_SVG}</div>
         </a>
@@ -2064,7 +2125,8 @@ function navbarHTML(me, active) {
         <a href="#/profile/${me.id}" class="mbn-item ${active==='profile'?'active':''}">
             <span class="mbn-icon">👤</span><span>Profil</span>
         </a>
-    </div>`;
+    </div>
+    ${mobileDrawerHTML(me, active)}`;
 }
 function sidebarLeftHTML(me, active) {
     return `<div class="sidebar sidebar-left">
@@ -2100,6 +2162,12 @@ function attachNotifEvents() {
     document.getElementById('close-chat-sidebar')?.addEventListener('click', () => Chat.closeSidebar());
     document.getElementById('theme-toggle-btn')?.addEventListener('click', () => Theme.toggle());
     document.addEventListener('click', (e) => { const w = document.querySelector('.notif-wrapper'); if (w && !w.contains(e.target)) closeNotifPanel(); });
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', openMobileDrawer);
+    document.getElementById('mobile-drawer-close')?.addEventListener('click', closeMobileDrawer);
+    document.getElementById('mobile-drawer-overlay')?.addEventListener('click', closeMobileDrawer);
+    document.getElementById('mobile-drawer-messages')?.addEventListener('click', () => { closeMobileDrawer(); Chat.toggleSidebar(); });
+    document.getElementById('mobile-drawer-logout')?.addEventListener('click', async () => { closeMobileDrawer(); await signOut(auth); Chat.closeAll(); toast('Déconnecté','success'); });
+    document.querySelectorAll('#mobile-drawer a').forEach(a => a.addEventListener('click', closeMobileDrawer));
 }
 function attachHomeEvents(isMessages = false) {
     document.getElementById('logout-btn')?.addEventListener('click', async () => { await signOut(auth); Chat.closeAll(); toast('Logged out','success'); });
