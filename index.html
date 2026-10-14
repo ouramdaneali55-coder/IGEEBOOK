@@ -736,6 +736,24 @@ const toast = (msg, type = '') => { const c = document.getElementById('toast-con
 const uploadImage = async (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
 const formatBytes = (bytes) => { if (!bytes) return ''; if (bytes < 1024) return bytes + ' B'; if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' KB'; return (bytes/1024/1024).toFixed(1) + ' MB'; };
 
+/* ============ CLOUDINARY UPLOAD HELPER ============ */
+async function uploadToCloudinary(file, folder = 'igee_books') {
+    const isPdf = file.type === 'application/pdf';
+    const resourceType = isPdf ? 'raw' : 'image';
+    const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    if (folder) formData.append('folder', folder);
+    const res = await fetch(url, { method: 'POST', body: formData });
+    if (!res.ok) {
+        let errMsg = 'Upload failed';
+        try { const errJson = await res.json(); errMsg = errJson.error?.message || errMsg; } catch(e) {}
+        throw new Error(errMsg);
+    }
+    return await res.json();
+}
+
 const Lightbox = {
     images: [], currentIndex: 0,
     init() {
@@ -781,13 +799,16 @@ function confirmDialog(title, text, okLabel = 'Delete') {
         cancelBtn.addEventListener('click', onCancel);
     });
 }
-function openFormModal(title, fieldsHTML) {
+function openFormModal(title, fieldsHTML, onReady) {
     return new Promise((resolve) => {
         const overlay = document.getElementById('form-modal');
         const form = document.getElementById('form-content');
         document.getElementById('form-title').textContent = title;
         form.innerHTML = fieldsHTML;
         overlay.classList.add('active');
+        if (typeof onReady === 'function') {
+            setTimeout(() => { try { onReady(); } catch(e) { console.error('onReady error:', e); } }, 20);
+        }
         form.onsubmit = (e) => { e.preventDefault(); const fd = new FormData(form); const data = {}; for (const [k,v] of fd.entries()) data[k]=v; overlay.classList.remove('active'); resolve(data); };
         const closeHandler = (e) => { if (e.target === overlay) { overlay.classList.remove('active'); resolve(null); } };
         overlay.addEventListener('click', closeHandler, { once: true });
@@ -1819,19 +1840,75 @@ function loadHomeAnnouncementBanner() {
 /* ============ DIGITAL LIBRARY ============ */
 let _allBooks = [];
 let _libUnsub = null;
+let currentPromoFilter = 'all';
 let currentLibFilter = 'all';
 let currentLibSearch = '';
 
-const BOOK_CATEGORIES = {
-    math:        { label: 'Mathématiques', icon: '📐', color: '#1877f2' },
-    physics:     { label: 'Physique',      icon: '⚛️', color: '#9c27b0' },
-    chemistry:   { label: 'Chimie',        icon: '🧪', color: '#42b72a' },
-    cs:          { label: 'Informatique',  icon: '💻', color: '#00bcd4' },
-    electronics: { label: 'Électronique',  icon: '⚡', color: '#ff9800' },
-    literature:  { label: 'Littérature',   icon: '📖', color: '#e91e63' },
-    languages:   { label: 'Langues',       icon: '🌍', color: '#ff5722' },
-    other:       { label: 'Autre',         icon: '📚', color: '#607d8b' }
+const BOOK_PROMOTIONS = {
+    L1: { label: 'L1 — 1st Year',   icon: '🎓', color: '#1877f2' },
+    L2: { label: 'L2 — 2nd Year',   icon: '🎓', color: '#42b72a' },
+    L3: { label: 'L3 — 3rd Year',   icon: '🎓', color: '#ff9800' },
+    M1: { label: 'M1 — Master 1',   icon: '🎓', color: '#9c27b0' }
 };
+
+const PROMOTION_SUBJECTS = {
+    L1: [
+        { value: 'algorithm',   label: 'Algorithm',                 icon: '💻' },
+        { value: 'chemistry',   label: 'Chemistry',                 icon: '🧪' },
+        { value: 'electricity', label: 'Electricity',               icon: '⚡' },
+        { value: 'math',        label: 'Math (Algebra + Calculus)', icon: '📐' },
+        { value: 'novel',       label: 'Novel',                     icon: '📖' },
+        { value: 'physics',     label: 'Physics',                   icon: '⚛️' },
+        { value: 'english',     label: 'English Grammar',           icon: '🌍' }
+    ],
+    L2: [
+        { value: 'active_devices',    label: 'Active Devices',          icon: '⚡' },
+        { value: 'diff_eq',           label: 'Differential Equations',  icon: '📐' },
+        { value: 'digital_systems',   label: 'Digital Systems',         icon: '💻' },
+        { value: 'economics',         label: 'Economics',               icon: '📊' },
+        { value: 'electric_machines', label: 'Electric Machines',       icon: '🔌' },
+        { value: 'electrical_eng',    label: 'Electrical Engineering',  icon: '⚡' },
+        { value: 'emf',               label: 'EMF',                     icon: '📡' },
+        { value: 'linear_systems',    label: 'Linear Systems',          icon: '🎛️' },
+        { value: 'vibrations_waves',  label: 'Vibrations and Waves',    icon: '🌊' }
+    ],
+    L3: [
+        { value: 'comm_principles',   label: 'Communication Principles',           icon: '📡' },
+        { value: 'comm_circuits',     label: 'Communications Circuits',            icon: '📡' },
+        { value: 'computer_arch',     label: 'Computer Architecture',              icon: '💻' },
+        { value: 'energy_systems',    label: 'Energy Systems',                     icon: '🔋' },
+        { value: 'eng_mgmt',          label: 'Engineering Management',             icon: '📊' },
+        { value: 'linear_control',    label: 'Linear Control Systems',             icon: '🎛️' },
+        { value: 'linear_systems_2',  label: 'Linear Systems II',                  icon: '🎛️' },
+        { value: 'microprocessor',    label: 'Microprocessor Systems Design',      icon: '💾' },
+        { value: 'power_electronics', label: 'Power Electronics',                  icon: '⚡' },
+        { value: 'process_control',   label: 'Process Control and Instrumentation',icon: '🎛️' },
+        { value: 'z80',               label: 'The Z80 Microprocessor',             icon: '💾' }
+    ],
+    M1: [
+        { value: 'power_analysis',  label: 'Power System Analysis (Hadi Sadat)', icon: '🔌' },
+        { value: 'microwave_amp',   label: 'Microwave Transistor Amplifiers',    icon: '📡' },
+        { value: 'william',         label: 'William',                            icon: '📚' },
+        { value: 'dtsp',            label: 'Discrete-Time Signal Processing',    icon: '📊' },
+        { value: 'dtsp_solutions',  label: 'DTSP Solution Manual',               icon: '📊' },
+        { value: 'power_elements',  label: 'Elements of Power System Analysis',  icon: '🔌' }
+    ]
+};
+
+function getSubjectInfo(promotion, categoryValue) {
+    const subjects = PROMOTION_SUBJECTS[promotion] || [];
+    const found = subjects.find(s => s.value === categoryValue);
+    if (found) return found;
+    for (const p of Object.values(PROMOTION_SUBJECTS)) {
+        const f = p.find(s => s.value === categoryValue);
+        if (f) return f;
+    }
+    return { value: categoryValue || 'other', label: categoryValue || 'Other', icon: '📚' };
+}
+
+function getPromotionColor(promo) {
+    return (BOOK_PROMOTIONS[promo] && BOOK_PROMOTIONS[promo].color) || '#607d8b';
+}
 
 async function renderLibrary() {
     const me = currentUserData; if (!me) return;
@@ -1842,32 +1919,67 @@ async function renderLibrary() {
             <div>
                 <div class="library-hero">
                     <div class="hero-icon">📚</div>
-                    <h1>Bibliothèque Numérique</h1>
-                    <p>Livres, cours et documents PDF partagés par la communauté IGEE</p>
+                    <h1>Digital Library</h1>
+                    <p>Books, courses and PDF documents shared by the IGEE community</p>
                 </div>
                 <div class="library-toolbar">
-                    <div class="library-filters" id="library-filters">
-                        <button class="library-filter active" data-lib-filter="all">📚 Tous</button>
-                        ${Object.entries(BOOK_CATEGORIES).map(([k,c]) => `<button class="library-filter" data-lib-filter="${k}">${c.icon} ${c.label}</button>`).join('')}
+                    <div class="library-filters" id="library-promo-filters" style="width:100%;margin-bottom:8px;">
+                        <button class="library-filter active" data-promo-filter="all">🎓 All Promotions</button>
+                        ${Object.entries(BOOK_PROMOTIONS).map(([k,p]) => `<button class="library-filter" data-promo-filter="${k}">${p.icon} ${p.label}</button>`).join('')}
                     </div>
-                    <button class="btn-upload-book" id="upload-book-btn">+ Ajouter un livre</button>
+                </div>
+                <div class="library-toolbar">
+                    <div class="library-filters" id="library-subject-filters">
+                        <button class="library-filter active" data-lib-filter="all">📚 All Subjects</button>
+                    </div>
+                    <button class="btn-upload-book" id="upload-book-btn">+ Add a Book</button>
                 </div>
                 <div class="library-search-wrap">
-                    <input type="text" id="library-search" placeholder="🔍 Rechercher par titre, auteur ou description...">
+                    <input type="text" id="library-search" placeholder="🔍 Search by title, author or description...">
                 </div>
-                <div class="library-grid" id="library-grid"><div class="loading">Chargement...</div></div>
+                <div class="library-grid" id="library-grid"><div class="loading">Loading...</div></div>
             </div>
         </div>`;
     attachHomeEvents(true);
     document.getElementById('upload-book-btn')?.addEventListener('click', createBook);
-    document.querySelectorAll('[data-lib-filter]').forEach(btn => {
+
+    function updateSubjectFilters() {
+        const container = document.getElementById('library-subject-filters');
+        if (!container) return;
+        const promo = currentPromoFilter;
+        let subjects = [];
+        if (promo === 'all') {
+            const seen = new Set();
+            Object.values(PROMOTION_SUBJECTS).forEach(arr => arr.forEach(s => { if (!seen.has(s.value)) { seen.add(s.value); subjects.push(s); } }));
+        } else {
+            subjects = PROMOTION_SUBJECTS[promo] || [];
+        }
+        let html = `<button class="library-filter ${currentLibFilter==='all'?'active':''}" data-lib-filter="all">📚 All Subjects</button>`;
+        html += subjects.map(s => `<button class="library-filter ${currentLibFilter===s.value?'active':''}" data-lib-filter="${s.value}">${s.icon} ${s.label}</button>`).join('');
+        container.innerHTML = html;
+        container.querySelectorAll('[data-lib-filter]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                container.querySelectorAll('[data-lib-filter]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLibFilter = btn.dataset.libFilter;
+                renderLibraryList();
+            });
+        });
+    }
+
+    document.querySelectorAll('[data-promo-filter]').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('[data-lib-filter]').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('[data-promo-filter]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentLibFilter = btn.dataset.libFilter;
+            currentPromoFilter = btn.dataset.promoFilter;
+            currentLibFilter = 'all';
+            updateSubjectFilters();
             renderLibraryList();
         });
     });
+
+    updateSubjectFilters();
+
     document.getElementById('library-search')?.addEventListener('input', (e) => {
         currentLibSearch = e.target.value.toLowerCase().trim();
         renderLibraryList();
@@ -1878,18 +1990,19 @@ async function renderLibrary() {
 function loadLibraryRealtime() {
     const grid = document.getElementById('library-grid'); if (!grid) return;
     if (_libUnsub) _libUnsub();
-    const q = query(collection(db, 'books'), orderBy('createdAt', 'desc'), limit(100));
+    const q = query(collection(db, 'books'), orderBy('createdAt', 'desc'), limit(200));
     _libUnsub = onSnapshot(q, (snap) => {
         _allBooks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderLibraryList();
     }, () => {
-        grid.innerHTML = `<div class="library-empty" style="grid-column:1/-1;"><div class="emoji">📚</div><h3>Impossible de charger</h3><p>Vérifiez votre connexion.</p></div>`;
+        grid.innerHTML = `<div class="library-empty" style="grid-column:1/-1;"><div class="emoji">📚</div><h3>Cannot load library</h3><p>Please check your connection.</p></div>`;
     });
 }
 
 function renderLibraryList() {
     const grid = document.getElementById('library-grid'); if (!grid) return;
     let items = [..._allBooks];
+    if (currentPromoFilter !== 'all') items = items.filter(b => b.promotion === currentPromoFilter);
     if (currentLibFilter !== 'all') items = items.filter(b => b.category === currentLibFilter);
     if (currentLibSearch) {
         const s = currentLibSearch;
@@ -1900,7 +2013,7 @@ function renderLibraryList() {
         );
     }
     if (!items.length) {
-        grid.innerHTML = `<div class="library-empty" style="grid-column:1/-1;"><div class="emoji">📚</div><h3>${_allBooks.length === 0 ? 'Bibliothèque vide' : 'Aucun résultat'}</h3><p>${_allBooks.length === 0 ? 'Soyez le premier à ajouter un livre !' : 'Essayez une autre recherche.'}</p></div>`;
+        grid.innerHTML = `<div class="library-empty" style="grid-column:1/-1;"><div class="emoji">📚</div><h3>${_allBooks.length === 0 ? 'Library is empty' : 'No results'}</h3><p>${_allBooks.length === 0 ? 'Be the first to add a book!' : 'Try another search or filter.'}</p></div>`;
         return;
     }
     grid.innerHTML = items.map(b => bookCardHTML(b)).join('');
@@ -1910,36 +2023,20 @@ function renderLibraryList() {
 }
 
 function bookCardHTML(b) {
-    const cat = BOOK_CATEGORIES[b.category] || BOOK_CATEGORIES.other;
+    const promo = b.promotion || 'L1';
+    const promoColor = getPromotionColor(promo);
+    const subj = getSubjectInfo(promo, b.category);
     const cover = b.cover
         ? `<img src="${b.cover}" loading="lazy" alt="${esc(b.title)}">`
-        : `<div class="book-no-cover" style="background:linear-gradient(135deg,${cat.color},${cat.color}cc);"><span>${cat.icon}</span><small>${esc(cat.label)}</small></div>`;
+        : `<div class="book-no-cover" style="background:linear-gradient(135deg,${promoColor},${promoColor}cc);"><span>${subj.icon}</span><small>${esc(subj.label)}</small></div>`;
     const pages = b.pages ? `<span>📄 ${b.pages} pages</span>` : '';
     const size = b.size ? `<span>💾 ${formatBytes(b.size)}</span>` : '';
-    
-/* ============ CLOUDINARY UPLOAD HELPER ============ */
-async function uploadToCloudinary(file, folder = 'igee_books') {
-    const isPdf = file.type === 'application/pdf';
-    const resourceType = isPdf ? 'raw' : 'image';
-    const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    if (folder) formData.append('folder', folder);
-    const res = await fetch(url, { method: 'POST', body: formData });
-    if (!res.ok) {
-        let errMsg = 'Upload failed';
-        try { const errJson = await res.json(); errMsg = errJson.error?.message || errMsg; } catch(e) {}
-        throw new Error(errMsg);
-    }
-    return await res.json();
-}
     return `<div class="library-card" data-book-id="${b.id}">
-        <div class="book-cover-wrap">${cover}<span class="book-cat-badge" style="background:${cat.color};">${cat.icon}</span></div>
+        <div class="book-cover-wrap">${cover}<span class="book-cat-badge" style="background:${promoColor};">${subj.icon}</span></div>
         <div class="book-info">
             <div class="book-title">${esc(b.title)}</div>
             ${b.author ? `<div class="book-author">✍️ ${esc(b.author)}</div>` : ''}
-            <div class="book-meta">${pages}${size}</div>
+            <div class="book-meta"><span>🎓 ${esc(promo)}</span>${pages}${size}</div>
             <div class="book-uploader">
                 <img src="${b.uploaderPhoto || initialsAvatar(b.uploaderPrenom||'?',b.uploaderNom||'?')}" loading="lazy">
                 <span>${esc((b.uploaderPrenom||'') + ' ' + (b.uploaderNom||''))}</span>
@@ -1951,33 +2048,47 @@ async function uploadToCloudinary(file, folder = 'igee_books') {
 
 async function createBook() {
     const me = currentUserData;
-    const data = await openFormModal('📚 Ajouter un livre', `
-        <label>Titre *</label>
-        <input type="text" name="title" placeholder="Ex: Algèbre Linéaire - Cours" required maxlength="150">
-        <label>Auteur</label>
-        <input type="text" name="author" placeholder="Ex: Pr. Ahmed Benali" maxlength="100">
-        <label>Catégorie *</label>
-        <select name="category" required>
-            ${Object.entries(BOOK_CATEGORIES).map(([k,c]) => `<option value="${k}">${c.icon} ${c.label}</option>`).join('')}
+    const data = await openFormModal('📚 Add a Book', `
+        <label>Promotion *</label>
+        <select name="promotion" id="book-promotion-select" required>
+            ${Object.entries(BOOK_PROMOTIONS).map(([k,p]) => `<option value="${k}">${p.icon} ${p.label}</option>`).join('')}
         </select>
-        <label>Nombre de pages (optionnel)</label>
+        <label>Subject *</label>
+        <select name="category" id="book-subject-select" required></select>
+        <label>Title *</label>
+        <input type="text" name="title" placeholder="Ex: Linear Algebra - Course" required maxlength="150">
+        <label>Author</label>
+        <input type="text" name="author" placeholder="Ex: Pr. Ahmed Benali" maxlength="100">
+        <label>Number of pages (optional)</label>
         <input type="number" name="pages" placeholder="Ex: 250" min="1" max="9999">
         <label>Description</label>
-        <textarea name="description" placeholder="Brève description du contenu..."></textarea>
-        <label>Image de couverture (optionnel, max 500 KB)</label>
+        <textarea name="description" placeholder="Short description..."></textarea>
+        <label>Cover image (optional, max 500 KB)</label>
         <input type="file" name="cover" accept="image/*">
-        <label>Fichier PDF * (max 10 MB)</label>
+        <label>PDF file * (max 10 MB)</label>
         <input type="file" name="pdf" accept="application/pdf" required>
         <div class="btn-row">
-            <button type="button" class="btn-cancel" onclick="document.getElementById('form-modal').classList.remove('active');">Annuler</button>
-            <button type="submit" class="btn-submit" style="background:linear-gradient(135deg,#673ab7,#311b92);">📤 Publier</button>
-        </div>`);
+            <button type="button" class="btn-cancel" onclick="document.getElementById('form-modal').classList.remove('active');">Cancel</button>
+            <button type="submit" class="btn-submit" style="background:linear-gradient(135deg,#673ab7,#311b92);">📤 Publish</button>
+        </div>`, () => {
+            const promoSelect = document.getElementById('book-promotion-select');
+            const subjectSelect = document.getElementById('book-subject-select');
+            if (!promoSelect || !subjectSelect) return;
+            const updateSubjects = () => {
+                const promo = promoSelect.value;
+                const subjects = PROMOTION_SUBJECTS[promo] || [];
+                subjectSelect.innerHTML = subjects.map(s => `<option value="${s.value}">${s.icon} ${s.label}</option>`).join('');
+            };
+            promoSelect.addEventListener('change', updateSubjects);
+            updateSubjects();
+        });
     if (!data) return;
     const pdfFile = data.pdf;
     const coverFile = data.cover;
-    if (!pdfFile || !pdfFile.size) return toast('Veuillez sélectionner un fichier PDF', 'error');
-    if (pdfFile.size > 10 * 1024 * 1024) return toast('PDF trop volumineux (max 10 MB)', 'error');
-    if (coverFile && coverFile.size > 500 * 1024) return toast('Image trop volumineuse (max 500 KB)', 'error');
+    if (!pdfFile || !pdfFile.size) return toast('Please select a PDF file', 'error');
+    if (pdfFile.size > 10 * 1024 * 1024) return toast('PDF too large (max 10 MB)', 'error');
+    if (coverFile && coverFile.size > 500 * 1024) return toast('Image too large (max 500 KB)', 'error');
+    if (CLOUDINARY_CLOUD_NAME === 'TON_CLOUD_NAME_ICI') return toast('Cloudinary not configured!', 'error');
     showLoading();
     try {
         const pdfRes = await uploadToCloudinary(pdfFile, 'igee_books/pdfs');
@@ -1993,6 +2104,7 @@ async function createBook() {
         await addDoc(collection(db, 'books'), {
             title: (data.title || '').trim(),
             author: (data.author || '').trim(),
+            promotion: data.promotion || 'L1',
             category: data.category || 'other',
             pages: data.pages ? parseInt(data.pages) : null,
             description: (data.description || '').trim(),
@@ -2008,21 +2120,23 @@ async function createBook() {
             createdAt: serverTimestamp()
         });
         hideLoading();
-        toast('Livre publié avec succès ! 📚', 'success');
+        toast('Book published successfully! 📚', 'success');
     } catch(err) {
         hideLoading();
         console.error('Cloudinary upload error:', err);
-        toast('Erreur upload : ' + err.message, 'error');
+        toast('Upload error: ' + err.message, 'error');
     }
 }
 
 async function openBookDetail(book) {
     const modal = document.getElementById('book-detail-modal');
-    const cat = BOOK_CATEGORIES[book.category] || BOOK_CATEGORIES.other;
+    const promo = book.promotion || 'L1';
+    const promoColor = getPromotionColor(promo);
+    const subj = getSubjectInfo(promo, book.category);
     const canDelete = book.uploaderId === currentUser.uid || currentUserData.isAdmin;
     const coverHTML = book.cover
         ? `<img src="${book.cover}" alt="${esc(book.title)}">`
-        : `<div class="book-no-cover" style="background:linear-gradient(135deg,${cat.color},${cat.color}cc);"><span>${cat.icon}</span><small>${esc(cat.label)}</small></div>`;
+        : `<div class="book-no-cover" style="background:linear-gradient(135deg,${promoColor},${promoColor}cc);"><span>${subj.icon}</span><small>${esc(subj.label)}</small></div>`;
     modal.innerHTML = `<div class="book-detail">
         <div class="book-detail-header">
             <button class="book-detail-close" id="book-detail-close-btn">✕</button>
@@ -2030,7 +2144,7 @@ async function openBookDetail(book) {
             <div class="book-detail-info">
                 <h2>${esc(book.title)}</h2>
                 ${book.author ? `<div class="author">✍️ ${esc(book.author)}</div>` : ''}
-                <span class="cat-pill" style="background:${cat.color};">${cat.icon} ${esc(cat.label)}</span>
+                <span class="cat-pill" style="background:${promoColor};">🎓 ${esc(promo)} • ${subj.icon} ${esc(subj.label)}</span>
                 <div class="meta-row">
                     ${book.pages ? `<span>📄 ${book.pages} pages</span>` : ''}
                     ${book.size ? `<span>💾 ${formatBytes(book.size)}</span>` : ''}
@@ -2040,16 +2154,16 @@ async function openBookDetail(book) {
         </div>
         <div class="book-detail-body">
             ${book.description ? `<h4>Description</h4><div class="book-detail-desc">${esc(book.description)}</div>` : ''}
-            <h4>Partagé par</h4>
+            <h4>Shared by</h4>
             <div class="book-detail-uploader">
                 <img src="${book.uploaderPhoto || initialsAvatar(book.uploaderPrenom||'?',book.uploaderNom||'?')}">
                 <span class="name">${esc((book.uploaderPrenom||'') + ' ' + (book.uploaderNom||''))}</span>
                 <span class="time">${timeAgo(book.createdAt)}</span>
             </div>
             <div class="book-detail-actions">
-                <a href="${book.pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn-read">📖 Lire le PDF</a>
-                <a href="${book.pdfUrl}" download="${esc(book.title)}.pdf" class="btn-download">⬇️ Télécharger</a>
-                ${canDelete ? `<button class="btn-delete-book" id="book-delete-btn">🗑️ Supprimer</button>` : ''}
+                <a href="${book.pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn-read">📖 Read PDF</a>
+                <a href="${book.pdfUrl}" download="${esc(book.title)}.pdf" class="btn-download">⬇️ Download</a>
+                ${canDelete ? `<button class="btn-delete-book" id="book-delete-btn">🗑️ Delete</button>` : ''}
             </div>
         </div>
     </div>`;
@@ -2059,14 +2173,13 @@ async function openBookDetail(book) {
     document.getElementById('book-detail-close-btn').addEventListener('click', close);
     modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
     document.getElementById('book-delete-btn')?.addEventListener('click', async () => {
-        const ok = await confirmDialog('Supprimer ce livre ?', 'Cette action est irréversible.', 'Supprimer');
+        const ok = await confirmDialog('Delete this book?', 'This action is irreversible.', 'Delete');
         if (!ok) return;
         try {
-            
             await deleteDoc(doc(db, 'books', book.id));
-            toast('Livre supprimé', 'success');
+            toast('Book deleted', 'success');
             close();
-        } catch(err) { toast('Erreur: ' + err.message, 'error'); }
+        } catch(err) { toast('Error: ' + err.message, 'error'); }
     });
 }
 
@@ -2082,10 +2195,10 @@ function mobileDrawerHTML(me, active) {
             <button class="mobile-drawer-close" id="mobile-drawer-close">✕</button>
         </div>
         <div class="mobile-drawer-menu">
-            <a href="#/profile/${me.id}" class="menu-item ${active==='profile'?'active':''}"><span class="icon">👤</span> Mon Profil</a>
+            <a href="#/profile/${me.id}" class="menu-item ${active==='profile'?'active':''}"><span class="icon">👤</span> My Profile</a>
             <a href="#/home" class="menu-item ${active==='home'?'active':''}"><span class="icon">📰</span> News Feed</a>
             <div class="menu-item" id="mobile-drawer-messages"><span class="icon">💬</span> Messages</div>
-            <a href="#/library" class="menu-item ${active==='library'?'active':''}"><span class="icon">📚</span> Bibliothèque</a>
+            <a href="#/library" class="menu-item ${active==='library'?'active':''}"><span class="icon">📚</span> Digital Library</a>
             <a href="#/saved" class="menu-item ${active==='saved'?'active':''}"><span class="icon">🔖</span> Saved Posts</a>
             <a href="#/activity" class="menu-item ${active==='activity'?'active':''}"><span class="icon">📊</span> Activity Log</a>
             <a href="#/groups" class="menu-item ${active==='groups'?'active':''}"><span class="icon">👥</span> IGEE Groups</a>
@@ -2094,7 +2207,7 @@ function mobileDrawerHTML(me, active) {
             <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}"><span class="icon">📢</span> Announcements</a>
         </div>
         <div class="mobile-drawer-footer">
-            <button class="mobile-drawer-logout" id="mobile-drawer-logout"><span class="icon">🚪</span> Déconnexion</button>
+            <button class="mobile-drawer-logout" id="mobile-drawer-logout"><span class="icon">🚪</span> Logout</button>
         </div>
     </div>`;
 }
@@ -2130,19 +2243,19 @@ function navbarHTML(me, active) {
     </div>
     <div class="mobile-bottom-nav">
         <a href="#/home" class="mbn-item ${active==='home'?'active':''}">
-            <span class="mbn-icon">🏠</span><span>Accueil</span>
+            <span class="mbn-icon">🏠</span><span>Home</span>
         </a>
         <button class="mbn-item" id="mbn-messages">
             <span class="mbn-icon">💬<span class="mbn-badge hidden" id="mbn-msg-badge"></span></span><span>Chats</span>
         </button>
         <button class="mbn-item" id="mbn-notif">
-            <span class="mbn-icon">🔔<span class="mbn-badge hidden" id="mbn-notif-badge"></span></span><span>Alertes</span>
+            <span class="mbn-icon">🔔<span class="mbn-badge hidden" id="mbn-notif-badge"></span></span><span>Alerts</span>
         </button>
         <a href="#/groups" class="mbn-item ${active==='groups'?'active':''}">
-            <span class="mbn-icon">👥</span><span>Groupes</span>
+            <span class="mbn-icon">👥</span><span>Groups</span>
         </a>
         <a href="#/profile/${me.id}" class="mbn-item ${active==='profile'?'active':''}">
-            <span class="mbn-icon">👤</span><span>Profil</span>
+            <span class="mbn-icon">👤</span><span>Profile</span>
         </a>
     </div>
     ${mobileDrawerHTML(me, active)}`;
@@ -2152,7 +2265,7 @@ function sidebarLeftHTML(me, active) {
         <a href="#/profile/${me.id}" class="menu-item"><img src="${me.photo||initialsAvatar(me.prenom,me.nom)}"><span>${esc(me.prenom+' '+me.nom)}</span></a>
         <a href="#/home" class="menu-item ${active==='home'?'active':''}"><span class="icon">📰</span> News Feed</a>
         <div class="menu-item" id="sidebar-messages"><span class="icon">💬</span> Messages</div>
-        <a href="#/library" class="menu-item ${active==='library'?'active':''}" style="${active==='library'?'background:rgba(103,58,183,.15);color:#673ab7;':''}"><span class="icon">📚</span> Bibliothèque</a>
+        <a href="#/library" class="menu-item ${active==='library'?'active':''}" style="${active==='library'?'background:rgba(103,58,183,.15);color:#673ab7;':''}"><span class="icon">📚</span> Digital Library</a>
         <a href="#/saved" class="menu-item saved-item ${active==='saved'?'active':''}"><span class="icon">🔖</span> Saved Posts</a>
         <a href="#/activity" class="menu-item ${active==='activity'?'active':''}"><span class="icon">📊</span> Activity Log</a>
         <a href="#/groups" class="menu-item ${active==='groups'?'active':''}"><span class="icon">👥</span> IGEE Groups</a>
@@ -2185,7 +2298,7 @@ function attachNotifEvents() {
     document.getElementById('mobile-drawer-close')?.addEventListener('click', closeMobileDrawer);
     document.getElementById('mobile-drawer-overlay')?.addEventListener('click', closeMobileDrawer);
     document.getElementById('mobile-drawer-messages')?.addEventListener('click', () => { closeMobileDrawer(); Chat.toggleSidebar(); });
-    document.getElementById('mobile-drawer-logout')?.addEventListener('click', async () => { closeMobileDrawer(); await signOut(auth); Chat.closeAll(); toast('Déconnecté','success'); });
+    document.getElementById('mobile-drawer-logout')?.addEventListener('click', async () => { closeMobileDrawer(); await signOut(auth); Chat.closeAll(); toast('Logged out','success'); });
     document.querySelectorAll('#mobile-drawer a').forEach(a => a.addEventListener('click', closeMobileDrawer));
 }
 function attachHomeEvents(isMessages = false) {
