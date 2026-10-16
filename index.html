@@ -1107,16 +1107,29 @@ function renderLogin() {
         <div class="auth-box"><h2>Login</h2><div id="auth-msg"></div>
             <form id="login-form">
                 <input type="email" name="email" placeholder="Email @igee.com" required>
-                <input type="password" name="password" placeholder="Password" required>
+                <input type="text" name="cardNumber" placeholder="Card Number (your password)" required maxlength="20" style="letter-spacing:1px;">
                 <button type="submit" id="login-btn">Sign In</button>
             </form>
             <div class="link">No account? <a href="#/register">Create an account</a></div>
         </div>
     </div>`;
     document.getElementById('login-form').addEventListener('submit', async (e) => {
-        e.preventDefault(); const fd = new FormData(e.target); const btn = document.getElementById('login-btn'); const msg = document.getElementById('auth-msg');
+        e.preventDefault(); 
+        const fd = new FormData(e.target); 
+        const btn = document.getElementById('login-btn'); 
+        const msg = document.getElementById('auth-msg');
+        const email = fd.get('email').trim().toLowerCase();
+        const cardNumber = fd.get('cardNumber').trim();
+        
+        if (!cardNumber) return msg.innerHTML = '<div class="error-msg">Please enter your card number.</div>';
+        
         btn.disabled = true; btn.textContent = 'Signing in...';
-        try { await signInWithEmailAndPassword(auth, fd.get('email').trim(), fd.get('password')); toast('Welcome!', 'success'); } catch(err) { msg.innerHTML = '<div class="error-msg">' + (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' ? 'Incorrect email or password' : 'Error: ' + err.message) + '</div>'; }
+        try { 
+            await signInWithEmailAndPassword(auth, email, cardNumber); 
+            toast('Welcome!', 'success'); 
+        } catch(err) { 
+            msg.innerHTML = '<div class="error-msg">' + (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' ? 'Incorrect email or card number' : 'Error: ' + err.message) + '</div>'; 
+        }
         btn.disabled = false; btn.textContent = 'Sign In';
     });
 }
@@ -1143,10 +1156,9 @@ function renderRegister() {
                 <input type="text" name="prenom" placeholder="First name (e.g. Ali)" required>
                 <input type="text" name="nom" placeholder="Last name (e.g. OURAMDANE)" required>
                 <input type="email" name="email" placeholder="Email @igee.com" required>
-                <input type="password" name="password" placeholder="Password (min 6 characters)" required>
                 
-                <label id="card-label" style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">Card Number</label>
-                <input type="text" name="cardNumber" id="card-input" placeholder="Enter your number" required maxlength="20" style="letter-spacing:1px;">
+                <label id="card-label" style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">Card Number (will be your password)</label>
+                <input type="text" name="cardNumber" id="card-input" placeholder="Enter your card number" required maxlength="20" style="letter-spacing:1px;">
 
                 <div id="student-fields" style="display:none; border-top:1px dashed #ddd; padding-top:12px; margin-top:12px;">
                     <p style="font-size:12px; color:#65676b; margin-bottom:8px; text-align:center;">Additional Information (Student)</p>
@@ -1180,17 +1192,17 @@ function renderRegister() {
         if (role === 'student') {
             studentFields.style.display = 'block';
             staffFields.style.display = 'none';
-            cardLabel.textContent = "Student Card Number (Matricule)";
+            cardLabel.textContent = "Student Card Number (Matricule) - Will be your password";
             cardInput.placeholder = "Ex: 221234567890";
         } else if (role === 'teacher' || role === 'admin') {
             studentFields.style.display = 'none';
             staffFields.style.display = 'block';
-            cardLabel.textContent = "Professional Badge Number";
+            cardLabel.textContent = "Professional Badge Number - Will be your password";
             cardInput.placeholder = "Ex: 711779002147";
         } else {
             studentFields.style.display = 'none';
             staffFields.style.display = 'none';
-            cardLabel.textContent = "Card Number";
+            cardLabel.textContent = "Card Number - Will be your password";
             cardInput.placeholder = "Enter your number";
         }
     });
@@ -1201,9 +1213,9 @@ function renderRegister() {
         const prenom = fd.get('prenom').trim();
         const nom = fd.get('nom').trim();
         const email = fd.get('email').trim().toLowerCase();
-        const password = fd.get('password');
         const role = fd.get('role');
         const cardNumber = fd.get('cardNumber').trim();
+        const password = cardNumber; // Le mot de passe = le numéro de carte
         
         const dateNaissance = fd.get('dateNaissance') ? fd.get('dateNaissance').trim() : null;
         const lieuNaissance = fd.get('lieuNaissance') ? fd.get('lieuNaissance').trim() : null;
@@ -1218,7 +1230,6 @@ function renderRegister() {
         
         if (!role) return msg.innerHTML = '<div class="error-msg">Please choose a role.</div>';
         if (!email.endsWith('@igee.com')) return msg.innerHTML = '<div class="error-msg">Please use your IGEE email (@igee.com)</div>';
-        if (password.length < 6) return msg.innerHTML = '<div class="error-msg">Password too short (min 6 characters).</div>';
         if (!cardNumber) return msg.innerHTML = '<div class="error-msg">Please enter your card number.</div>';
 
         btn.disabled = true; btn.textContent = 'Verifying...';
@@ -1298,6 +1309,7 @@ function renderRegister() {
             console.error(err);
             let errorMsg = err.message;
             if (err.code === 'auth/email-already-in-use') errorMsg = 'This email is already in use.';
+            if (err.code === 'auth/weak-password') errorMsg = 'Card number too short. Please check your card.';
             msg.innerHTML = `<div class="error-msg">${errorMsg}</div>`;
             btn.disabled = false; 
             btn.textContent = 'Create my account';
