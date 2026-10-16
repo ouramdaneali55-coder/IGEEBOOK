@@ -933,8 +933,8 @@ const Chat = {
                 return `<div class="chat-msg-wrapper ${sent?'sent':'received'}" data-msg-id="${d.id}">
                     <div class="chat-msg ${sent?'sent':'received'}">${replyHTML}${linkify(m.text)}<span class="time">${timeAgo(m.createdAt)}</span></div>
                     <div class="chat-msg-actions">
-                        <button class="chat-msg-action-btn" data-action="react" data-msg="${d.id}" title="Réagir">😊</button>
-                        <button class="chat-msg-action-btn" data-action="reply" data-msg="${d.id}" title="Répondre">↩</button>
+                        <button class="chat-msg-action-btn" data-action="react" data-msg="${d.id}" title="React">😊</button>
+                        <button class="chat-msg-action-btn" data-action="reply" data-msg="${d.id}" title="Reply">↩</button>
                     </div>
                     ${reactionHTML}
                 </div>`;
@@ -998,7 +998,7 @@ const Chat = {
             win.querySelectorAll('.chat-reply-preview').forEach(p => p.remove());
             const preview = document.createElement('div');
             preview.className = 'chat-reply-preview';
-            preview.innerHTML = `<div class="crp-bar"></div><div class="crp-content"><strong>↩ Répondre à ${esc(senderName)}</strong><div class="crp-text">${esc((msg.text||'').substring(0,100))}</div></div><button class="crp-close" title="Annuler">✕</button>`;
+            preview.innerHTML = `<div class="crp-bar"></div><div class="crp-content"><strong>↩ Replying to ${esc(senderName)}</strong><div class="crp-text">${esc((msg.text||'').substring(0,100))}</div></div><button class="crp-close" title="Cancel">✕</button>`;
             win.insertBefore(preview, inputBar);
             input.dataset.replyToId = msgId;
             input.dataset.replyToText = (msg.text||'').substring(0,100);
@@ -1127,53 +1127,48 @@ function renderRegister() {
             <div class="igee-logo-3d auth-logo-3d">${IGEE_LOGO_SVG}</div>
             <div class="book-logo-3d auth-logo-3d">${BOOK_LOGO_SVG}</div>
         </div>
-        <div class="auth-slogan">Rejoignez le réseau interne de l'IGEE</div>
+        <div class="auth-slogan">Join the internal network of IGEE</div>
         <div class="auth-box" style="width: 480px;">
-            <h2>Créer un compte</h2>
+            <h2>Create an Account</h2>
             <div id="auth-msg"></div>
             <form id="reg-form">
-                <!-- Choix du rôle -->
-                <label style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">Je suis :</label>
+                <label style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">I am :</label>
                 <select name="role" id="role-select" required style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #ddd; border-radius:8px; background:#f5f6f7; font-size:15px; outline:none;">
-                    <option value="">-- Choisir un rôle --</option>
-                    <option value="student">🎓 Étudiant</option>
-                    <option value="teacher">👨‍🏫 Enseignant</option>
-                    <option value="admin">🛡️ Administrateur</option>
+                    <option value="">-- Choose a role --</option>
+                    <option value="student">🎓 Student</option>
+                    <option value="teacher">👨‍🏫 Teacher</option>
+                    <option value="admin">🛡️ Administrator</option>
                 </select>
 
-                <input type="text" name="prenom" placeholder="Prénom (ex: Ali)" required>
-                <input type="text" name="nom" placeholder="Nom (ex: OURAMDANE)" required>
+                <input type="text" name="prenom" placeholder="First name (e.g. Ali)" required>
+                <input type="text" name="nom" placeholder="Last name (e.g. OURAMDANE)" required>
                 <input type="email" name="email" placeholder="Email @igee.com" required>
-                <input type="password" name="password" placeholder="Mot de passe (min 6 caractères)" required>
+                <input type="password" name="password" placeholder="Password (min 6 characters)" required>
                 
-                <!-- Numéro de carte (change selon le rôle) -->
-                <label id="card-label" style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">Numéro de carte</label>
-                <input type="text" name="cardNumber" id="card-input" placeholder="Entrez votre numéro" required maxlength="20" style="letter-spacing:1px;">
+                <label id="card-label" style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">Card Number</label>
+                <input type="text" name="cardNumber" id="card-input" placeholder="Enter your number" required maxlength="20" style="letter-spacing:1px;">
 
-                <!-- CHAMPS SPÉCIFIQUES ÉTUDIANTS (Masqués par défaut) -->
                 <div id="student-fields" style="display:none; border-top:1px dashed #ddd; padding-top:12px; margin-top:12px;">
-                    <p style="font-size:12px; color:#65676b; margin-bottom:8px; text-align:center;">Informations complémentaires (Étudiant)</p>
-                    <input type="text" name="dateNaissance" placeholder="Date de naissance (ex: 1996/06/28)">
-                    <input type="text" name="lieuNaissance" placeholder="Lieu de naissance (ex: Tébessa)">
-                    <input type="text" name="filiere" placeholder="Filière (ex: Électronique)">
-                    <input type="text" name="anneeEtude" placeholder="Année d'étude (ex: 1ère année Master)">
+                    <p style="font-size:12px; color:#65676b; margin-bottom:8px; text-align:center;">Additional Information (Student)</p>
+                    <input type="text" name="dateNaissance" placeholder="Date of birth (e.g. 1996/06/28)">
+                    <input type="text" name="lieuNaissance" placeholder="Place of birth (e.g. Tébessa)">
+                    <input type="text" name="filiere" placeholder="Field of study (e.g. Electronics)">
+                    <input type="text" name="anneeEtude" placeholder="Year of study (e.g. 1st year Master)">
                 </div>
 
-                <!-- CHAMPS SPÉCIFIQUES ENSEIGNANTS/ADMINS (Masqués par défaut) -->
                 <div id="staff-fields" style="display:none; border-top:1px dashed #ddd; padding-top:12px; margin-top:12px;">
-                    <p style="font-size:12px; color:#65676b; margin-bottom:8px; text-align:center;">Informations complémentaires (Personnel)</p>
-                    <input type="text" name="profession" placeholder="Profession (ex: Technicien supérieur des bibliothèques)">
-                    <input type="text" name="department" placeholder="Département (ex: Institut de Génie Électrique et Électronique)">
-                    <input type="text" name="birthYear" placeholder="Année de naissance (ex: 1971)" maxlength="4">
+                    <p style="font-size:12px; color:#65676b; margin-bottom:8px; text-align:center;">Additional Information (Staff)</p>
+                    <input type="text" name="profession" placeholder="Profession (e.g. Senior Library Technician)">
+                    <input type="text" name="department" placeholder="Department (e.g. Institute of Electrical and Electronic Engineering)">
+                    <input type="text" name="birthYear" placeholder="Year of birth (e.g. 1971)" maxlength="4">
                 </div>
                 
-                <button type="submit" id="reg-btn" style="margin-top:15px;">Créer mon compte</button>
+                <button type="submit" id="reg-btn" style="margin-top:15px;">Create my account</button>
             </form>
-            <div class="link">Déjà inscrit ? <a href="#/">Se connecter</a></div>
+            <div class="link">Already registered? <a href="#/">Sign In</a></div>
         </div>
     </div>`;
 
-    // Gestion de l'affichage dynamique selon le rôle
     const roleSelect = document.getElementById('role-select');
     const studentFields = document.getElementById('student-fields');
     const staffFields = document.getElementById('staff-fields');
@@ -1185,18 +1180,18 @@ function renderRegister() {
         if (role === 'student') {
             studentFields.style.display = 'block';
             staffFields.style.display = 'none';
-            cardLabel.textContent = "Numéro de carte étudiant (Matricule)";
+            cardLabel.textContent = "Student Card Number (Matricule)";
             cardInput.placeholder = "Ex: 221234567890";
         } else if (role === 'teacher' || role === 'admin') {
             studentFields.style.display = 'none';
             staffFields.style.display = 'block';
-            cardLabel.textContent = "Numéro de badge professionnel";
+            cardLabel.textContent = "Professional Badge Number";
             cardInput.placeholder = "Ex: 711779002147";
         } else {
             studentFields.style.display = 'none';
             staffFields.style.display = 'none';
-            cardLabel.textContent = "Numéro de carte";
-            cardInput.placeholder = "Entrez votre numéro";
+            cardLabel.textContent = "Card Number";
+            cardInput.placeholder = "Enter your number";
         }
     });
 
@@ -1210,83 +1205,68 @@ function renderRegister() {
         const role = fd.get('role');
         const cardNumber = fd.get('cardNumber').trim();
         
-        // Champs étudiants
         const dateNaissance = fd.get('dateNaissance') ? fd.get('dateNaissance').trim() : null;
         const lieuNaissance = fd.get('lieuNaissance') ? fd.get('lieuNaissance').trim() : null;
         const filiere = fd.get('filiere') ? fd.get('filiere').trim() : null;
         const anneeEtude = fd.get('anneeEtude') ? fd.get('anneeEtude').trim() : null;
         
-        // Champs personnel
         const profession = fd.get('profession') ? fd.get('profession').trim() : null;
         const department = fd.get('department') ? fd.get('department').trim() : null;
         const birthYear = fd.get('birthYear') ? fd.get('birthYear').trim() : null;
 
         const msg = document.getElementById('auth-msg'), btn = document.getElementById('reg-btn');
         
-        // Validations de base
-        if (!role) return msg.innerHTML = '<div class="error-msg">Veuillez choisir un rôle.</div>';
-        if (!email.endsWith('@igee.com')) return msg.innerHTML = '<div class="error-msg">Utilisez votre email IGEE (@igee.com)</div>';
-        if (password.length < 6) return msg.innerHTML = '<div class="error-msg">Mot de passe trop court (min 6 caractères).</div>';
-        if (!cardNumber) return msg.innerHTML = '<div class="error-msg">Veuillez entrer votre numéro de carte.</div>';
+        if (!role) return msg.innerHTML = '<div class="error-msg">Please choose a role.</div>';
+        if (!email.endsWith('@igee.com')) return msg.innerHTML = '<div class="error-msg">Please use your IGEE email (@igee.com)</div>';
+        if (password.length < 6) return msg.innerHTML = '<div class="error-msg">Password too short (min 6 characters).</div>';
+        if (!cardNumber) return msg.innerHTML = '<div class="error-msg">Please enter your card number.</div>';
 
-        btn.disabled = true; btn.textContent = 'Vérification...';
+        btn.disabled = true; btn.textContent = 'Verifying...';
 
         try {
-            // ==========================================
-            // VÉRIFICATION CONTRE LA LISTE BLANCHE FIRESTORE
-            // ==========================================
-            
-            // 1. Chercher le numéro de carte dans la collection "allowed_cards"
             const cardQuery = query(collection(db, 'allowed_cards'), where('cardNumber', '==', cardNumber));
             const cardSnap = await getDocs(cardQuery);
 
             if (cardSnap.empty) {
-                throw new Error("Ce numéro de carte n'est pas reconnu par l'IGEE. Contactez l'administration.");
+                throw new Error("This card number is not recognized by IGEE. Contact the administration.");
             }
 
             const cardData = cardSnap.docs[0].data();
             const cardDocId = cardSnap.docs[0].id;
 
-            // 2. Vérifier que le rôle correspond
             if (cardData.role !== role) {
-                throw new Error(`Ce numéro de carte est associé au rôle "${cardData.role}". Veuillez sélectionner le bon rôle.`);
+                throw new Error(`This card number is associated with the role "${cardData.role}". Please select the correct role.`);
             }
 
-            // 3. Vérifier que la carte n'a pas déjà été utilisée
             if (cardData.used === true) {
-                throw new Error("Ce numéro de carte a déjà été utilisé pour créer un compte.");
+                throw new Error("This card number has already been used to create an account.");
             }
 
-            // 4. Vérifications supplémentaires pour les étudiants (champs obligatoires)
             if (role === 'student') {
                 if (!dateNaissance || !lieuNaissance || !filiere || !anneeEtude) {
-                    throw new Error("Veuillez remplir toutes les informations étudiantes (Date, Lieu, Filière, Année).");
+                    throw new Error("Please fill in all student information (Date, Place, Field, Year).");
                 }
             } else {
                 if (!profession || !department) {
-                    throw new Error("Veuillez remplir votre profession et votre département.");
+                    throw new Error("Please fill in your profession and department.");
                 }
             }
 
-            // ==========================================
-            // CRÉATION DU COMPTE
-            // ==========================================
-            btn.textContent = 'Création du compte...';
+            btn.textContent = 'Creating account...';
             const cred = await createUserWithEmailAndPassword(auth, email, password);
             
             await updateProfile(cred.user, { displayName: `${prenom} ${nom}` });
 
-            // Préparation des données utilisateur
             const userData = {
                 prenom,
                 nom,
                 email,
                 role: role,
                 cardNumber: cardNumber,
-                profession: role === 'student' ? 'Étudiant IGEE' : profession,
+                profession: role === 'student' ? 'IGEE Student' : profession,
                 department: role === 'student' ? 'IGEE' : department,
                 photo: null,
-                bio: role === 'student' ? `Étudiant en ${anneeEtude} - ${filiere}` : `${profession} - ${department}`,
+                bio: role === 'student' ? `Student in ${anneeEtude} - ${filiere}` : `${profession} - ${department}`,
                 savedPosts: [],
                 isAdmin: role === 'admin',
                 createdAt: serverTimestamp()
@@ -1297,7 +1277,7 @@ function renderRegister() {
                 userData.lieuNaissance = lieuNaissance;
                 userData.filiere = filiere;
                 userData.anneeEtude = anneeEtude;
-                userData.universite = "Université de Boumerdès";
+                userData.universite = "University of Boumerdès";
                 userData.institut = "IGEE";
             } else {
                 userData.birthYear = birthYear || null;
@@ -1306,22 +1286,21 @@ function renderRegister() {
 
             await setDoc(doc(db, 'users', cred.user.uid), userData);
 
-            // 5. Marquer la carte comme utilisée
             await updateDoc(doc(db, 'allowed_cards', cardDocId), {
                 used: true,
                 usedBy: cred.user.uid,
                 usedAt: serverTimestamp()
             });
 
-            toast('Compte créé avec succès ! 🎉', 'success');
+            toast('Account created successfully! 🎉', 'success');
             
         } catch (err) {
             console.error(err);
             let errorMsg = err.message;
-            if (err.code === 'auth/email-already-in-use') errorMsg = 'Cet email est déjà utilisé.';
+            if (err.code === 'auth/email-already-in-use') errorMsg = 'This email is already in use.';
             msg.innerHTML = `<div class="error-msg">${errorMsg}</div>`;
             btn.disabled = false; 
-            btn.textContent = 'Créer mon compte';
+            btn.textContent = 'Create my account';
         }
     });
 }
@@ -1415,7 +1394,7 @@ function loadCommentsRealtime(postId) {
             const reactionHTML = Object.keys(counts).length ?
                 `<div class="comment-reactions">${Object.entries(counts).map(([e,ct]) => `<span class="comment-reaction-badge">${e}${ct>1?`<span class="count">${ct}</span>`:''}</span>`).join('')}</div>` : '';
             const replyHTML = c.replyTo ? `<div class="comment-reply-quote"><strong>${esc(c.replyTo.senderName||'')}</strong>${esc((c.replyTo.text||'').substring(0,80))}</div>` : '';
-            html.push(`<div class="comment" data-comment-id="${c.id}"><div class="comment-main-row"><img class="hover-target" data-uid="${c.userId}" src="${author.photo||initialsAvatar(author.prenom,author.nom)}"><div class="comment-wrapper"><div class="bubble"><span class="name hover-target" data-uid="${c.userId}">${esc(author.prenom+' '+author.nom)}<span class="time">${timeAgo(c.createdAt)}</span></span>${replyHTML}${linkify(c.contenu)}${isMine?`<button class="comment-del-btn" data-comment="${c.id}">✕</button>`:''}</div><div class="comment-actions-inline"><button class="comment-action-btn" data-action="react-comment" data-comment="${c.id}" title="Réagir">😊 Réagir</button><button class="comment-action-btn" data-action="reply-comment" data-comment="${c.id}" title="Répondre">↩ Répondre</button></div>${reactionHTML}</div></div></div>`);
+            html.push(`<div class="comment" data-comment-id="${c.id}"><div class="comment-main-row"><img class="hover-target" data-uid="${c.userId}" src="${author.photo||initialsAvatar(author.prenom,author.nom)}"><div class="comment-wrapper"><div class="bubble"><span class="name hover-target" data-uid="${c.userId}">${esc(author.prenom+' '+author.nom)}<span class="time">${timeAgo(c.createdAt)}</span></span>${replyHTML}${linkify(c.contenu)}${isMine?`<button class="comment-del-btn" data-comment="${c.id}">✕</button>`:''}</div><div class="comment-actions-inline"><button class="comment-action-btn" data-action="react-comment" data-comment="${c.id}" title="React">😊 React</button><button class="comment-action-btn" data-action="reply-comment" data-comment="${c.id}" title="Reply">↩ Reply</button></div>${reactionHTML}</div></div></div>`);
         }
         container.innerHTML = html.join('') || '<p style="font-size:13px;color:var(--text-secondary)">No comments</p>';
         const pe = document.querySelector(`.post[data-post-id="${postId}"]`); if (pe) { const s = pe.querySelector('.post-stats div:last-child'); if (s) s.textContent = `${comments.length} comment${comments.length>1?'s':''}`; }
@@ -1485,7 +1464,7 @@ async function replyToComment(postId, commentId) {
         form.parentElement.querySelectorAll('.comment-reply-preview-comment').forEach(p => p.remove());
         const preview = document.createElement('div');
         preview.className = 'comment-reply-preview-comment';
-        preview.innerHTML = `<div class="crp-content-comment"><strong>↩ Répondre à ${esc(senderName)}</strong><div class="crp-text-comment">${esc((c.contenu||'').substring(0,80))}</div></div><button class="crp-close-comment" title="Annuler">✕</button>`;
+        preview.innerHTML = `<div class="crp-content-comment"><strong>↩ Replying to ${esc(senderName)}</strong><div class="crp-text-comment">${esc((c.contenu||'').substring(0,80))}</div></div><button class="crp-close-comment" title="Cancel">✕</button>`;
         form.parentElement.insertBefore(preview, form);
         const input = form.querySelector('input');
         input.dataset.replyToId = commentId;
