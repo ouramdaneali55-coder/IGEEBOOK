@@ -660,7 +660,7 @@ const firebaseConfig = {
 };
 const VAPID_KEY = "BKKFSH-sI6SIdAeKMdgy5-yhHMuJG56KF17o3xsJ4o6z7xIa4sKeOh40SWGbNtGONGC6j2gQcK01fR7VnhUupTI";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, query, where, orderBy, limit, onSnapshot, serverTimestamp, updateDoc, deleteDoc, arrayUnion, arrayRemove, increment, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
@@ -735,6 +735,29 @@ const initialsAvatar = (prenom, nom) => { const i = ((prenom?.[0] || '') + (nom?
 const toast = (msg, type = '') => { const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; c.appendChild(t); setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(() => t.remove(), 300); }, 3500); };
 const uploadImage = async (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
 const formatBytes = (bytes) => { if (!bytes) return ''; if (bytes < 1024) return bytes + ' B'; if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' KB'; return (bytes/1024/1024).toFixed(1) + ' MB'; };
+
+/* ============ AUTH HELPERS (CARD + DOB) ============ */
+function normalizeDOB(dob) {
+    const parts = String(dob).split(/[\/\-\.\s]+/).filter(Boolean);
+    if (parts.length === 3) {
+        const yearIdx = parts.findIndex(p => p.length === 4);
+        let year, month, day;
+        if (yearIdx !== -1) {
+            year = parts[yearIdx];
+            const others = parts.filter((_, i) => i !== yearIdx);
+            [day, month] = others;
+        } else {
+            [day, month, year] = parts;
+            year = '20' + year;
+        }
+        return `${year}${String(month).padStart(2,'0')}${String(day).padStart(2,'0')}`;
+    }
+    return String(dob).replace(/\D/g, '');
+}
+function cardToEmail(cardNumber) {
+    const safe = String(cardNumber).replace(/[^a-zA-Z0-9]/g, '');
+    return `${safe}@igee.local`;
+}
 
 /* ============ CLOUDINARY UPLOAD HELPER ============ */
 async function uploadToCloudinary(file, folder = 'igee_books') {
@@ -1104,219 +1127,162 @@ function renderLogin() {
             <div class="book-logo-3d auth-logo-3d">${BOOK_LOGO_SVG}</div>
         </div>
         <div class="auth-slogan">The internal network of IGEE Institute</div>
-        <div class="auth-box"><h2>Login</h2><div id="auth-msg"></div>
+        <div class="auth-box">
+            <h2>Login</h2>
+            <div id="auth-msg"></div>
             <form id="login-form">
-                <input type="email" name="email" placeholder="Email @igee.com" required>
-                <input type="text" name="cardNumber" placeholder="Card Number (your password)" required maxlength="20" style="letter-spacing:1px;">
+                <input type="text" name="cardNumber" placeholder="Card Number" required maxlength="20" style="letter-spacing:1px;">
+                <input type="text" name="dateNaissance" placeholder="Password" required>
                 <button type="submit" id="login-btn">Sign In</button>
             </form>
-            <div class="link">No account? <a href="#/register">Create an account</a></div>
         </div>
     </div>`;
+    
     document.getElementById('login-form').addEventListener('submit', async (e) => {
-        e.preventDefault(); 
-        const fd = new FormData(e.target); 
-        const btn = document.getElementById('login-btn'); 
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const btn = document.getElementById('login-btn');
         const msg = document.getElementById('auth-msg');
-        const email = fd.get('email').trim().toLowerCase();
+        
         const cardNumber = fd.get('cardNumber').trim();
+        const dob = fd.get('dateNaissance').trim();
+
+        if (!cardNumber || !dob) {
+            return msg.innerHTML = '<div class="error-msg">Please fill in all fields.</div>';
+        }
+
+        const email = cardToEmail(cardNumber);
+        const password = normalizeDOB(dob);
+
+        btn.disabled = true; 
+        btn.textContent = 'Signing in...';
         
-        if (!cardNumber) return msg.innerHTML = '<div class="error-msg">Please enter your card number.</div>';
-        
-        btn.disabled = true; btn.textContent = 'Signing in...';
         try { 
-            await signInWithEmailAndPassword(auth, email, cardNumber); 
-            toast('Welcome!', 'success'); 
-        } catch(err) { 
-            msg.innerHTML = '<div class="error-msg">' + (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' ? 'Incorrect email or card number' : 'Error: ' + err.message) + '</div>'; 
-        }
-        btn.disabled = false; btn.textContent = 'Sign In';
-    });
-}
-
-function renderRegister() {
-    document.getElementById('app').innerHTML = `<div class="auth-page">
-        <div class="auth-logos-row">
-            <div class="igee-logo-3d auth-logo-3d">${IGEE_LOGO_SVG}</div>
-            <div class="book-logo-3d auth-logo-3d">${BOOK_LOGO_SVG}</div>
-        </div>
-        <div class="auth-slogan">Join the internal network of IGEE</div>
-        <div class="auth-box" style="width: 480px;">
-            <h2>Create an Account</h2>
-            <div id="auth-msg"></div>
-            <form id="reg-form">
-                <label style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">I am :</label>
-                <select name="role" id="role-select" required style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #ddd; border-radius:8px; background:#f5f6f7; font-size:15px; outline:none;">
-                    <option value="">-- Choose a role --</option>
-                    <option value="student">🎓 Student</option>
-                    <option value="teacher">👨‍🏫 Teacher</option>
-                    <option value="admin">🛡️ Administrator</option>
-                </select>
-
-                <input type="text" name="prenom" placeholder="First name (e.g. Ali)" required>
-                <input type="text" name="nom" placeholder="Last name (e.g. OURAMDANE)" required>
-                <input type="email" name="email" placeholder="Email @igee.com" required>
-                
-                <label id="card-label" style="font-size:13px; font-weight:bold; color:#65676b; margin-bottom:5px; display:block;">Card Number (will be your password)</label>
-                <input type="text" name="cardNumber" id="card-input" placeholder="Enter your card number" required maxlength="20" style="letter-spacing:1px;">
-
-                <div id="student-fields" style="display:none; border-top:1px dashed #ddd; padding-top:12px; margin-top:12px;">
-                    <p style="font-size:12px; color:#65676b; margin-bottom:8px; text-align:center;">Additional Information (Student)</p>
-                    <input type="text" name="dateNaissance" placeholder="Date of birth (e.g. 1996/06/28)">
-                    <input type="text" name="lieuNaissance" placeholder="Place of birth (e.g. Tébessa)">
-                    <input type="text" name="filiere" placeholder="Field of study (e.g. Electronics)">
-                    <input type="text" name="anneeEtude" placeholder="Year of study (e.g. 1st year Master)">
-                </div>
-
-                <div id="staff-fields" style="display:none; border-top:1px dashed #ddd; padding-top:12px; margin-top:12px;">
-                    <p style="font-size:12px; color:#65676b; margin-bottom:8px; text-align:center;">Additional Information (Staff)</p>
-                    <input type="text" name="profession" placeholder="Profession (e.g. Senior Library Technician)">
-                    <input type="text" name="department" placeholder="Department (e.g. Institute of Electrical and Electronic Engineering)">
-                    <input type="text" name="birthYear" placeholder="Year of birth (e.g. 1971)" maxlength="4">
-                </div>
-                
-                <button type="submit" id="reg-btn" style="margin-top:15px;">Create my account</button>
-            </form>
-            <div class="link">Already registered? <a href="#/">Sign In</a></div>
-        </div>
-    </div>`;
-
-    const roleSelect = document.getElementById('role-select');
-    const studentFields = document.getElementById('student-fields');
-    const staffFields = document.getElementById('staff-fields');
-    const cardLabel = document.getElementById('card-label');
-    const cardInput = document.getElementById('card-input');
-
-    roleSelect.addEventListener('change', (e) => {
-        const role = e.target.value;
-        if (role === 'student') {
-            studentFields.style.display = 'block';
-            staffFields.style.display = 'none';
-            cardLabel.textContent = "Student Card Number (Matricule) - Will be your password";
-            cardInput.placeholder = "Ex: 221234567890";
-        } else if (role === 'teacher' || role === 'admin') {
-            studentFields.style.display = 'none';
-            staffFields.style.display = 'block';
-            cardLabel.textContent = "Professional Badge Number - Will be your password";
-            cardInput.placeholder = "Ex: 711779002147";
-        } else {
-            studentFields.style.display = 'none';
-            staffFields.style.display = 'none';
-            cardLabel.textContent = "Card Number - Will be your password";
-            cardInput.placeholder = "Enter your number";
-        }
-    });
-
-    document.getElementById('reg-form').addEventListener('submit', async (e) => {
-        e.preventDefault(); 
-        const fd = new FormData(e.target); 
-        const prenom = fd.get('prenom').trim();
-        const nom = fd.get('nom').trim();
-        const email = fd.get('email').trim().toLowerCase();
-        const role = fd.get('role');
-        const cardNumber = fd.get('cardNumber').trim();
-        const password = cardNumber; // Le mot de passe = le numéro de carte
-        
-        const dateNaissance = fd.get('dateNaissance') ? fd.get('dateNaissance').trim() : null;
-        const lieuNaissance = fd.get('lieuNaissance') ? fd.get('lieuNaissance').trim() : null;
-        const filiere = fd.get('filiere') ? fd.get('filiere').trim() : null;
-        const anneeEtude = fd.get('anneeEtude') ? fd.get('anneeEtude').trim() : null;
-        
-        const profession = fd.get('profession') ? fd.get('profession').trim() : null;
-        const department = fd.get('department') ? fd.get('department').trim() : null;
-        const birthYear = fd.get('birthYear') ? fd.get('birthYear').trim() : null;
-
-        const msg = document.getElementById('auth-msg'), btn = document.getElementById('reg-btn');
-        
-        if (!role) return msg.innerHTML = '<div class="error-msg">Please choose a role.</div>';
-        if (!email.endsWith('@igee.com')) return msg.innerHTML = '<div class="error-msg">Please use your IGEE email (@igee.com)</div>';
-        if (!cardNumber) return msg.innerHTML = '<div class="error-msg">Please enter your card number.</div>';
-
-        btn.disabled = true; btn.textContent = 'Verifying...';
-
-        try {
-            const cardQuery = query(collection(db, 'allowed_cards'), where('cardNumber', '==', cardNumber));
-            const cardSnap = await getDocs(cardQuery);
-
-            if (cardSnap.empty) {
-                throw new Error("This card number is not recognized by IGEE. Contact the administration.");
-            }
-
-            const cardData = cardSnap.docs[0].data();
-            const cardDocId = cardSnap.docs[0].id;
-
-            if (cardData.role !== role) {
-                throw new Error(`This card number is associated with the role "${cardData.role}". Please select the correct role.`);
-            }
-
-            if (cardData.used === true) {
-                throw new Error("This card number has already been used to create an account.");
-            }
-
-            if (role === 'student') {
-                if (!dateNaissance || !lieuNaissance || !filiere || !anneeEtude) {
-                    throw new Error("Please fill in all student information (Date, Place, Field, Year).");
-                }
-            } else {
-                if (!profession || !department) {
-                    throw new Error("Please fill in your profession and department.");
-                }
-            }
-
-            btn.textContent = 'Creating account...';
-            const cred = await createUserWithEmailAndPassword(auth, email, password);
-            
-            await updateProfile(cred.user, { displayName: `${prenom} ${nom}` });
-
-            const userData = {
-                prenom,
-                nom,
-                email,
-                role: role,
-                cardNumber: cardNumber,
-                profession: role === 'student' ? 'IGEE Student' : profession,
-                department: role === 'student' ? 'IGEE' : department,
-                photo: null,
-                bio: role === 'student' ? `Student in ${anneeEtude} - ${filiere}` : `${profession} - ${department}`,
-                savedPosts: [],
-                isAdmin: role === 'admin',
-                createdAt: serverTimestamp()
+            await signInWithEmailAndPassword(auth, email, password); 
+            toast('Welcome! 🎉', 'success'); 
+        } catch(err) {
+            const errorMessages = {
+                'auth/invalid-credential': 'Incorrect card number or password.',
+                'auth/user-not-found': 'Account not found. Contact administration.',
+                'auth/wrong-password': 'Incorrect password.',
+                'auth/too-many-requests': 'Too many attempts. Try again later.'
             };
-
-            if (role === 'student') {
-                userData.dateNaissance = dateNaissance;
-                userData.lieuNaissance = lieuNaissance;
-                userData.filiere = filiere;
-                userData.anneeEtude = anneeEtude;
-                userData.universite = "University of Boumerdès";
-                userData.institut = "IGEE";
-            } else {
-                userData.birthYear = birthYear || null;
-                userData.institut = "IGEE";
-            }
-
-            await setDoc(doc(db, 'users', cred.user.uid), userData);
-
-            await updateDoc(doc(db, 'allowed_cards', cardDocId), {
-                used: true,
-                usedBy: cred.user.uid,
-                usedAt: serverTimestamp()
-            });
-
-            toast('Account created successfully! 🎉', 'success');
-            
-        } catch (err) {
-            console.error(err);
-            let errorMsg = err.message;
-            if (err.code === 'auth/email-already-in-use') errorMsg = 'This email is already in use.';
-            if (err.code === 'auth/weak-password') errorMsg = 'Card number too short. Please check your card.';
-            msg.innerHTML = `<div class="error-msg">${errorMsg}</div>`;
-            btn.disabled = false; 
-            btn.textContent = 'Create my account';
+            msg.innerHTML = `<div class="error-msg">${errorMessages[err.code] || 'Error: Please check your information.'}</div>`;
         }
+        
+        btn.disabled = false; 
+        btn.textContent = 'Sign In';
     });
 }
 
+/* ============ ADMIN IMPORT PAGE ============ */
+async function renderAdminImport() {
+    const me = currentUserData;
+    if (!me?.isAdmin) { toast('Access denied', 'error'); return Router.navigate('/home'); }
+    document.getElementById('app').innerHTML = `
+        ${navbarHTML(me, 'admin')}
+        <div class="container" style="grid-template-columns:280px 1fr;">
+            ${sidebarLeftHTML(me, 'admin')}
+            <div>
+                <div class="page-header-card">
+                    <div class="title-wrap">
+                        <div class="icon-big" style="background:linear-gradient(135deg,#d93025,#b8271d);">👥</div>
+                        <div><h1>Import Users</h1><p>Create accounts for students, teachers & admins</p></div>
+                    </div>
+                </div>
+                <div style="background:var(--bg-card);border-radius:12px;padding:24px;box-shadow:0 1px 3px var(--shadow);">
+                    <h3 style="margin-bottom:10px;">📋 Format (one user per line)</h3>
+                    <pre style="background:var(--bg-input);padding:12px;border-radius:8px;font-size:13px;overflow-x:auto;">prenom | nom | dateNaissance | cardNumber | role | email(optional)</pre>
+                    <p style="color:var(--text-secondary);font-size:13px;margin:8px 0 16px;">
+                        <b>role</b> = student / teacher / admin &nbsp;•&nbsp; <b>dateNaissance</b> = ex. 1996/06/28 &nbsp;•&nbsp; email optionnel (défaut: cardNumber@igee.local)
+                    </p>
+                    <textarea id="import-data" placeholder="Ahmed | Benali | 1996/06/28 | 221234567890 | student&#10;Fatima | Zahra | 1975/03/15 | 711779002147 | teacher" style="width:100%;min-height:220px;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:13px;background:var(--bg-input);color:var(--text-primary);outline:none;"></textarea>
+                    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                        <button id="import-btn" style="background:linear-gradient(135deg,#1877f2,#0c5cbf);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;">📥 Import Users</button>
+                        <label for="import-file" style="cursor:pointer;background:var(--bg-hover);color:var(--text-primary);padding:12px 24px;border-radius:8px;font-weight:bold;">📁 Load from .txt / .csv</label>
+                        <input type="file" id="import-file" accept=".txt,.csv" style="display:none;">
+                    </div>
+                    <div id="import-results" style="margin-top:20px;"></div>
+                </div>
+            </div>
+        </div>`;
+    attachHomeEvents(true);
+    document.getElementById('import-file').addEventListener('change', async (e) => {
+        const f = e.target.files[0]; if (!f) return;
+        document.getElementById('import-data').value = await f.text();
+    });
+    document.getElementById('import-btn').addEventListener('click', async () => {
+        const raw = document.getElementById('import-data').value.trim();
+        if (!raw) return toast('Paste some data first', 'error');
+        await runImport(raw);
+    });
+}
+
+async function runImport(raw) {
+    const resultsEl = document.getElementById('import-results');
+    const btn = document.getElementById('import-btn');
+    btn.disabled = true; btn.textContent = 'Importing...';
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+    const users = [], parseErrors = [];
+    for (const line of lines) {
+        const parts = line.split('|').map(s => s.trim());
+        if (parts.length < 5) { parseErrors.push({ line, error: 'Expected 5 fields (prenom|nom|dob|card|role)' }); continue; }
+        const [prenom, nom, dateNaissance, cardNumber, role, email] = parts;
+        if (!prenom || !nom || !dateNaissance || !cardNumber || !role) { parseErrors.push({ line, error: 'Empty required field' }); continue; }
+        const r = role.toLowerCase();
+        if (!['student','teacher','admin'].includes(r)) { parseErrors.push({ line, error: `Invalid role "${role}"` }); continue; }
+        if (normalizeDOB(dateNaissance).length < 6) { parseErrors.push({ line, error: 'Date of birth must contain ≥6 digits' }); continue; }
+        users.push({ prenom, nom, dateNaissance, cardNumber, role: r, email: email || cardToEmail(cardNumber) });
+    }
+    if (!users.length) {
+        resultsEl.innerHTML = `<div class="error-msg">❌ ${parseErrors.length} line(s) invalid — check the format.</div>`;
+        btn.disabled = false; btn.textContent = '📥 Import Users'; return;
+    }
+    resultsEl.innerHTML = `<div class="loading">Importing ${users.length} user(s)...</div>`;
+    const appName = 'igee-import-' + Date.now();
+    let secondaryApp;
+    try { secondaryApp = initializeApp(firebaseConfig, appName); }
+    catch(e) { resultsEl.innerHTML = `<div class="error-msg">Init error: ${e.message}</div>`; btn.disabled = false; btn.textContent = '📥 Import Users'; return; }
+    const secondaryAuth = getAuth(secondaryApp);
+    const successes = [], failures = [];
+    for (const u of users) {
+        try {
+            try { await signOut(secondaryAuth); } catch(e) {}
+            const cred = await createUserWithEmailAndPassword(secondaryAuth, u.email, normalizeDOB(u.dateNaissance));
+            await updateProfile(cred.user, { displayName: `${u.prenom} ${u.nom}` });
+            await setDoc(doc(db, 'users', cred.user.uid), {
+                prenom: u.prenom, nom: u.nom, email: u.email, role: u.role,
+                cardNumber: u.cardNumber, dateNaissance: u.dateNaissance,
+                bio: u.role === 'student' ? 'IGEE Student' : `${u.role} at IGEE`,
+                photo: null, savedPosts: [], isAdmin: u.role === 'admin',
+                institut: 'IGEE', createdAt: serverTimestamp()
+            });
+            await setDoc(doc(db, 'allowed_cards', u.cardNumber), {
+                cardNumber: u.cardNumber, prenom: u.prenom, nom: u.nom,
+                role: u.role, dateNaissance: u.dateNaissance, email: u.email,
+                used: true, uid: cred.user.uid, createdAt: serverTimestamp()
+            });
+            successes.push(u);
+        } catch(err) {
+            failures.push({ ...u, error: err.code === 'auth/email-already-in-use' ? 'Card already exists' : err.message });
+        }
+    }
+    try { await deleteApp(secondaryApp); } catch(e) {}
+    resultsEl.innerHTML = `
+        <div style="background:linear-gradient(135deg,#42b72a,#369b23);color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
+            ✅ ${successes.length} account(s) created successfully
+        </div>
+        ${failures.length ? `<div style="background:#ffebe8;color:#c92a2a;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
+            ❌ ${failures.length} failure(s):
+            <ul style="margin-top:8px;padding-left:20px;">${failures.map(f => `<li>${esc(f.prenom)} ${esc(f.nom)} (${esc(f.cardNumber)}): ${esc(f.error)}</li>`).join('')}</ul>
+        </div>` : ''}
+        ${parseErrors.length ? `<div style="background:#fff3cd;color:#856404;padding:14px 18px;border-radius:8px;">
+            ⚠️ ${parseErrors.length} line(s) skipped (format)
+        </div>` : ''}`;
+    btn.disabled = false; btn.textContent = '📥 Import Users';
+}
+
+/* ============ RENDER HOME ============ */
 function renderHome() {
     if (!currentUserData) return;
     const me = currentUserData;
@@ -2373,6 +2339,7 @@ function mobileDrawerHTML(me, active) {
             <a href="#/events" class="menu-item ${active==='events'?'active':''}"><span class="icon">📅</span> Events</a>
             <a href="#/clubs" class="menu-item clubs-item ${active==='clubs'?'active':''}"><span class="icon">🏆</span> Official Clubs</a>
             <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}"><span class="icon">📢</span> Announcements</a>
+            ${me.isAdmin ? `<a href="#/admin/import" class="menu-item ${active==='admin'?'active':''}"><span class="icon">👥</span> Import Users</a>` : ''}
         </div>
         <div class="mobile-drawer-footer">
             <button class="mobile-drawer-logout" id="mobile-drawer-logout"><span class="icon">🚪</span> Logout</button>
@@ -2440,6 +2407,7 @@ function sidebarLeftHTML(me, active) {
         <a href="#/events" class="menu-item ${active==='events'?'active':''}"><span class="icon">📅</span> Events</a>
         <a href="#/clubs" class="menu-item clubs-item ${active==='clubs'?'active':''}"><span class="icon">🏆</span> <strong>Official Clubs</strong></a>
         <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}" style="${active==='announcements'?'background:rgba(24,119,242,.15);color:#1877f2;':''}"><span class="icon">📢</span> Announcements</a>
+        ${me.isAdmin ? `<a href="#/admin/import" class="menu-item ${active==='admin'?'active':''}" style="${active==='admin'?'background:rgba(217,48,37,.15);color:#d93025;':''}"><span class="icon">👥</span> <strong>Import Users</strong></a>` : ''}
     </div>`;
 }
 function sidebarRightHTML() { return `<div class="sidebar sidebar-right"><h3>IGEE Members</h3><div id="members-list"><div class="loading">Loading...</div></div></div>`; }
@@ -2603,7 +2571,6 @@ function attachProfileEvents(user) {
 }
 
 Router.register('/', () => { if (currentUser) Router.navigate('/home'); else renderLogin(); });
-Router.register('/register', () => { if (currentUser) Router.navigate('/home'); else renderRegister(); });
 Router.register('/home', () => { if (!currentUser) Router.navigate('/'); else renderHome(); });
 Router.register('/profile', (id) => { if (!currentUser) Router.navigate('/'); else renderProfile(id); });
 Router.register('/saved', () => { if (!currentUser) Router.navigate('/'); else renderSaved(); });
@@ -2615,6 +2582,11 @@ Router.register('/group', (id) => { if (!currentUser) Router.navigate('/'); else
 Router.register('/clubs', () => { if (!currentUser) Router.navigate('/'); else renderClubs(); });
 Router.register('/announcements', () => { if (!currentUser) Router.navigate('/'); else renderAnnouncements(); });
 Router.register('/library', () => { if (!currentUser) Router.navigate('/'); else renderLibrary(); });
+Router.register('/admin/import', () => {
+    if (!currentUser) return Router.navigate('/');
+    if (!currentUserData?.isAdmin) { toast('Access denied', 'error'); return Router.navigate('/home'); }
+    renderAdminImport();
+});
 
 window.addEventListener('hashchange', () => Router.handle());
 
