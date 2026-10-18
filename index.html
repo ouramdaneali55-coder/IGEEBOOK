@@ -1194,7 +1194,7 @@ async function renderAdminImport() {
                     <h3 style="margin-bottom:10px;">📋 Format (one user per line)</h3>
                     <pre style="background:var(--bg-input);padding:12px;border-radius:8px;font-size:13px;overflow-x:auto;">prenom | nom | dateNaissance | cardNumber | role | email(optional)</pre>
                     <p style="color:var(--text-secondary);font-size:13px;margin:8px 0 16px;">
-                        <b>role</b> = student / teacher / admin &nbsp;•&nbsp; <b>dateNaissance</b> = ex. 1996/06/28 &nbsp;•&nbsp; email optionnel (défaut: cardNumber@igee.local)
+                        <b>role</b> = student / teacher / worker / admin &nbsp;•&nbsp; <b>dateNaissance</b> = ex. 1996/06/28 &nbsp;•&nbsp; email optionnel (défaut: cardNumber@igee.local)
                     </p>
                     <textarea id="import-data" placeholder="Ahmed | Benali | 1996/06/28 | 221234567890 | student&#10;Fatima | Zahra | 1975/03/15 | 711779002147 | teacher" style="width:100%;min-height:220px;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:13px;background:var(--bg-input);color:var(--text-primary);outline:none;"></textarea>
                     <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
@@ -1230,7 +1230,7 @@ async function runImport(raw) {
         const [prenom, nom, dateNaissance, cardNumber, role, email] = parts;
         if (!prenom || !nom || !dateNaissance || !cardNumber || !role) { parseErrors.push({ line, error: 'Empty required field' }); continue; }
         const r = role.toLowerCase();
-        if (!['student','teacher','admin'].includes(r)) { parseErrors.push({ line, error: `Invalid role "${role}"` }); continue; }
+        if (!['student','teacher','worker','admin'].includes(r)) { parseErrors.push({ line, error: `Invalid role "${role}"` }); continue; }
         if (normalizeDOB(dateNaissance).length < 6) { parseErrors.push({ line, error: 'Date of birth must contain ≥6 digits' }); continue; }
         users.push({ prenom, nom, dateNaissance, cardNumber, role: r, email: email || cardToEmail(cardNumber) });
     }
@@ -1253,7 +1253,7 @@ async function runImport(raw) {
             await setDoc(doc(db, 'users', cred.user.uid), {
                 prenom: u.prenom, nom: u.nom, email: u.email, role: u.role,
                 cardNumber: u.cardNumber, dateNaissance: u.dateNaissance,
-                bio: u.role === 'student' ? 'IGEE Student' : `${u.role} at IGEE`,
+                bio: u.role === 'student' ? 'IGEE Student' : (u.role === 'worker' ? 'IGEE Staff / Worker' : `${u.role} at IGEE`),
                 photo: null, savedPosts: [], isAdmin: u.role === 'admin',
                 institut: 'IGEE', createdAt: serverTimestamp()
             });
