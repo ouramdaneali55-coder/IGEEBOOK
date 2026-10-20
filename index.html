@@ -716,13 +716,13 @@ const Theme = {
 const REACTIONS = {
     'like': { emoji: '👍', label: 'Like', color: '#1877f2' },
     'love': { emoji: '❤️', label: 'Love', color: '#e41e3f' },
-    'haha': { emoji: '😂', label: 'Haha', color: '#ffb400' },
+    
     'wow': { emoji: '😮', label: 'Wow', color: '#ffb400' },
     'sad': { emoji: '😢', label: 'Sad', color: '#ffb400' }
 };
 
-const CHAT_REACTIONS = ['❤️', '👍', '😂', '😮', '😢', '🙏'];
-const COMMENT_REACTIONS = ['❤️', '👍', '😂', '😮', '😢', '🙏'];
+const CHAT_REACTIONS = ['❤️', '👍', '😮', '😢', '🙏'];
+const COMMENT_REACTIONS = ['❤️', '👍', '😮', '😢', '🙏'];
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const showLoading = () => document.getElementById('loading-bar')?.classList.add('active');
