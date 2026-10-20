@@ -443,6 +443,19 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .comment-reaction-picker button{width:34px;height:34px;border:none;background:transparent;font-size:20px;cursor:pointer;border-radius:50%;transition:transform .2s;display:flex;align-items:center;justify-content:center;padding:0;}
 .comment-reaction-picker button:hover{transform:scale(1.35) translateY(-3px);}
 
+/* ============ SEARCH DROPDOWN ============ */
+.search-container { position: relative; flex: 1; max-width: 280px; margin: 0 15px; }
+.search-container .search { width: 100% !important; }
+.search-container .search:focus { width: 100% !important; }
+.search-dropdown { position: absolute; top: 48px; left: 0; width: 100%; background: var(--bg-card); border-radius: 8px; box-shadow: 0 4px 20px var(--shadow); display: none; z-index: 1000; max-height: 350px; overflow-y: auto; border: 1px solid var(--border); }
+.search-dropdown.active { display: block; }
+.search-result-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-soft); transition: background 0.2s; }
+.search-result-item:hover { background: var(--bg-hover); }
+.search-result-item img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.search-result-item .sr-info .sr-name { font-weight: bold; font-size: 14px; color: var(--text-primary); }
+.search-result-item .sr-info .sr-role { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.search-no-result { padding: 15px; text-align: center; color: var(--text-secondary); font-size: 14px; }
+
 /* ============ ANNOUNCEMENTS BOARD ============ */
 .announcements-hero{background:linear-gradient(135deg,#1877f2 0%,#0c5cbf 50%,#1877f2 100%);background-size:200% 200%;animation:gradient 6s ease infinite;border-radius:16px;padding:36px 30px;margin-bottom:24px;color:#fff;text-align:center;box-shadow:0 12px 40px rgba(24,119,242,.3);}
 .announcements-hero .hero-icon{font-size:64px;margin-bottom:10px;display:inline-block;animation:bounce 2s ease infinite;}
@@ -587,6 +600,7 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 
 @media (max-width:1100px){.container{grid-template-columns:240px 1fr;}.sidebar-right{display:none;}}
 @media (max-width:800px){
+.search-container{display:none !important;}
 .mobile-menu-btn{display:flex;}
 .container{grid-template-columns:1fr;padding:0;margin:0 0 70px 0;gap:0;max-width:100%;}.sidebar{display:none !important;}.feed{width:100%;padding:0;}.navbar{height:52px;padding:0 8px;box-shadow:0 1px 2px var(--shadow);}.navbar .logo{gap:0;flex:1;}.navbar .igee-logo-3d{width:40px;height:40px;border-radius:11px;}.navbar .search{display:none;}.navbar .nav-icons{gap:2px;}.navbar .nav-icons a,.navbar .nav-icons button{width:38px;height:38px;font-size:17px;background:transparent;}.navbar .nav-icons a:hover,.navbar .nav-icons button:hover{background:var(--bg-hover);transform:none;}.navbar .user-avatar{width:36px;height:36px;border-width:1.5px;}.navbar .nav-icons a[title="Home"]{display:none;}.navbar .nav-icons a[title="Profile"]{display:none;}.navbar .nav-icons #logout-btn{display:none;}.create-post,.post,.empty-state,.activity-item,.attendees-list,.page-header-card,.activity-header,.activity-tabs,.groups-tabs{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.post:hover{box-shadow:none;}.post-header{padding:10px 12px;}.post-header img{width:38px;height:38px;}.post-content{padding:0 12px 10px;font-size:15px;}.post-content img{border-radius:6px;}.post-stats{padding:6px 12px;font-size:12px;}.post-actions button{font-size:12.5px;padding:9px 2px;gap:4px;font-weight:600;}.comments{padding:8px 12px 10px;}.comment-form input{font-size:14px;padding:10px 14px;}.reaction-picker{left:2px;padding:4px 6px;gap:0;}.reaction-picker .reaction-btn{width:36px;height:36px;font-size:20px;}.reaction-picker .reaction-btn:hover{transform:scale(1.2) translateY(-3px);}.create-post{padding:12px;}.create-post textarea{font-size:15px;}.page-header-card{padding:16px;flex-direction:column;align-items:flex-start;gap:12px;}.page-header-card .icon-big{width:48px;height:48px;font-size:24px;}.page-header-card h1{font-size:22px;}.page-header-card .btn-create{width:100%;justify-content:center;padding:11px;}.clubs-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.clubs-hero h1{font-size:24px;}.clubs-hero .trophy{font-size:48px;}.clubs-hero p{font-size:14px;}.events-grid,.groups-grid{grid-template-columns:1fr;gap:8px;padding:0;}.event-card,.group-card,.club-display-card{border-radius:0;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.event-card:hover,.group-card:hover,.club-display-card:hover{transform:none;box-shadow:none;}.event-detail-cover{border-radius:0;height:200px;}.event-detail-card{border-radius:0;padding:20px 16px 24px;}.event-detail-card h1{font-size:22px;}.group-detail-cover{border-radius:0;height:180px;}.group-detail-card{border-radius:0;padding:20px 16px 24px;}.group-detail-card h1{font-size:22px;}.activity-header{padding:18px 16px;gap:14px;}.activity-header .icon-big{width:48px;height:48px;font-size:24px;}.activity-header h1{font-size:22px;}.activity-tabs{padding:6px;overflow-x:auto;scrollbar-width:none;}.activity-tabs::-webkit-scrollbar{display:none;}.activity-tab{padding:9px 14px;font-size:13px;}.chat-sidebar{width:100%;top:52px;height:calc(100vh - 52px - 58px);}#chat-windows-container{right:0;left:0;bottom:58px;gap:0;}.chat-window{width:100%;height:calc(100vh - 52px - 58px);border-radius:0;}.chat-window.minimized{height:52px;}.chat-window-header{padding:10px 14px;}.chat-window-body{padding:12px 14px;}.chat-fab{display:none !important;}.notif-panel{width:100vw;max-width:100vw;right:-12px;top:52px;border-radius:0;max-height:calc(100vh - 52px - 58px);}.auth-logo-3d{width:78px;height:78px;border-radius:18px;}.auth-logos-row{gap:14px;margin-bottom:14px;}.auth-slogan{font-size:13.5px;margin-bottom:20px;padding:0 12px;}.auth-box{padding:22px 18px;width:100%;max-width:440px;}.auth-box h2{font-size:20px;margin-bottom:18px;}.auth-box input{padding:13px 14px;font-size:15px;}.auth-box button{padding:13px;font-size:15px;}.auth-box button:hover{transform:none;box-shadow:none;}#toast-container{bottom:74px;right:12px;left:12px;align-items:stretch;}.toast{max-width:100%;}#install-btn{bottom:74px;right:12px;padding:10px 16px;font-size:13px;}.mobile-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--bg-card);border-top:1px solid var(--border);z-index:950;box-shadow:0 -1px 6px var(--shadow);justify-content:space-around;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);}.mobile-bottom-nav .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-secondary);text-decoration:none;background:none;border:none;cursor:pointer;font-size:10.5px;font-family:inherit;padding:6px 4px;position:relative;transition:color .15s;font-weight:500;}.mobile-bottom-nav .mbn-item .mbn-icon{font-size:22px;line-height:1;position:relative;display:flex;align-items:center;justify-content:center;}.mobile-bottom-nav .mbn-item.active{color:#1877f2;font-weight:700;}.mobile-bottom-nav .mbn-item.active .mbn-icon::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:22px;height:3px;background:#1877f2;border-radius:2px;}.mobile-bottom-nav .mbn-item .mbn-badge{position:absolute;top:-4px;right:-10px;background:#e41e3f;color:#fff;font-size:10px;font-weight:bold;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg-card);}.announcements-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.announcements-hero h1{font-size:24px;}.announcements-hero .hero-icon{font-size:48px;}.announcements-hero p{font-size:14px;}.announcements-toolbar{border-radius:0;padding:12px;margin-bottom:8px;}.announcement-card{border-radius:0;margin-bottom:8px;box-shadow:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.announcement-card:hover{transform:none;box-shadow:none;}.announcement-title{font-size:17px;}.announcement-content{font-size:14px;}.home-announcement-banner{border-radius:0;margin-bottom:8px;}.library-hero{border-radius:0;padding:24px 16px;margin-bottom:8px;}.library-hero h1{font-size:24px;}.library-hero .hero-icon{font-size:48px;}.library-hero p{font-size:14px;}.library-toolbar{border-radius:0;padding:12px;margin-bottom:8px;}.library-search-wrap{padding:0 10px;}.library-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;}.library-card{border-radius:10px;}.book-detail{border-radius:12px;}.book-detail-header{padding:20px;gap:16px;}.book-detail-cover{width:120px;}.book-detail-info h2{font-size:18px;}.book-detail-body{padding:0 20px 20px;}}
 @media (max-width:400px){.navbar .nav-icons button#theme-toggle-btn{display:none;}.mobile-bottom-nav .mbn-item span:not(.mbn-icon):not(.mbn-badge){font-size:10px;}.chat-msg{font-size:13.5px;}.post-actions button{font-size:12px;}.library-grid{grid-template-columns:repeat(2,1fr);gap:8px;padding:8px;}.book-title{font-size:12.5px;}.library-filter{padding:7px 10px;font-size:11.5px;}}
@@ -1077,6 +1091,76 @@ const hoverCard = {
     scheduleHide() { this.hideTimer = setTimeout(() => this.hide(), 250); },
     hide() { clearTimeout(this.hideTimer); this.el.classList.remove('active'); this.currentUid = null; }
 };
+
+function setupGlobalSearch() {
+    const searchInput = document.getElementById('search-input');
+    const dropdown = document.getElementById('search-dropdown');
+    if (!searchInput || !dropdown) return;
+
+    // Clone to remove old event listeners
+    const newSearchInput = searchInput.cloneNode(true);
+    searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+
+    newSearchInput.addEventListener('input', async (e) => {
+        const queryText = e.target.value.trim().toLowerCase();
+        dropdown.innerHTML = '';
+
+        if (queryText.length < 2) {
+            dropdown.classList.remove('active');
+            return;
+        }
+
+        dropdown.innerHTML = '<div class="search-no-result">Searching...</div>';
+        dropdown.classList.add('active');
+
+        try {
+            // Fetch up to 1000 users to search in memory
+            const usersRef = collection(db, 'users');
+            const snapshot = await getDocs(query(usersRef, limit(1000)));
+
+            const results = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const fullName = `${data.prenom || ''} ${data.nom || ''}`.toLowerCase();
+                const matricule = (data.cardNumber || '').toLowerCase();
+
+                if (fullName.includes(queryText) || matricule.includes(queryText)) {
+                    results.push({ id: doc.id, ...data });
+                }
+            });
+
+            if (results.length === 0) {
+                dropdown.innerHTML = '<div class="search-no-result">No users found</div>';
+                return;
+            }
+
+            // Show top 10 results
+            dropdown.innerHTML = results.slice(0, 10).map(u => `
+                <div class="search-result-item" onclick="location.hash='#/profile/${u.id}'; document.getElementById('search-dropdown').classList.remove('active'); document.getElementById('search-input').value = '';">
+                    <img src="${u.photo || initialsAvatar(u.prenom, u.nom)}">
+                    <div class="sr-info">
+                        <div class="sr-name">${esc(u.prenom)} ${esc(u.nom)}</div>
+                        <div class="sr-role">${u.role === 'student' ? 'Student' : u.role === 'teacher' ? 'Teacher' : 'Staff'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            console.error("Search error:", err);
+            dropdown.innerHTML = '<div class="search-no-result">Error searching users</div>';
+        }
+    });
+
+    // Attach document click listener ONLY ONCE (avoids duplicate listeners)
+    if (!window._globalSearchClickAttached) {
+        window._globalSearchClickAttached = true;
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-dropdown') && e.target.id !== 'search-input') {
+                document.getElementById('search-dropdown')?.classList.remove('active');
+            }
+        });
+    }
+}
 
 let currentUser = null;
 let currentUserData = null;
@@ -2362,7 +2446,10 @@ function navbarHTML(me, active) {
         <a href="#/home" class="logo" title="IGEE Social">
             <div class="igee-logo-3d">${IGEE_LOGO_SVG}</div>
         </a>
-        <input class="search" type="text" placeholder="Search..." id="search-input">
+        <div class="search-container">
+            <input class="search" type="text" placeholder="Search users..." id="search-input" autocomplete="off">
+            <div id="search-dropdown" class="search-dropdown"></div>
+        </div>
         <div class="nav-icons">
             <a href="#/home" title="Home" style="${active==='home'?'background:rgba(24,119,242,.15);color:#1877f2':''}">🏠</a>
             <button id="messages-btn" title="Messages" style="${active==='messages'?'background:rgba(24,119,242,.15);color:#1877f2':''}">💬<span class="badge hidden" id="msg-badge"></span></button>
@@ -2420,6 +2507,7 @@ function loadMembersRealtime() {
     });
 }
 function attachNotifEvents() {
+    setupGlobalSearch();
     document.getElementById('notif-bell')?.addEventListener('click', (e) => { e.stopPropagation(); toggleNotifPanel(); });
     document.getElementById('mbn-notif')?.addEventListener('click', () => toggleNotifPanel());
     document.getElementById('mark-all-read')?.addEventListener('click', (e) => { e.stopPropagation(); markAllNotifsRead(); });
@@ -2452,8 +2540,6 @@ function attachHomeEvents(isMessages = false) {
         try { let imageUrl = null; if (file) { if (file.size > 1024*1024) throw new Error('Image too large (max 1 MB)'); imageUrl = await uploadImage(file); } await addDoc(collection(db,'posts'), { userId:currentUser.uid, contenu, image: imageUrl, likes: [], reactions: {}, createdAt: serverTimestamp() }); textarea.value = ''; fileInput.value = ''; document.getElementById('file-name').textContent = ''; toast('Post published!','success'); } catch(err) { toast('Error: ' + err.message, 'error'); }
         btn.disabled = false; btn.textContent = 'Post';
     });
-    document.getElementById('search-input')?.addEventListener('input', (e) => { const q = e.target.value.toLowerCase().trim(); document.querySelectorAll('.post').forEach(p => { p.style.display = p.textContent.toLowerCase().includes(q) ? '' : 'none'; }); });
-    document.getElementById('search-input')?.addEventListener('keypress', (e) => { if (e.key === 'Enter' && e.target.value.trim()) SearchHistory.add(e.target.value.trim()); });
 }
 function attachPostEvents() {
     document.querySelectorAll('.like-btn').forEach(btn => {
