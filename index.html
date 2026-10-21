@@ -1859,6 +1859,7 @@ async function renderGroupDetail(groupId) {
     const snap = await getDoc(doc(db,'groups',groupId)); if (!snap.exists()) { toast('Not found','error'); return Router.navigate('/groups'); }
     const g = { id: groupId, ...snap.data() };
     const isCreator = g.creatorId === currentUser.uid;
+    const canManage = isCreator || me.isAdmin; // L'admin OU le créateur peut gérer
     const members = g.members || []; const isMember = members.some(m => m.uid === currentUser.uid);
     const clubInfo = getClubIdentity(g.name);
     const isClubGroup = !!clubInfo;
@@ -1866,6 +1867,7 @@ async function renderGroupDetail(groupId) {
     for (const m of members.slice(0,20)) { try { const u = await getDoc(doc(db,'users',m.uid)); if (u.exists()) memberFull.push({ uid:m.uid, ...u.data() }); } catch {} }
     const coverStyle = isClubGroup ? `background:${clubInfo.bg};` : 'background:linear-gradient(135deg,#9c27b0,#6a1b9a);';
     const emoji = isClubGroup ? clubInfo.emoji : '👥';
+    
     document.getElementById('app').innerHTML = `
         ${navbarHTML(me, 'groups')}
         <div class="container" style="grid-template-columns:280px 1fr;">
@@ -1875,20 +1877,85 @@ async function renderGroupDetail(groupId) {
                 <div class="group-detail-card">
                     ${isClubGroup?'<div class="club-official-banner">🏆 OFFICIAL CLUB OF IGEE</div>':''}
                     <h1>${esc(g.name)}</h1>
-                    <div class="gr-meta-row"><span>${g.privacy==='private'?'🔒 Private Group':'🌐 Public Group'}</span><span>👥 ${members.length} member${members.length!==1?'s':''}</span></div>
+                    <div class="gr-meta-row"><span>${g.privacy==='private'?'🔒 Private Group':'🌐 Public Group'}</span><span>👥 ${members.length} member${members.length!==1?'s':''}</span><span>👑 Propriétaire : ${esc(g.creatorName || 'Inconnu')}</span></div>
                     ${g.description?`<div class="gr-desc">${esc(g.description)}</div>`:''}
-                    <div class="gr-actions"><button class="btn-join ${isMember?'joined':''}" id="join-group-btn">${isMember?'✓ Joined':(g.privacy==='private'?'🔒 Request to Join':'➕ Join Group')}</button>${isCreator?`<button class="btn-delete" id="delete-group-btn">🗑️ Delete Group</button>`:''}</div>
+                    <div class="gr-actions">
+                        <button class="btn-join ${isMember?'joined':''}" id="join-group-btn">${isMember?'✓ Joined':(g.privacy==='private'?'🔒 Request to Join':'➕ Join Group')}</button>
+                        
+                        <!-- NOUVEAU BOUTON TRANSFÉRER -->
+                        ${canManage ? `<button class="btn-transfer" id="transfer-group-btn" style="background:#1877f2;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;">🔄 Transférer la propriété</button>` : ''}
+                        
+                        ${canManage ? `<button class="btn-delete" id="delete-group-btn">🗑️ Delete Group</button>` : ''}
+                    </div>
                 </div>
                 <div class="attendees-list"><h3>Members (${members.length})</h3><div class="att-list">${memberFull.map(a=>`<div class="att-item" onclick="location.hash='#/profile/${a.uid}'"><img src="${a.photo||initialsAvatar(a.prenom,a.nom)}"><span class="name">${esc(a.prenom+' '+a.nom)}${a.uid===g.creatorId?' 👑':''}</span></div>`).join('')}</div></div>
             </div>
         </div>`;
     attachHomeEvents(true);
-    document.getElementById('join-group-btn')?.addEventListener('click', async () => {
-        try { const ref = doc(db,'groups',groupId); if (isMember) { await updateDoc(ref, { members: arrayRemove(members.find(m => m.uid === currentUser.uid)) }); toast('Left group','success'); } else { await updateDoc(ref, { members: arrayUnion({ uid:currentUser.uid, prenom:currentUserData.prenom, nom:currentUserData.nom, photo:currentUserData.photo }) }); toast('Joined! 🎉','success'); if (!isCreator) { await createNotification({ userId:g.creatorId, type:'group_join', fromUserId:currentUser.uid, message:'joined your group', link:'/group/'+groupId }); } } renderGroupDetail(groupId); } catch(err) { toast('Error','error'); }
-    });
-    document.getElementById('delete-group-btn')?.addEventListener('click', async () => { const ok = await confirmDialog('Delete group?', 'Cannot be undone.', 'Delete'); if (!ok) return; try { await deleteDoc(doc(db,'groups',groupId)); toast('Deleted','success'); Router.navigate('/groups'); } catch {} });
-}
 
+    // Logique pour rejoindre/quitter
+    document.getElementById('join-group-btn')?.addEventListener('click', async () => {
+        try { 
+            const ref = doc(db,'groups',groupId); 
+            if (isMember) { 
+                await updateDoc(ref, { members: arrayRemove(members.find(m => m.uid === currentUser.uid)) }); 
+                toast('Left group','success'); 
+            } else { 
+                await updateDoc(ref, { members: arrayUnion({ uid:currentUser.uid, prenom:currentUserData.prenom, nom:currentUserData.nom, photo:currentUserData.photo }) }); 
+                toast('Joined! 🎉','success'); 
+                if (!isCreator) { await createNotification({ userId:g.creatorId, type:'group_join', fromUserId:currentUser.uid, message:'joined your group', link:'/group/'+groupId }); } 
+            } 
+            renderGroupDetail(groupId); 
+        } catch(err) { toast('Error','error'); }
+    });
+
+    // Logique pour SUPPRIMER
+    document.getElementById('delete-group-btn')?.addEventListener('click', async () => { 
+        const ok = await confirmDialog('Delete group?', 'Cannot be undone.', 'Delete'); 
+        if (!ok) return; 
+        try { await deleteDoc(doc(db,'groups',groupId)); toast('Deleted','success'); Router.navigate('/groups'); } catch {} 
+    });
+
+    // NOUVELLE LOGIQUE : TRANSFÉRER LA PROPRIÉTÉ
+    document.getElementById('transfer-group-btn')?.addEventListener('click', async () => {
+        // On ne peut pas transférer si on est le seul membre
+        const eligibleMembers = members.filter(m => m.uid !== g.creatorId);
+        if (eligibleMembers.length === 0) {
+            return toast('Le club doit avoir d\'autres membres pour pouvoir transférer.', 'error');
+        }
+
+        const options = eligibleMembers.map(m => `<option value="${m.uid}">${esc(m.prenom + ' ' + m.nom)}</option>`).join('');
+        
+        const data = await openFormModal('🔄 Transférer la propriété', `
+            <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Choisissez le nouveau propriétaire de ce club. Vous perdrez vos droits de gestion (sauf si vous êtes admin).</p>
+            <label>Nouveau propriétaire *</label>
+            <select name="newOwner" required>
+                <option value="">-- Sélectionnez un membre --</option>
+                ${options}
+            </select>
+            <div class="btn-row">
+                <button type="button" class="btn-cancel">Annuler</button>
+                <button type="submit" class="btn-submit" style="background:#1877f2;">Confirmer le transfert</button>
+            </div>
+        `);
+
+        if (!data || !data.newOwner) return;
+
+        const newOwner = members.find(m => m.uid === data.newOwner);
+        if (!newOwner) return;
+
+        try {
+            await updateDoc(doc(db, 'groups', groupId), {
+                creatorId: newOwner.uid,
+                creatorName: `${newOwner.prenom} ${newOwner.nom}`
+            });
+            toast('Propriété transférée avec succès ! 🎉', 'success');
+            renderGroupDetail(groupId); // Recharger la page
+        } catch(err) {
+            toast('Erreur lors du transfert : ' + err.message, 'error');
+        }
+    });
+}
 async function renderClubs() {
     const me = currentUserData; if (!me) return;
     document.getElementById('app').innerHTML = `
