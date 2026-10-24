@@ -2340,8 +2340,8 @@ async function createAnnouncement() {
     const me = currentUserData;
     if (!me?.isAdmin) return toast('Only admins can create announcements', 'error');
     
-    const levels = ['L1', 'L2', 'L3', 'M1', 'M2'];
-    const fields = ['TRONC COMMUN', 'COMPUTER', 'CONTROL', 'IED', 'IEM', 'POWER', 'TELECOM'];
+    const levels = ['L1', 'L2', 'L3', 'M1', 'M2', 'ENS', 'ATS', 'CONTR'];
+    const fields = ['TRONC COMMUN', 'COMPUTER', 'CONTROL', 'IED', 'IEM', 'POWER', 'TELECOM', 'ENS', 'ATS', 'CONTR'];
     const groups = ['G01', 'G02', 'G03', 'G04', 'G05', 'G06', 'G07', 'G08', 'G09', 'G10', 'G11', 'G12', 'G13', 'G14', 'G15', 'G16'];
     const rooms = ['AMPHI 1', 'AMPHI 2', 'AMPHI 3', 'AMPHI 4', 'A207', 'A108', 'A113', 'A201', 'A205', 'A209', 'B001', 'B005', 'B007', 'B301', 'B312', 'C104', 'C107', 'LS-B214'];
     const days = ['Samedi', 'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi'];
