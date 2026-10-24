@@ -469,6 +469,18 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .announcements-filter.urgent.active{background:linear-gradient(135deg,#d93025,#b8271d);}
 .announcements-filter.high.active{background:linear-gradient(135deg,#ff9800,#f57c00);}
 .announcements-filter.pinned.active{background:linear-gradient(135deg,#ffd700,#ff9800);color:#fff;}
+
+/* AJOUT DU BOUTON MY SCHEDULE */
+.announcements-filter.my-target {
+    background: linear-gradient(135deg, #e91e63, #c2185b);
+    color: #fff;
+}
+.announcements-filter.my-target.active {
+    background: linear-gradient(135deg, #e91e63, #c2185b);
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(233,30,99,.2);
+}
+
 .btn-create-ann{background:linear-gradient(135deg,#1877f2,#0c5cbf);color:#fff;border:none;padding:11px 22px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;transition:.2s;}
 .btn-create-ann:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(24,119,242,.4);}
 .announcements-list{display:flex;flex-direction:column;gap:14px;}
@@ -483,6 +495,30 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .announcement-priority.urgent{background:rgba(217,48,37,.15);color:#d93025;}
 .announcement-pin-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:bold;padding:4px 10px;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9800);color:#fff;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 8px rgba(255,152,0,.35);}
 .announcement-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+
+/* NOUVEAUX BADGES DE CIBLAGE */
+.announcement-target-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.ann-target-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+.ann-target-badge.location { background: rgba(24, 119, 242, 0.1); color: #1877f2; border-color: rgba(24, 119, 242, 0.2); }
+.ann-target-badge.schedule { background: rgba(66, 183, 42, 0.1); color: #42b72a; border-color: rgba(66, 183, 42, 0.2); }
+.ann-target-badge.audience { background: rgba(156, 39, 176, 0.1); color: #9c27b0; border-color: rgba(156, 39, 176, 0.2); }
+
 .announcement-title{font-size:19px;font-weight:bold;margin-bottom:8px;line-height:1.35;color:var(--text-primary);}
 .announcement-content{font-size:15px;line-height:1.6;color:var(--text-primary);white-space:pre-wrap;word-wrap:break-word;margin-bottom:12px;}
 .announcement-content img{max-width:100%;border-radius:10px;margin-top:10px;max-height:420px;object-fit:cover;display:block;}
@@ -597,6 +633,9 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .mobile-drawer-logout{width:100%;padding:12px 16px;background:transparent;border:none;cursor:pointer;font-size:15px;font-family:inherit;color:#d93025;font-weight:600;display:flex;align-items:center;gap:12px;border-radius:8px;text-align:left;}
 .mobile-drawer-logout:hover{background:#ffebe8;}
 .mobile-drawer-logout .icon{font-size:22px;width:30px;text-align:center;}
+
+/* AJOUT DE LA BARRE DE RECHERCHE MOBILE */
+.mobile-search-wrap { padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg-card); flex-shrink: 0; }
 
 @media (max-width:1100px){.container{grid-template-columns:240px 1fr;}.sidebar-right{display:none;}}
 @media (max-width:800px){
@@ -880,7 +919,6 @@ function confirmDialog(title, text, okLabel = 'Delete') {
     });
 }
 
-// CORRIGÉ : Gestion propre du bouton Cancel et de la promesse
 function openFormModal(title, fieldsHTML, onReady) {
     return new Promise((resolve) => {
         const overlay = document.getElementById('form-modal');
@@ -1007,7 +1045,6 @@ const Chat = {
         win.querySelector('.close-btn').addEventListener('click', (e) => { e.stopPropagation(); this.close(convId); });
         win.querySelector('.chat-window-header').addEventListener('click', () => { if (this.openWindows[convId]?.minimized) { win.classList.remove('minimized'); this.openWindows[convId].minimized = false; } });
         const input = win.querySelector('.chat-input-field');
-        // CORRIGÉ : keydown au lieu de keypress pour plus de fiabilité
         input.addEventListener('keydown', (e) => { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); this.sendMessage(convId,otherId,input); } });
         win.querySelector('.send-btn').addEventListener('click', () => this.sendMessage(convId,otherId,input));
         try { await updateDoc(doc(db,'conversations',convId), { [`unread.${currentUser.uid}`]:0 }); } catch {}
@@ -1169,7 +1206,6 @@ function setupGlobalSearch() {
             return;
         }
         
-        // AJOUTÉ : Enregistrer la recherche dans l'historique
         SearchHistory.add(queryText);
 
         dropdown.innerHTML = '<div class="search-no-result">Searching...</div>';
@@ -1216,6 +1252,9 @@ function setupGlobalSearch() {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-dropdown') && e.target.id !== 'search-input') {
                 document.getElementById('search-dropdown')?.classList.remove('active');
+            }
+            if (!e.target.closest('.mobile-search-wrap')) {
+                document.getElementById('mobile-search-dropdown')?.classList.remove('active');
             }
         });
     }
@@ -1335,11 +1374,11 @@ async function renderAdminImport() {
                 </div>
                 <div style="background:var(--bg-card);border-radius:12px;padding:24px;box-shadow:0 1px 3px var(--shadow);">
                     <h3 style="margin-bottom:10px;">📋 Format (one user per line)</h3>
-                    <pre style="background:var(--bg-input);padding:12px;border-radius:8px;font-size:13px;overflow-x:auto;">prenom | nom | dateNaissance | cardNumber | role | email(optional)</pre>
+                    <pre style="background:var(--bg-input);padding:12px;border-radius:8px;font-size:13px;overflow-x:auto;">prenom | nom | dateNaissance | cardNumber | role | niveau | groupe | email(optional)</pre>
                     <p style="color:var(--text-secondary);font-size:13px;margin:8px 0 16px;">
-                        <b>role</b> = student / teacher / worker / admin &nbsp;•&nbsp; <b>dateNaissance</b> = ex. 1996/06/28 &nbsp;•&nbsp; email optionnel (défaut: cardNumber@igee.local)
+                        <b>role</b> = student / teacher / worker / admin &nbsp;•&nbsp; <b>dateNaissance</b> = ex. 1996/06/28 &nbsp;•&nbsp; <b>niveau</b> = L1, L2... &nbsp;•&nbsp; <b>groupe</b> = G01, G02...
                     </p>
-                    <textarea id="import-data" placeholder="Ahmed | Benali | 1996/06/28 | 221234567890 | student&#10;Fatima | Zahra | 1975/03/15 | 711779002147 | teacher" style="width:100%;min-height:220px;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:13px;background:var(--bg-input);color:var(--text-primary);outline:none;"></textarea>
+                    <textarea id="import-data" placeholder="Ahmed | Benali | 1996/06/28 | 221234567890 | student | L1 | G01&#10;Fatima | Zahra | 1975/03/15 | 711779002147 | teacher | | " style="width:100%;min-height:220px;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:13px;background:var(--bg-input);color:var(--text-primary);outline:none;"></textarea>
                     <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                         <button id="import-btn" style="background:linear-gradient(135deg,#1877f2,#0c5cbf);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;">📥 Import Users</button>
                         <label for="import-file" style="cursor:pointer;background:var(--bg-hover);color:var(--text-primary);padding:12px 24px;border-radius:8px;font-weight:bold;">📁 Load from .txt / .csv</label>
@@ -1347,14 +1386,29 @@ async function renderAdminImport() {
                     </div>
                     <div id="import-results" style="margin-top:20px;"></div>
                 </div>
+
+                               <!-- NOUVEAU BLOC : METTRE A JOUR NIVEAU, SPECIALITE ET GROUPE -->
+                <div style="background:var(--bg-card);border-radius:12px;padding:24px;box-shadow:0 1px 3px var(--shadow);margin-top:20px;">
+                    <h3 style="margin-bottom:10px;">🎓 Mettre à jour Niveau, Spécialité & Groupe</h3>
+                    <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">
+                        Format : <b>Numéro de carte | Niveau | Spécialité | Groupe</b> (ex: <code>222232490417 | M2 | COMPUTER | G1</code>)
+                    </p>
+                    <textarea id="update-all-data" placeholder="222232490417 | M2 | COMPUTER | G1&#10;222231353307 | M2 | COMPUTER | G2&#10;..." style="width:100%;min-height:150px;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:13px;background:var(--bg-input);color:var(--text-primary);outline:none;"></textarea>
+                    <div style="margin-top:12px;">
+                        <button id="update-all-btn" style="background:linear-gradient(135deg,#ff9800,#f57c00);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;">🚀 Mettre à jour (Niveau/Spé/Groupe)</button>
+                    </div>
+                    <div id="update-all-results" style="margin-top:20px;"></div>
+                </div>
             </div>
         </div>`;
     attachHomeEvents(true);
     document.getElementById('import-file').addEventListener('change', async (e) => {
         const f = e.target.files[0]; if (!f) return;
         document.getElementById('import-data').value = await f.text();
+    
     });
-    document.getElementById('import-btn').addEventListener('click', async () => {
+document.getElementById('update-all-btn').addEventListener('click', updateAllMassively);  
+  document.getElementById('import-btn').addEventListener('click', async () => {
         const raw = document.getElementById('import-data').value.trim();
         if (!raw) return toast('Paste some data first', 'error');
         await runImport(raw);
@@ -1367,16 +1421,26 @@ async function runImport(raw) {
     btn.disabled = true; btn.textContent = 'Importing...';
     const lines = raw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
     const users = [], parseErrors = [];
+    
     for (const line of lines) {
         const parts = line.split('|').map(s => s.trim());
-        if (parts.length < 5) { parseErrors.push({ line, error: 'Expected 5 fields (prenom|nom|dob|card|role)' }); continue; }
-        const [prenom, nom, dateNaissance, cardNumber, role, email] = parts;
+        if (parts.length < 5) { parseErrors.push({ line, error: 'Expected at least 5 fields' }); continue; }
+        
+        const [prenom, nom, dateNaissance, cardNumber, role, niveau, groupe, email] = parts;
+        
         if (!prenom || !nom || !dateNaissance || !cardNumber || !role) { parseErrors.push({ line, error: 'Empty required field' }); continue; }
         const r = role.toLowerCase();
         if (!['student','teacher','worker','admin'].includes(r)) { parseErrors.push({ line, error: `Invalid role "${role}"` }); continue; }
         if (normalizeDOB(dateNaissance).length < 6) { parseErrors.push({ line, error: 'Date of birth must contain ≥6 digits' }); continue; }
-        users.push({ prenom, nom, dateNaissance, cardNumber, role: r, email: email || cardToEmail(cardNumber) });
+        
+        users.push({ 
+            prenom, nom, dateNaissance, cardNumber, role: r, 
+            niveau: niveau || null, 
+            groupe: groupe || null,
+            email: email || cardToEmail(cardNumber)
+        });
     }
+    
     if (!users.length) {
         resultsEl.innerHTML = `<div class="error-msg">❌ ${parseErrors.length} line(s) invalid — check the format.</div>`;
         btn.disabled = false; btn.textContent = '📥 Import Users'; return;
@@ -1388,18 +1452,24 @@ async function runImport(raw) {
     catch(e) { resultsEl.innerHTML = `<div class="error-msg">Init error: ${e.message}</div>`; btn.disabled = false; btn.textContent = '📥 Import Users'; return; }
     const secondaryAuth = getAuth(secondaryApp);
     const successes = [], failures = [];
+    
     for (const u of users) {
         try {
             try { await signOut(secondaryAuth); } catch(e) {}
             const cred = await createUserWithEmailAndPassword(secondaryAuth, u.email, normalizeDOB(u.dateNaissance));
             await updateProfile(cred.user, { displayName: `${u.prenom} ${u.nom}` });
+            
             await setDoc(doc(db, 'users', cred.user.uid), {
                 prenom: u.prenom, nom: u.nom, email: u.email, role: u.role,
                 cardNumber: u.cardNumber, dateNaissance: u.dateNaissance,
                 bio: u.role === 'student' ? 'IGEE Student' : (u.role === 'worker' ? 'IGEE Staff / Worker' : `${u.role} at IGEE`),
                 photo: null, savedPosts: [], isAdmin: u.role === 'admin',
-                institut: 'IGEE', createdAt: serverTimestamp()
+                institut: 'IGEE', 
+                niveau: u.niveau, 
+                groupe: u.groupe,
+                createdAt: serverTimestamp()
             });
+            
             await setDoc(doc(db, 'allowed_cards', u.cardNumber), {
                 cardNumber: u.cardNumber, prenom: u.prenom, nom: u.nom,
                 role: u.role, dateNaissance: u.dateNaissance, email: u.email,
@@ -1411,6 +1481,7 @@ async function runImport(raw) {
         }
     }
     try { await deleteApp(secondaryApp); } catch(e) {}
+    
     resultsEl.innerHTML = `
         <div style="background:linear-gradient(135deg,#42b72a,#369b23);color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
             ✅ ${successes.length} account(s) created successfully
@@ -1423,6 +1494,71 @@ async function runImport(raw) {
             ⚠️ ${parseErrors.length} line(s) skipped (format)
         </div>` : ''}`;
     btn.disabled = false; btn.textContent = '📥 Import Users';
+}
+
+
+// NOUVELLE FONCTION MAGIQUE : Mise à jour de masse (Niveau + Spécialité + Groupe)
+async function updateAllMassively() {
+    const raw = document.getElementById('update-all-data').value.trim();
+    if (!raw) return toast('Colle d\'abord tes données', 'error');
+    
+    const btn = document.getElementById('update-all-btn');
+    btn.disabled = true; btn.textContent = 'Mise à jour en cours...';
+    
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+    let successCount = 0;
+    let failCount = 0;
+    let errors = [];
+
+    for (const line of lines) {
+        const parts = line.split('|').map(s => s.trim());
+        if (parts.length < 4) {
+            errors.push(`Ligne ignorée (il manque des infos) : ${line}`);
+            continue;
+        }
+        const cardNumber = parts[0];
+        const niveau = parts[1];
+        const specialite = parts[2];
+        const groupe = parts[3];
+
+        try {
+            const q = query(collection(db, 'users'), where('cardNumber', '==', cardNumber));
+            const snap = await getDocs(q);
+            
+            if (snap.empty) {
+                failCount++;
+                errors.push(`Étudiant introuvable : ${cardNumber}`);
+                continue;
+            }
+            
+            const docId = snap.docs[0].id;
+            await updateDoc(doc(db, 'users', docId), { 
+                niveau: niveau,
+                specialite: specialite,
+                groupe: groupe
+            });
+            successCount++;
+            
+        } catch (err) {
+            failCount++;
+            errors.push(`Erreur carte ${cardNumber} : ${err.message}`);
+        }
+    }
+
+    btn.disabled = false; btn.textContent = '🚀 Mettre à jour (Niveau/Spé/Groupe)';
+    
+    document.getElementById('update-all-results').innerHTML = `
+        <div style="background:linear-gradient(135deg,#42b72a,#369b23);color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
+            ✅ ${successCount} étudiant(s) mis à jour avec succès.
+        </div>
+        ${failCount > 0 ? `<div style="background:#ffebe8;color:#c92a2a;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
+            ❌ ${failCount} échec(s) :
+            <ul style="margin-top:8px;padding-left:20px;max-height:150px;overflow-y:auto;">
+                ${errors.map(e => `<li>${esc(e)}</li>`).join('')}
+            </ul>
+        </div>` : ''}
+    `;
+    toast('Mise à jour terminée !', 'success');
 }
 
 /* ============ RENDER HOME ============ */
@@ -1451,14 +1587,33 @@ function loadPostsRealtime() {
     const q = query(collection(db,'posts'), orderBy('createdAt','desc'), limit(50));
     onSnapshot(q, (snap) => { if (snap.empty) { feed.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>No posts yet.</p></div>`; return; } renderPosts(snap.docs.map(d => ({ id:d.id, ...d.data() }))); });
 }
+
+// CORRECTION DU BUG DES "??" (Auteurs introuvables)
 async function renderPosts(posts) {
     const feed = document.getElementById('posts-feed'); if (!feed) return;
-    const ids = [...new Set(posts.map(p => p.userId))]; const authors = {};
-    for (const id of ids) { const s = await getDoc(doc(db,'users',id)); if (s.exists()) authors[id] = { id, ...s.data() }; }
-    feed.innerHTML = posts.map(p => postHTML(p, authors[p.userId] || { prenom:'?', nom:'?' })).join('');
-    attachPostEvents(); posts.forEach(p => loadCommentsRealtime(p.id));
+    
+    const authors = {};
+    for (const p of posts) {
+        if (!authors[p.userId]) {
+            try {
+                const s = await getDoc(doc(db,'users',p.userId));
+                if (s.exists()) {
+                    authors[p.userId] = { id: p.userId, ...s.data() };
+                } else {
+                    authors[p.userId] = { prenom: 'Utilisateur', nom: 'supprimé' };
+                }
+            } catch (e) {
+                authors[p.userId] = { prenom: 'Utilisateur', nom: 'supprimé' };
+            }
+        }
+    }
+    
+    feed.innerHTML = posts.map(p => postHTML(p, authors[p.userId])).join('');
+    attachPostEvents(); 
+    posts.forEach(p => loadCommentsRealtime(p.id));
     attachLightboxListeners();
 }
+
 function postHTML(post, author) {
     const reactionsObj = post.reactions || {};
     const likesArr = post.likes || [];
@@ -1699,12 +1854,14 @@ function activityItemHTML(item, idx) {
     return `<div class="activity-item"><div class="act-icon-wrap"><img class="act-avatar" src="${avatar}"><span class="act-badge ${cls}">${badge}</span></div><div class="act-body"><div class="act-title">${title}<span class="type-label">${label}</span></div>${content?`<div class="act-content">${content}</div>`:''}<div class="act-meta"><span>🕐 ${relTime}</span>${meta.map(m=>`<span>${m}</span>`).join('')}</div><div class="act-actions"><button class="act-action-btn act-delete danger" data-id="${delId}" data-type="${type}">🗑️ Remove</button></div></div></div>`;
 }
 
+// CORRECTION DU BUG "Loading..." (Posts infinis)
 async function renderProfile(userId) {
     const me = currentUserData; if (!me) return;
     const isMe = userId === currentUser.uid;
     const snap = await getDoc(doc(db,'users',userId));
     if (!snap.exists()) { toast('User not found', 'error'); return Router.navigate('/home'); }
     const user = { id: userId, ...snap.data() };
+    
     document.getElementById('app').innerHTML = `
         ${navbarHTML(me, 'profile')}
         <div style="max-width:800px;margin:20px auto;padding:0 15px;">
@@ -1719,15 +1876,29 @@ async function renderProfile(userId) {
             <h3 style="margin:20px 0 12px;color:var(--text-secondary);font-size:14px;text-transform:uppercase;">Posts</h3>
             <div id="profile-posts"><div class="loading">Loading...</div></div>
         </div>`;
-    const postsQ = query(collection(db,'posts'),where('userId','==',userId),orderBy('createdAt','desc'));
+        
+    const postsQ = query(collection(db,'posts'),where('userId','==',userId));
     onSnapshot(postsQ, async (snap) => {
         const posts = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        posts.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+        
         const container = document.getElementById('profile-posts'); if (!container) return;
-        if (!posts.length) { container.innerHTML = '<div class="empty-state"><div class="emoji">📝</div><p>No posts</p></div>'; return; }
+        
+        if (!posts.length) { 
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="emoji">📝</div>
+                    <p>No posts yet</p>
+                    <p style="font-size:13px;margin-top:6px">When ${esc(user.prenom)} publishes something, it will appear here.</p>
+                </div>`; 
+            return; 
+        }
+        
         container.innerHTML = posts.map(p => postHTML(p, user)).join('');
         attachPostEvents(); posts.forEach(p => loadCommentsRealtime(p.id));
         attachLightboxListeners();
     });
+    
     attachHomeEvents(true);
     if (isMe) attachProfileEvents(user);
     if (!isMe) document.getElementById('msg-user-btn')?.addEventListener('click', () => openConversationWithUser(userId));
@@ -1873,7 +2044,7 @@ async function renderGroupDetail(groupId) {
     const snap = await getDoc(doc(db,'groups',groupId)); if (!snap.exists()) { toast('Not found','error'); return Router.navigate('/groups'); }
     const g = { id: groupId, ...snap.data() };
     const isCreator = g.creatorId === currentUser.uid;
-    const canManage = isCreator || me.isAdmin; // L'admin OU le créateur peut gérer
+    const canManage = isCreator || me.isAdmin;
     const members = g.members || []; const isMember = members.some(m => m.uid === currentUser.uid);
     const clubInfo = getClubIdentity(g.name);
     const isClubGroup = !!clubInfo;
@@ -1896,7 +2067,6 @@ async function renderGroupDetail(groupId) {
                     <div class="gr-actions">
                         <button class="btn-join ${isMember?'joined':''}" id="join-group-btn">${isMember?'✓ Joined':(g.privacy==='private'?'🔒 Request to Join':'➕ Join Group')}</button>
                         
-                        <!-- NOUVEAU BOUTON TRANSFÉRER -->
                         ${canManage ? `<button class="btn-transfer" id="transfer-group-btn" style="background:#1877f2;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;">🔄 Transférer la propriété</button>` : ''}
                         
                         ${canManage ? `<button class="btn-delete" id="delete-group-btn">🗑️ Delete Group</button>` : ''}
@@ -1907,7 +2077,6 @@ async function renderGroupDetail(groupId) {
         </div>`;
     attachHomeEvents(true);
 
-    // Logique pour rejoindre/quitter
     document.getElementById('join-group-btn')?.addEventListener('click', async () => {
         try { 
             const ref = doc(db,'groups',groupId); 
@@ -1923,16 +2092,13 @@ async function renderGroupDetail(groupId) {
         } catch(err) { toast('Error','error'); }
     });
 
-    // Logique pour SUPPRIMER
     document.getElementById('delete-group-btn')?.addEventListener('click', async () => { 
         const ok = await confirmDialog('Delete group?', 'Cannot be undone.', 'Delete'); 
         if (!ok) return; 
         try { await deleteDoc(doc(db,'groups',groupId)); toast('Deleted','success'); Router.navigate('/groups'); } catch {} 
     });
 
-    // NOUVELLE LOGIQUE : TRANSFÉRER LA PROPRIÉTÉ
     document.getElementById('transfer-group-btn')?.addEventListener('click', async () => {
-        // On ne peut pas transférer si on est le seul membre
         const eligibleMembers = members.filter(m => m.uid !== g.creatorId);
         if (eligibleMembers.length === 0) {
             return toast('Le club doit avoir d\'autres membres pour pouvoir transférer.', 'error');
@@ -1964,7 +2130,7 @@ async function renderGroupDetail(groupId) {
                 creatorName: `${newOwner.prenom} ${newOwner.nom}`
             });
             toast('Propriété transférée avec succès ! 🎉', 'success');
-            renderGroupDetail(groupId); // Recharger la page
+            renderGroupDetail(groupId); 
         } catch(err) {
             toast('Erreur lors du transfert : ' + err.message, 'error');
         }
@@ -2037,6 +2203,7 @@ async function renderAnnouncements() {
                 <div class="announcements-toolbar">
                     <div class="announcements-filters">
                         <button class="announcements-filter active" data-ann-filter="all">📋 All</button>
+                        <button class="announcements-filter my-target" data-ann-filter="my-target">🎯 My Schedule</button>
                         <button class="announcements-filter urgent" data-ann-filter="urgent">🚨 Urgent</button>
                         <button class="announcements-filter high" data-ann-filter="high">⚠️ Important</button>
                         <button class="announcements-filter pinned" data-ann-filter="pinned">📌 Pinned</button>
@@ -2073,9 +2240,25 @@ function loadAnnouncementsRealtime() {
 function renderAnnouncementsList(filter) {
     const list = document.getElementById('announcements-list'); if (!list) return;
     let items = [..._allAnnouncements];
-    if (filter === 'urgent') items = items.filter(a => a.priority === 'urgent');
-    else if (filter === 'high') items = items.filter(a => a.priority === 'high');
-    else if (filter === 'pinned') items = items.filter(a => a.pinned);
+    
+    // --- FILTRE "MY SCHEDULE" ---
+    if (filter === 'my-target') {
+        const myLevel = currentUserData.niveau || 'L1';
+        const myGroup = currentUserData.groupe || '';
+        items = items.filter(a => {
+            if (!a.targetLevel) return false;
+            if (a.targetLevel !== myLevel) return false;
+            if (a.targetGroup && a.targetGroup !== myGroup) return false;
+            return true;
+        });
+    } else if (filter === 'urgent') {
+        items = items.filter(a => a.priority === 'urgent');
+    } else if (filter === 'high') {
+        items = items.filter(a => a.priority === 'high');
+    } else if (filter === 'pinned') {
+        items = items.filter(a => a.pinned);
+    }
+
     items.sort((a, b) => {
         if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
         const pOrder = { urgent: 0, high: 1, normal: 2 };
@@ -2083,21 +2266,47 @@ function renderAnnouncementsList(filter) {
         if (pa !== pb) return pa - pb;
         return (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0);
     });
+
     if (!items.length) {
         list.innerHTML = `<div class="announcements-empty"><div class="emoji">📢</div><h3>No announcements ${filter !== 'all' ? 'in this category' : 'yet'}</h3><p>${currentUserData.isAdmin ? 'Click "New Announcement" to create the first one.' : 'Check back later for updates.'}</p></div>`;
         return;
     }
+
     const isAdmin = !!currentUserData.isAdmin;
     list.innerHTML = items.map(a => {
         const p = ANN_PRIORITY[a.priority] || ANN_PRIORITY.normal;
         const author = { prenom: a.creatorPrenom || 'IGEE', nom: a.creatorNom || 'Admin', photo: a.creatorPhoto };
         const avatar = author.photo || initialsAvatar(author.prenom, author.nom);
+        
+        // --- BADGES DE CIBLAGE ---
+        let targetBadges = '';
+        if (a.targetLevel) {
+            let audienceText = a.targetLevel;
+            if (a.targetField) audienceText += ` - ${a.targetField}`;
+            if (a.targetGroup) audienceText += ` - ${a.targetGroup}`;
+            targetBadges += `<span class="ann-target-badge audience">🎯 ${audienceText}</span>`;
+        }
+        if (a.targetRoom) {
+            targetBadges += `<span class="ann-target-badge location">📍 ${a.targetRoom}</span>`;
+        }
+        if (a.targetDay || a.targetDate || a.targetTime) {
+            let scheduleText = '';
+            if (a.targetDay) scheduleText += a.targetDay;
+            if (a.targetDate) {
+                const d = new Date(a.targetDate);
+                scheduleText += ` ${d.toLocaleDateString('fr-FR')}`; 
+            }
+            if (a.targetTime) scheduleText += ` à ${a.targetTime}`;
+            targetBadges += `<span class="ann-target-badge schedule">📅 ${scheduleText}</span>`;
+        }
+
         return `<div class="announcement-card ${p.cls}" data-ann-id="${a.id}">
             <div class="announcement-head">
                 <span class="announcement-priority ${p.cls}">${p.icon} ${p.label}</span>
                 ${a.pinned ? '<span class="announcement-pin-badge">📌 Pinned</span>' : ''}
             </div>
             <div class="announcement-title">${esc(a.title)}</div>
+            ${targetBadges ? `<div class="announcement-target-badges">${targetBadges}</div>` : ''}
             <div class="announcement-content">${linkify(a.content)}${a.image ? `<img src="${a.image}">` : ''}</div>
             <div class="announcement-meta">
                 <div class="announcement-author"><img src="${avatar}"><span>${esc(author.prenom + ' ' + author.nom)}</span></div>
@@ -2109,6 +2318,7 @@ function renderAnnouncementsList(filter) {
             </div>
         </div>`;
     }).join('');
+    
     list.querySelectorAll('[data-ann-del]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -2129,15 +2339,75 @@ function renderAnnouncementsList(filter) {
 async function createAnnouncement() {
     const me = currentUserData;
     if (!me?.isAdmin) return toast('Only admins can create announcements', 'error');
+    
+    const levels = ['L1', 'L2', 'L3', 'M1', 'M2'];
+    const fields = ['TRONC COMMUN', 'COMPUTER', 'CONTROL', 'IED', 'IEM', 'POWER', 'TELECOM'];
+    const groups = ['G01', 'G02', 'G03', 'G04', 'G05', 'G06', 'G07', 'G08', 'G09', 'G10', 'G11', 'G12', 'G13', 'G14', 'G15', 'G16'];
+    const rooms = ['AMPHI 1', 'AMPHI 2', 'AMPHI 3', 'AMPHI 4', 'A207', 'A108', 'A113', 'A201', 'A205', 'A209', 'B001', 'B005', 'B007', 'B301', 'B312', 'C104', 'C107', 'LS-B214'];
+    const days = ['Samedi', 'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi'];
+
     const data = await openFormModal('📢 New Announcement', `
         <label>Title *</label>
-        <input type="text" name="title" placeholder="e.g. Exam Schedule Updated" required maxlength="120">
+        <input type="text" name="title" placeholder="e.g. Examen Important L1 G4" required maxlength="120">
+        
         <label>Priority *</label>
         <select name="priority" required>
             <option value="normal">📢 Normal</option>
             <option value="high">⚠️ Important</option>
             <option value="urgent">🚨 Urgent</option>
         </select>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+                <label>Target Level</label>
+                <select name="targetLevel">
+                    <option value="">All Levels</option>
+                    ${levels.map(l => `<option value="${l}">${l}</option>`).join('')}
+                </select>
+            </div>
+            <div>
+                <label>Target Field</label>
+                <select name="targetField">
+                    <option value="">All Fields</option>
+                    ${fields.map(f => `<option value="${f}">${f}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+        
+        <label>Target Group</label>
+        <select name="targetGroup">
+            <option value="">All Groups</option>
+            ${groups.map(g => `<option value="${g}">${g}</option>`).join('')}
+        </select>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
+            <div>
+                <label>Room / Location</label>
+                <select name="targetRoom">
+                    <option value="">No specific room</option>
+                    ${rooms.map(r => `<option value="${r}">${r}</option>`).join('')}
+                </select>
+            </div>
+            <div>
+                <label>Day</label>
+                <select name="targetDay">
+                    <option value="">No specific day</option>
+                    ${days.map(d => `<option value="${d}">${d}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+                <label>Specific Date</label>
+                <input type="date" name="targetDate">
+            </div>
+            <div>
+                <label>Time</label>
+                <input type="time" name="targetTime">
+            </div>
+        </div>
+
         <label>Content *</label>
         <textarea name="content" placeholder="Write your announcement..." required></textarea>
         <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-primary);">
@@ -2147,7 +2417,9 @@ async function createAnnouncement() {
             <button type="button" class="btn-cancel">Cancel</button>
             <button type="submit" class="btn-submit">Publish</button>
         </div>`);
+        
     if (!data || !data.title?.trim() || !data.content?.trim()) return;
+    
     try {
         await addDoc(collection(db, 'announcements'), {
             title: data.title.trim(),
@@ -2155,6 +2427,13 @@ async function createAnnouncement() {
             priority: data.priority || 'normal',
             pinned: data.pinned === 'on',
             image: null,
+            targetLevel: data.targetLevel || null,
+            targetField: data.targetField || null,
+            targetGroup: data.targetGroup || null,
+            targetRoom: data.targetRoom || null,
+            targetDay: data.targetDay || null,
+            targetDate: data.targetDate || null,
+            targetTime: data.targetTime || null,
             creatorId: currentUser.uid,
             creatorPrenom: me.prenom,
             creatorNom: me.nom,
@@ -2257,7 +2536,6 @@ function getPromotionColor(promo) {
 async function renderLibrary() {
     const me = currentUserData; if (!me) return;
     
-    // AJOUTÉ : Réinitialiser les filtres
     currentPromoFilter = 'all';
     currentLibFilter = 'all';
     currentLibSearch = '';
@@ -2521,7 +2799,6 @@ async function openBookDetail(book) {
     document.body.style.overflow = 'hidden';
     const close = () => { modal.classList.remove('active'); document.body.style.overflow = ''; };
     
-    // CORRIGÉ : Remplacement de onclick pour éviter l'accumulation d'écouteurs
     document.getElementById('book-detail-close-btn').onclick = close;
     modal.onclick = (e) => { if (e.target === modal) close(); };
     
@@ -2546,6 +2823,13 @@ function mobileDrawerHTML(me, active) {
                 <div class="email">${esc(me.email || '')}</div>
             </div>
             <button class="mobile-drawer-close" id="mobile-drawer-close">✕</button>
+        </div>
+        <!-- BARRE DE RECHERCHE MOBILE -->
+        <div class="mobile-search-wrap">
+            <div style="position: relative;">
+                <input type="text" id="mobile-search-input" placeholder="🔍 Search users..." style="width: 100%; padding: 10px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-input); color: var(--text-primary); font-size: 14px; outline: none;">
+                <div id="mobile-search-dropdown" class="search-dropdown" style="top: 45px; width: 100%;"></div>
+            </div>
         </div>
         <div class="mobile-drawer-menu">
             <a href="#/profile/${me.id}" class="menu-item ${active==='profile'?'active':''}"><span class="icon">👤</span> My Profile</a>
@@ -2752,7 +3036,6 @@ function attachPostEvents() {
     });
     document.querySelectorAll('.share-btn').forEach(btn => { btn.onclick = async () => { const url = window.location.origin + window.location.pathname + '#/home'; try { if (navigator.share) await navigator.share({ title:'IGEE Social', url }); else { await navigator.clipboard.writeText(url); toast('Link copied!','success'); } } catch(e) {} }; });
     
-    // CORRIGÉ : Éviter les fuites de mémoire en n'ajoutant le listener qu'une seule fois
     if (!window._postClickAttached) {
         window._postClickAttached = true;
         document.addEventListener('click', () => { document.querySelectorAll('.post-dropdown.active').forEach(d => d.classList.remove('active')); });
