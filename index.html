@@ -903,26 +903,31 @@ function attachLightboxListeners() {
     });
 }
 
-// ============ NOUVELLE FONCTION : ARRÊT AUTOMATIQUE DES VIDÉOS ============
+// ============ NOUVELLE FONCTION : ARRÊT AUTOMATIQUE DES VIDÉOS (MÉTHODE RADICALE) ============
 function setupAutoPauseForVideos() {
     const videoIframes = document.querySelectorAll('.youtube-preview iframe');
     
     videoIframes.forEach(iframe => {
+        // On s'assure de ne pas ajouter l'événement plusieurs fois
         if (iframe.dataset.pauseListenerAttached) return;
         iframe.dataset.pauseListenerAttached = 'true';
 
-        // Quand l'utilisateur clique sur l'iframe pour lancer la vidéo
         iframe.addEventListener('click', () => {
+            // On parcourt toutes les autres vidéos
             document.querySelectorAll('.youtube-preview iframe').forEach(otherIframe => {
                 if (otherIframe !== iframe) {
-                    // On envoie la commande de pause via l'API YouTube
-                    otherIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    // MÉTHODE RADICALE : On sauvegarde l'URL, on vide l'iframe, puis on remet l'URL
+                    const currentSrc = otherIframe.src;
+                    otherIframe.src = ''; // Coupe le son et la vidéo instantanément
+                    setTimeout(() => {
+                        otherIframe.src = currentSrc; // Remet la vidéo (elle sera en pause)
+                    }, 100); // Un petit délai de 100ms
                 }
             });
         });
     });
 }
-// =========================================================================
+// =========================================================================// =========================================================================
 
 const SearchHistory = { key:'igee_search_history', add(term){ if(!term||term.length<2)return; try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); h.unshift({term,at:Date.now()}); h=h.slice(0,30); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){} }, getAll(){try{return JSON.parse(localStorage.getItem(this.key)||'[]');}catch{return [];}}, remove(term){try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){}} };
 
