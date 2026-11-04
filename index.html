@@ -782,7 +782,10 @@ const showLoading = () => document.getElementById('loading-bar')?.classList.add(
 const hideLoading = () => setTimeout(() => document.getElementById('loading-bar')?.classList.remove('active'), 400);
 const extractYouTubeId = (url) => { const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/, /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/]; for (const p of patterns) { const m = url.match(p); if (m) return m[1]; } return null; };
 const getDomain = (url) => { try { return new URL(url).hostname.replace('www.', ''); } catch { return ''; } };
-const linkify = (text) => { const safe = esc(text); const urlRegex = /(https?:\/\/[^\s<]+)/g; const urls = [...safe.matchAll(urlRegex)].map(m => m[1]); let result = safe.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'); const previews = []; const seen = new Set(); for (const url of urls) { const cu = url.replace(/[.,;:!?)]+$/, ''); const yt = extractYouTubeId(cu); if (yt && !seen.has(yt)) { seen.add(yt); previews.push(`<div class="youtube-preview"><iframe src="https://www.youtube.com/embed/${yt}" allow="accelerometer; autoplay; clipboard-write; encrypted-media" allowfullscreen loading="lazy"></iframe></div>`); } else if (!yt) { const d = getDomain(cu); previews.push(`<a href="${cu}" target="_blank" rel="noopener noreferrer" class="link-preview"><div class="lp-header"><div class="lp-domain">🔗 ${esc(d)}</div><div class="lp-title">${esc(cu)}</div></div></a>`); } } return result + previews.join(''); };
+
+// MODIFICATION ICI : Ajout de ?enablejsapi=1 pour permettre le contrôle via postMessage
+const linkify = (text) => { const safe = esc(text); const urlRegex = /(https?:\/\/[^\s<]+)/g; const urls = [...safe.matchAll(urlRegex)].map(m => m[1]); let result = safe.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'); const previews = []; const seen = new Set(); for (const url of urls) { const cu = url.replace(/[.,;:!?)]+$/, ''); const yt = extractYouTubeId(cu); if (yt && !seen.has(yt)) { seen.add(yt); previews.push(`<div class="youtube-preview"><iframe src="https://www.youtube.com/embed/${yt}?enablejsapi=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media" allowfullscreen loading="lazy"></iframe></div>`); } else if (!yt) { const d = getDomain(cu); previews.push(`<a href="${cu}" target="_blank" rel="noopener noreferrer" class="link-preview"><div class="lp-header"><div class="lp-domain">🔗 ${esc(d)}</div><div class="lp-title">${esc(cu)}</div></div></a>`); } } return result + previews.join(''); };
+
 const timeAgo = (ts) => { if (!ts) return "just now"; const d = ts.toDate ? ts.toDate() : new Date(ts); const df = (Date.now() - d.getTime()) / 1000; if (df < 60) return "just now"; if (df < 3600) return `${Math.floor(df/60)} min ago`; if (df < 86400) return `${Math.floor(df/3600)} h ago`; if (df < 604800) return `${Math.floor(df/86400)} d ago`; return d.toLocaleDateString('en-US', {day:'2-digit', month:'short', year:'numeric'}); };
 const initialsAvatar = (prenom, nom) => { const i = ((prenom?.[0] || '') + (nom?.[0] || '')).toUpperCase(); const colors = ['#1877f2','#42b72a','#e91e63','#ff9800','#9c27b0','#00bcd4']; const color = colors[((prenom||'').length + (nom||'').length) % colors.length]; const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" fill="${color}"/><text x="50%" y="52%" font-family="Arial" font-size="52" fill="white" text-anchor="middle" dominant-baseline="middle" font-weight="bold">${i}</text></svg>`; return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg); };
 const toast = (msg, type = '') => { const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; c.appendChild(t); setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(() => t.remove(), 300); }, 3500); };
@@ -899,6 +902,27 @@ function attachLightboxListeners() {
         img.onclick = (e) => { e.stopPropagation(); const post = img.closest('.post'); const images = [...post.querySelectorAll('.post-content img')].map(i => i.src); const idx = images.indexOf(img.src); Lightbox.open(img.src, images, idx >= 0 ? idx : 0); };
     });
 }
+
+// ============ NOUVELLE FONCTION : ARRÊT AUTOMATIQUE DES VIDÉOS ============
+function setupAutoPauseForVideos() {
+    const videoIframes = document.querySelectorAll('.youtube-preview iframe');
+    
+    videoIframes.forEach(iframe => {
+        if (iframe.dataset.pauseListenerAttached) return;
+        iframe.dataset.pauseListenerAttached = 'true';
+
+        // Quand l'utilisateur clique sur l'iframe pour lancer la vidéo
+        iframe.addEventListener('click', () => {
+            document.querySelectorAll('.youtube-preview iframe').forEach(otherIframe => {
+                if (otherIframe !== iframe) {
+                    // On envoie la commande de pause via l'API YouTube
+                    otherIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                }
+            });
+        });
+    });
+}
+// =========================================================================
 
 const SearchHistory = { key:'igee_search_history', add(term){ if(!term||term.length<2)return; try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); h.unshift({term,at:Date.now()}); h=h.slice(0,30); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){} }, getAll(){try{return JSON.parse(localStorage.getItem(this.key)||'[]');}catch{return [];}}, remove(term){try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){}} };
 
@@ -1612,6 +1636,9 @@ async function renderPosts(posts) {
     attachPostEvents(); 
     posts.forEach(p => loadCommentsRealtime(p.id));
     attachLightboxListeners();
+    
+    // APPEL DE LA FONCTION POUR ARRÊTER LES VIDÉOS
+    setupAutoPauseForVideos();
 }
 
 function postHTML(post, author) {
@@ -1787,6 +1814,9 @@ async function renderSaved() {
     container.innerHTML = posts.map(p => postHTML(p, authors[p.userId] || { prenom:'?', nom:'?' })).join('');
     attachPostEvents(); posts.forEach(p => loadCommentsRealtime(p.id));
     attachLightboxListeners();
+    
+    // AJOUT POUR LES VIDÉOS ICI AUSSI
+    setupAutoPauseForVideos();
 }
 
 async function renderActivityLog() {
@@ -1897,6 +1927,9 @@ async function renderProfile(userId) {
         container.innerHTML = posts.map(p => postHTML(p, user)).join('');
         attachPostEvents(); posts.forEach(p => loadCommentsRealtime(p.id));
         attachLightboxListeners();
+        
+        // AJOUT POUR LES VIDÉOS ICI AUSSI
+        setupAutoPauseForVideos();
     });
     
     attachHomeEvents(true);
@@ -2471,53 +2504,78 @@ const BOOK_PROMOTIONS = {
     L1: { label: 'L1 — 1st Year',   icon: '🎓', color: '#1877f2' },
     L2: { label: 'L2 — 2nd Year',   icon: '🎓', color: '#42b72a' },
     L3: { label: 'L3 — 3rd Year',   icon: '🎓', color: '#ff9800' },
-    M1: { label: 'M1 — Master 1',   icon: '🎓', color: '#9c27b0' }
+    M1: { label: 'M1 — Master 1',   icon: '🎓', color: '#9c27b0' },
+    M2: { label: 'M2 — Master 2',   icon: '🎓', color: '#e91e63' }
 };
 
 const PROMOTION_SUBJECTS = {
     L1: [
-        { value: 'algorithm',   label: 'Algorithm',                 icon: '💻' },
-        { value: 'chemistry',   label: 'Chemistry',                 icon: '🧪' },
-        { value: 'electricity', label: 'Electricity',               icon: '⚡' },
-        { value: 'math',        label: 'Math (Algebra + Calculus)', icon: '📐' },
-        { value: 'novel',       label: 'Novel',                     icon: '📖' },
-        { value: 'physics',     label: 'Physics',                   icon: '⚛️' },
-        { value: 'english',     label: 'English Grammar',           icon: '🌍' }
+        { value: 'maths_1',            label: 'Maths I',                                  icon: '📐' },
+        { value: 'algorithmic',        label: 'Algorithmic',                              icon: '💻' },
+        { value: 'physics_1',          label: 'Physics I',                                icon: '⚛️' },
+        { value: 'english_1',          label: 'English I',                                icon: '🌍' },
+        { value: 'writing_methods',    label: 'Writing Methods',                          icon: '📝' },
+        { value: 'ethics_deontology',  label: 'Ethics and Deontology',                    icon: '⚖️' }
     ],
     L2: [
-        { value: 'active_devices',    label: 'Active Devices',          icon: '⚡' },
-        { value: 'diff_eq',           label: 'Differential Equations',  icon: '📐' },
-        { value: 'digital_systems',   label: 'Digital Systems',         icon: '💻' },
-        { value: 'economics',         label: 'Economics',               icon: '📊' },
-        { value: 'electric_machines', label: 'Electric Machines',       icon: '🔌' },
-        { value: 'electrical_eng',    label: 'Electrical Engineering',  icon: '⚡' },
-        { value: 'emf',               label: 'EMF',                     icon: '📡' },
-        { value: 'linear_systems',    label: 'Linear Systems',          icon: '🎛️' },
-        { value: 'vibrations_waves',  label: 'Vibrations and Waves',    icon: '🌊' }
+        { value: 'maths_2',            label: 'Maths II',                                 icon: '📐' },
+        { value: 'maths_3',            label: 'Maths III',                                icon: '📐' },
+        { value: 'physics_2',          label: 'Physics II',                               icon: '⚛️' },
+        { value: 'chemistry_2',        label: 'Chemistry II',                             icon: '🧪' },
+        { value: 'electrical_eng_1',   label: 'Electrical Engineering I',                 icon: '⚡' },
+        { value: 'intro_programming',  label: 'Introduction to Programming',              icon: '💻' },
+        { value: 'english_2',          label: 'English II',                               icon: '🌍' },
+        { value: 'oral_presentation',  label: 'Oral Presentation',                        icon: '🗣️' }
     ],
     L3: [
-        { value: 'comm_principles',   label: 'Communication Principles',           icon: '📡' },
-        { value: 'comm_circuits',     label: 'Communications Circuits',            icon: '📡' },
-        { value: 'computer_arch',     label: 'Computer Architecture',              icon: '💻' },
-        { value: 'energy_systems',    label: 'Energy Systems',                     icon: '🔋' },
-        { value: 'eng_mgmt',          label: 'Engineering Management',             icon: '📊' },
-        { value: 'linear_control',    label: 'Linear Control Systems',             icon: '🎛️' },
-        { value: 'linear_systems_2',  label: 'Linear Systems II',                  icon: '🎛️' },
-        { value: 'microprocessor',    label: 'Microprocessor Systems Design',      icon: '💾' },
-        { value: 'power_electronics', label: 'Power Electronics',                  icon: '⚡' },
-        { value: 'process_control',   label: 'Process Control and Instrumentation',icon: '🎛️' },
-        { value: 'z80',               label: 'The Z80 Microprocessor',             icon: '💾' }
+        { value: 'maths_4',            label: 'Maths IV',                                 icon: '📐' },
+        { value: 'physics_3',          label: 'Physics III',                              icon: '⚛️' },
+        { value: 'numerical_methods',  label: 'Numerical Methods',                        icon: '🔢' },
+        { value: 'active_devices_1',   label: 'Active Devices I',                         icon: '🔌' },
+        { value: 'digital_systems_1',  label: 'Digital Systems I',                        icon: '💾' },
+        { value: 'electrical_eng_2',   label: 'Electrical Engineering II',                icon: '⚡' },
+        { value: 'probability_stats',  label: 'Probability and Statistics',               icon: '📊' },
+        { value: 'linear_systems_1',   label: 'Linear systems I',                         icon: '🎛️' },
+        { value: 'active_devices_2',   label: 'Active Devices II',                        icon: '🔌' },
+        { value: 'digital_systems_2',  label: 'Digital Systems II',                       icon: '💾' },
+        { value: 'electric_machines',  label: 'Electric Machines',                        icon: '⚙️' },
+        { value: 'info_comm_tech',     label: 'Information and Communication Techniques', icon: '📡' },
+        { value: 'linear_systems_2',   label: 'Linear Systems II',                        icon: '🎛️' },
+        { value: 'electromagnetic_field',label: 'Electromagnetic Field Theory',           icon: '🧲' },
+        { value: 'computer_architecture',label: 'Computer Architecture',                  icon: '🖥️' },
+        { value: 'power_electronics',  label: 'Power Electronics',                        icon: '⚡' },
+        { value: 'process_control',    label: 'Process Control and Instrumentation',      icon: '🎛️' },
+        { value: 'pcb_design',         label: 'Printed-Circuit Boards design',            icon: '🔌' },
+        { value: 'linear_control',     label: 'Linear Control Systems',                   icon: '🎛️' },
+        { value: 'comm_principles',    label: 'Communication Principles',                 icon: '📡' },
+        { value: 'energy_systems',     label: 'Energy Systems',                           icon: '🔋' },
+        { value: 'microprocessor_sys', label: 'Microprocessor Systems',                   icon: '💾' },
+        { value: 'entrepreneurship',   label: 'Entrepreneurship and business management', icon: '📊' }
     ],
     M1: [
-        { value: 'power_analysis',  label: 'Power System Analysis (Hadi Sadat)', icon: '🔌' },
-        { value: 'microwave_amp',   label: 'Microwave Transistor Amplifiers',    icon: '📡' },
-        { value: 'william',         label: 'William',                            icon: '📚' },
-        { value: 'dtsp',            label: 'Discrete-Time Signal Processing',    icon: '📊' },
-        { value: 'dtsp_solutions',  label: 'DTSP Solution Manual',               icon: '📊' },
-        { value: 'power_elements',  label: 'Elements of Power System Analysis',  icon: '🔌' }
+        { value: 'digital_control',    label: 'Digital Control Systems',                  icon: '🎛️' },
+        { value: 'adv_math_control',   label: 'Advanced Mathematics for Control',         icon: '📐' },
+        { value: 'sys_modeling',       label: 'System Modelling and Identification',      icon: '⚙️' },
+        { value: 'digital_signal_proc',label: 'Digital Signal Processing',                icon: '📊' },
+        { value: 'sensors_actuators',  label: 'Sensors and Actuators',                    icon: '🛠️' },
+        { value: 'sim_software',       label: 'Simulation Softwares for Control',         icon: '💻' },
+        { value: 'applied_optimization',label: 'Applied Optimization',                    icon: '📈' },
+        { value: 'applied_ai',         label: 'Applied Artificial Intelligence',          icon: '🤖' },
+        { value: 'industrial_automation',label: 'Industrial Automation',                  icon: '🏭' },
+        { value: 'nonlinear_sys',      label: 'Nonlinear Systems and Control',            icon: '🎛️' },
+        { value: 'multivariable_ctrl', label: 'Multivariable Control Systems',            icon: '🎛️' },
+        { value: 'ethics_integrity',   label: 'Standards and Rules of Ethics',            icon: '⚖️' }
+    ],
+    M2: [
+        { value: 'robotics_control',   label: 'Robotics and Control',                     icon: '🤖' },
+        { value: 'industrial_networks',label: 'Industrial Networks',                      icon: '🌐' },
+        { value: 'adaptive_predictive',label: 'Adaptive & Predictive Control',            icon: '🎛️' },
+        { value: 'adv_control_sys',    label: 'Advanced Control Systems',                 icon: '🎛️' },
+        { value: 'industrial_instr',   label: 'Industrial Instrumentation',               icon: '🛠️' },
+        { value: 'project_management', label: 'Project Management',                       icon: '📋' },
+        { value: 'comm_skills',        label: 'Communication Skills',                     icon: '🗣️' }
     ]
 };
-
 function getSubjectInfo(promotion, categoryValue) {
     const subjects = PROMOTION_SUBJECTS[promotion] || [];
     const found = subjects.find(s => s.value === categoryValue);
@@ -2615,6 +2673,7 @@ async function renderLibrary() {
     loadLibraryRealtime();
 }
 
+let booksToShow = 20; 
 function loadLibraryRealtime() {
     const grid = document.getElementById('library-grid'); if (!grid) return;
     if (_libUnsub) _libUnsub();
@@ -2644,10 +2703,27 @@ function renderLibraryList() {
         grid.innerHTML = `<div class="library-empty" style="grid-column:1/-1;"><div class="emoji">📚</div><h3>${_allBooks.length === 0 ? 'Library is empty' : 'No results'}</h3><p>${_allBooks.length === 0 ? 'Be the first to add a book!' : 'Try another search or filter.'}</p></div>`;
         return;
     }
-    grid.innerHTML = items.map(b => bookCardHTML(b)).join('');
+       const itemsToShow = items.slice(0, booksToShow);
+    
+    grid.innerHTML = itemsToShow.map(b => bookCardHTML(b)).join('');
     grid.querySelectorAll('.library-card').forEach((card, i) => {
-        card.addEventListener('click', () => openBookDetail(items[i]));
+        card.addEventListener('click', () => openBookDetail(itemsToShow[i]));
     });
+
+    // Ajout du bouton "Charger plus"
+    if (booksToShow < items.length) {
+        const btnHTML = `<div style="grid-column: 1 / -1; text-align: center; margin-top: 20px;">
+            <button id="load-more-books-btn" style="padding: 12px 24px; background: var(--bg-card); color: #673ab7; border: 2px solid #673ab7; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s;">
+                ⬇️ Charger plus de livres
+            </button>
+        </div>`;
+        grid.innerHTML += btnHTML;
+        
+        document.getElementById('load-more-books-btn').addEventListener('click', () => {
+            booksToShow += 20; // On ajoute 20 livres
+            renderLibraryList(); // On réaffiche la liste
+        });
+    }
 }
 
 function bookCardHTML(b) {
@@ -2990,7 +3066,7 @@ function attachPostEvents() {
                 const authorSnap = await getDoc(doc(db, 'users', newData.userId));
                 const author = authorSnap.exists() ? { id: authorSnap.id, ...authorSnap.data() } : { prenom:'?', nom:'?' };
                 const postEl = document.querySelector(`.post[data-post-id="${postId}"]`);
-                if (postEl) { const temp = document.createElement('div'); temp.innerHTML = postHTML(newData, author); postEl.replaceWith(temp.firstElementChild); attachPostEvents(); attachLightboxListeners(); loadCommentsRealtime(postId); }
+                if (postEl) { const temp = document.createElement('div'); temp.innerHTML = postHTML(newData, author); postEl.replaceWith(temp.firstElementChild); attachPostEvents(); attachLightboxListeners(); loadCommentsRealtime(postId); setupAutoPauseForVideos(); }
             }
         } catch(err) { toast('Error: ' + err.message, 'error'); }
     }
@@ -3061,7 +3137,7 @@ async function toggleSavePost(postId) {
                 const authorSnap = await getDoc(doc(db, 'users', data.userId));
                 const author = authorSnap.exists() ? { id: authorSnap.id, ...authorSnap.data() } : { prenom:'?', nom:'?' };
                 const temp = document.createElement('div'); temp.innerHTML = postHTML(data, author); postEl.replaceWith(temp.firstElementChild);
-                attachPostEvents(); attachLightboxListeners(); loadCommentsRealtime(postId);
+                attachPostEvents(); attachLightboxListeners(); loadCommentsRealtime(postId); setupAutoPauseForVideos();
             }
         }
     } catch(err) { toast('Error: ' + err.message, 'error'); }
