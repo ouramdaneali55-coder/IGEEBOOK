@@ -903,7 +903,7 @@ function attachLightboxListeners() {
     });
 }
 
-// ============ NOUVELLE FONCTION : ARRÊT AUTOMATIQUE DES VIDÉOS (MÉTHODE RADICALE) ============
+// ============ FONCTION OFFICIELLE : ARRÊT AUTOMATIQUE DES VIDÉOS ============
 function setupAutoPauseForVideos() {
     const videoIframes = document.querySelectorAll('.youtube-preview iframe');
     
@@ -916,17 +916,17 @@ function setupAutoPauseForVideos() {
             // On parcourt toutes les autres vidéos
             document.querySelectorAll('.youtube-preview iframe').forEach(otherIframe => {
                 if (otherIframe !== iframe) {
-                    // MÉTHODE RADICALE : On sauvegarde l'URL, on vide l'iframe, puis on remet l'URL
-                    const currentSrc = otherIframe.src;
-                    otherIframe.src = ''; // Coupe le son et la vidéo instantanément
-                    setTimeout(() => {
-                        otherIframe.src = currentSrc; // Remet la vidéo (elle sera en pause)
-                    }, 100); // Un petit délai de 100ms
+                    // On envoie la commande officielle à l'API YouTube
+                    otherIframe.contentWindow.postMessage(
+                        '{"event":"command","func":"pauseVideo","args":""}', 
+                        '*'
+                    );
                 }
             });
         });
     });
 }
+// =========================================================================
 // =========================================================================// =========================================================================
 
 const SearchHistory = { key:'igee_search_history', add(term){ if(!term||term.length<2)return; try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); h.unshift({term,at:Date.now()}); h=h.slice(0,30); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){} }, getAll(){try{return JSON.parse(localStorage.getItem(this.key)||'[]');}catch{return [];}}, remove(term){try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){}} };
