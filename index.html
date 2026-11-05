@@ -610,6 +610,35 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .btn-delete-book{background:#ffebe8;color:#d93025;}
 
 /* ============ MOBILE DRAWER MENU ============ */
+/* ============ JOLI BOUTON TIMETABLE ============ */
+.menu-item.timetable-item {
+    background: linear-gradient(135deg, rgba(66, 183, 42, 0.15), rgba(24, 119, 242, 0.15));
+    border-left: 3px solid #42b72a;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.menu-item.timetable-item:hover {
+    background: linear-gradient(135deg, rgba(66, 183, 42, 0.3), rgba(24, 119, 242, 0.3));
+    transform: translateX(6px);
+    box-shadow: 0 4px 12px rgba(66, 183, 42, 0.2);
+}
+.menu-item.timetable-item .icon {
+    animation: float 3s ease-in-out infinite;
+}
+.menu-item.timetable-item::after {
+    content: '→';
+    position: absolute;
+    right: 15px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    color: #42b72a;
+    font-weight: bold;
+}
+.menu-item.timetable-item:hover::after {
+    opacity: 1;
+    right: 10px;
+}
 .mobile-menu-btn{display:none;width:40px;height:40px;border-radius:50%;background:var(--bg-input);color:var(--text-primary);border:none;cursor:pointer;font-size:22px;align-items:center;justify-content:center;flex-shrink:0;margin-right:8px;line-height:1;}
 .mobile-menu-btn:hover{background:var(--bg-hover);}
 .mobile-drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1500;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease;backdrop-filter:blur(2px);}
@@ -2917,6 +2946,9 @@ function mobileDrawerHTML(me, active) {
             <a href="#/clubs" class="menu-item clubs-item ${active==='clubs'?'active':''}"><span class="icon">🏆</span> Official Clubs</a>
             <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}"><span class="icon">📢</span> Announcements</a>
             ${me.isAdmin ? `<a href="#/admin/import" class="menu-item ${active==='admin'?'active':''}"><span class="icon">👥</span> Import Users</a>` : ''}
+                        <a href="https://igeebook.univ-boumerdes.dz/timetable.html" target="_blank" class="menu-item timetable-item">
+                <span class="icon">📅</span> Timetable
+            </a>
         </div>
         <div class="mobile-drawer-footer">
             <button class="mobile-drawer-logout" id="mobile-drawer-logout"><span class="icon">🚪</span> Logout</button>
@@ -2988,6 +3020,10 @@ function sidebarLeftHTML(me, active) {
         <a href="#/clubs" class="menu-item clubs-item ${active==='clubs'?'active':''}"><span class="icon">🏆</span> <strong>Official Clubs</strong></a>
         <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}" style="${active==='announcements'?'background:rgba(24,119,242,.15);color:#1877f2;':''}"><span class="icon">📢</span> Announcements</a>
         ${me.isAdmin ? `<a href="#/admin/import" class="menu-item ${active==='admin'?'active':''}" style="${active==='admin'?'background:rgba(217,48,37,.15);color:#d93025;':''}"><span class="icon">👥</span> <strong>Import Users</strong></a>` : ''}
+                <!-- JOLI BOUTON TIMETABLE -->
+        <a href="https://igeebook.univ-boumerdes.dz/timetable.html" target="_blank" class="menu-item timetable-item">
+            <span class="icon">📅</span> <strong>Timetable</strong>
+        </a>
     </div>`;
 }
 function sidebarRightHTML() { return `<div class="sidebar sidebar-right"><h3>IGEE Members</h3><div id="members-list"><div class="loading">Loading...</div></div></div>`; }
