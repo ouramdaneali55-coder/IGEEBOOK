@@ -2730,27 +2730,36 @@ function renderLibraryList() {
         grid.innerHTML = `<div class="library-empty" style="grid-column:1/-1;"><div class="emoji">📚</div><h3>${_allBooks.length === 0 ? 'Library is empty' : 'No results'}</h3><p>${_allBooks.length === 0 ? 'Be the first to add a book!' : 'Try another search or filter.'}</p></div>`;
         return;
     }
-       const itemsToShow = items.slice(0, booksToShow);
     
-    grid.innerHTML = itemsToShow.map(b => bookCardHTML(b)).join('');
-    grid.querySelectorAll('.library-card').forEach((card, i) => {
-        card.addEventListener('click', () => openBookDetail(itemsToShow[i]));
-    });
-
-    // Ajout du bouton "Charger plus"
+    const itemsToShow = items.slice(0, booksToShow);
+    
+    // 1. On prépare TOUT le HTML (livres + bouton) en une seule fois
+    let html = itemsToShow.map(b => bookCardHTML(b)).join('');
+    
     if (booksToShow < items.length) {
-        const btnHTML = `<div style="grid-column: 1 / -1; text-align: center; margin-top: 20px;">
+        html += `<div style="grid-column: 1 / -1; text-align: center; margin-top: 20px;">
             <button id="load-more-books-btn" style="padding: 12px 24px; background: var(--bg-card); color: #673ab7; border: 2px solid #673ab7; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s;">
                 ⬇️ Charger plus de livres
             </button>
         </div>`;
-        grid.innerHTML += btnHTML;
-        
-        document.getElementById('load-more-books-btn').addEventListener('click', () => {
-            booksToShow += 20; // On ajoute 20 livres
-            renderLibraryList(); // On réaffiche la liste
-        });
     }
+    
+    // 2. On injecte tout le HTML d'un seul coup
+    grid.innerHTML = html;
+    
+    // 3. On attache les clics après l'injection (ce qui ne casse plus les boutons)
+    grid.querySelectorAll('.library-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            const bookId = card.dataset.bookId;
+            const book = itemsToShow.find(b => b.id === bookId);
+            if (book) openBookDetail(book);
+        });
+    });
+    
+    document.getElementById('load-more-books-btn')?.addEventListener('click', () => {
+        booksToShow += 20;
+        renderLibraryList();
+    });
 }
 
 function bookCardHTML(b) {
