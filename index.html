@@ -802,7 +802,7 @@ const firebaseConfig = {
 const VAPID_KEY = "BKKFSH-sI6SIdAeKMdgy5-yhHMuJG56KF17o3xsJ4o6z7xIa4sKeOh40SWGbNtGONGC6j2gQcK01fR7VnhUupTI";
 
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, query, where, orderBy, limit, onSnapshot, serverTimestamp, updateDoc, deleteDoc, arrayUnion, arrayRemove, increment, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
@@ -937,6 +937,33 @@ function normalizeDOB(dob) {
         if (asDDMM && asMMDD) return yyyy2 + mm2 + dd2;
     }
     return str;
+}
+
+/* ============ VALIDATION DATE DE NAISSANCE ============ */
+function validateDOB(d1) {
+    if (!/^\d{8}$/.test(d1)) return { ok: false, error: 'Date invalide. Format JJ/MM/AAAA.' };
+    const y = parseInt(d1.slice(0, 4), 10), m = parseInt(d1.slice(4, 6), 10), d = parseInt(d1.slice(6, 8), 10);
+    if (y < 1960 || y > 2030) return { ok: false, error: "Année entre 1960 et 2030." };
+    if (m < 1 || m > 12) return { ok: false, error: 'Mois entre 01 et 12.' };
+    if (d < 1 || d > 31) return { ok: false, error: 'Jour entre 01 et 31.' };
+    const dt = new Date(y, m - 1, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return { ok: false, error: "Date inexistante." };
+    if (dt > new Date()) return { ok: false, error: 'Date dans le futur.' };
+    return { ok: true };
+}
+
+/* ============ VALIDATION MOT DE PASSE ============ */
+function validateStrongPassword(pwd) {
+    if (!pwd || typeof pwd !== 'string') return { ok: false, error: 'Mot de passe requis.' };
+    if (pwd.length < 8) return { ok: false, error: 'Minimum 8 caractères.' };
+    if (pwd.length > 128) return { ok: false, error: 'Maximum 128 caractères.' };
+    if (!/[a-zA-Z]/.test(pwd)) return { ok: false, error: 'Ajoute au moins une lettre.' };
+    if (!/\d/.test(pwd)) return { ok: false, error: 'Ajoute au moins un chiffre.' };
+    if (currentUserData) {
+        const dob = normalizeDOB(currentUserData.dateNaissance || '');
+        if (dob && normalizeDOB(pwd) === dob) return { ok: false, error: 'Différent de ta date de naissance.' };
+    }
+    return { ok: true };
 }
 
 function cardToEmail(cardNumber) {
@@ -1383,6 +1410,10 @@ const Router = {
     async handle() {
         showLoading(); closeNotifPanel(); closeMobileDrawer();
         const hash = window.location.hash.replace(/^#/, '') || '/';
+               if (hash !== '/forgot-password' && window._resetFlow) {
+            window._resetFlow = false;
+            signOut(auth).catch(() => {});
+        }
         try {
             if (hash.startsWith('/profile/')) { await Router.routes['/profile'](hash.split('/')[2]); return; }
             if (hash.startsWith('/group/')) { await Router.routes['/group'](hash.split('/')[2]); return; }
@@ -1429,6 +1460,9 @@ function renderLogin() {
                 <input type="text" name="cardNumber" placeholder="Card Number" required maxlength="20" style="letter-spacing:1px;">
                 <input type="text" name="dateNaissance" placeholder="Password" required>
                 <button type="submit" id="login-btn">Sign In</button>
+                                <div class="link" style="margin-top:14px;">
+                    <a href="#/forgot-password">Mot de passe oublié ?</a>
+                </div>
             </form>
         </div>
     </div>`;
@@ -1447,13 +1481,15 @@ function renderLogin() {
         }
 
         const email = cardToEmail(cardNumber);
-        const password = normalizeDOB(dob);
-
-        btn.disabled = true; 
+                btn.disabled = true; 
         btn.textContent = 'Signing in...';
         
         try { 
-            await signInWithEmailAndPassword(auth, email, password); 
+            try {
+                await signInWithEmailAndPassword(auth, email, normalizeDOB(dob));
+            } catch (err1) {
+                await signInWithEmailAndPassword(auth, email, dob);
+            }
             toast('Welcome! 🎉', 'success'); 
         } catch(err) {
             const errorMessages = {
@@ -1467,6 +1503,140 @@ function renderLogin() {
         
         btn.disabled = false; 
         btn.textContent = 'Sign In';
+    });
+}
+
+/* ============ MOT DE PASSE OUBLIÉ ============ */
+function renderForgotPassword() {
+    window._resetFlow = true;
+    document.getElementById('app').innerHTML = `<div class="auth-page">
+        <div class="auth-logos-row"><div class="igee-logo-3d auth-logo-3d">${IGEE_LOGO_SVG}</div></div>
+        <div class="auth-slogan">Réinitialisation du mot de passe</div>
+        <div class="auth-box" style="width:460px;">
+            <h2>🔑 Mot de passe oublié</h2>
+            <div id="fp-msg"></div>
+            <div id="fp-step1">
+                <form id="fp-form">
+                    <input type="text" name="cardNumber" placeholder="Numéro de carte" required maxlength="20" style="letter-spacing:1px;">
+                    <input type="text" name="nom" placeholder="Votre nom de famille" required>
+                    <button type="submit" id="fp-btn">Vérifier mon identité</button>
+                </form>
+            </div>
+            <div id="fp-step2" style="display:none;">
+                <p style="font-size:13px;color:#65676b;margin-bottom:12px;text-align:center;line-height:1.6;">
+                    ✅ Identité vérifiée : <b id="fp-name"></b><br>
+                    Choisissez votre <b>nouvelle date de naissance</b>.<br>
+                    <span style="font-size:12px;">Elle deviendra votre mot de passe de secours.</span>
+                </p>
+                <form id="fp-form2">
+                    <input type="text" name="newDob" placeholder="Nouvelle date (ex: 15/03/2005)" required>
+                    <input type="text" name="newDob2" placeholder="Confirmez la date" required>
+                    <button type="submit" id="fp-btn2">Changer le mot de passe</button>
+                </form>
+            </div>
+            <div class="link"><a href="#/">← Retour à la connexion</a></div>
+        </div>
+    </div>`;
+
+    document.getElementById('fp-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const card = fd.get('cardNumber').trim();
+        const nom = fd.get('nom').trim().toLowerCase();
+        const btn = document.getElementById('fp-btn');
+        const msg = document.getElementById('fp-msg');
+        btn.disabled = true; btn.textContent = 'Vérification...';
+        try {
+            const snap = await getDocs(query(collection(db, 'users'), where('cardNumber', '==', card)));
+            if (snap.empty) throw new Error('Aucun compte trouvé.');
+            const u = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            if ((u.nom || '').trim().toLowerCase() !== nom) throw new Error('Le nom ne correspond pas.');
+            const currentPwd = u.customPassword || normalizeDOB(u.dateNaissance);
+            await signInWithEmailAndPassword(auth, cardToEmail(card), currentPwd);
+            document.getElementById('fp-step1').style.display = 'none';
+            document.getElementById('fp-step2').style.display = '';
+            document.getElementById('fp-name').textContent = `${u.prenom} ${u.nom}`;
+        } catch (err) {
+            msg.innerHTML = `<div class="error-msg">${esc(err.message)}</div>`;
+        }
+        btn.disabled = false; btn.textContent = 'Vérifier mon identité';
+    });
+
+    document.getElementById('fp-form2').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const d1 = normalizeDOB(fd.get('newDob'));
+        const d2 = normalizeDOB(fd.get('newDob2'));
+        const btn = document.getElementById('fp-btn2');
+        const msg = document.getElementById('fp-msg');
+        btn.disabled = true; btn.textContent = 'Changement...';
+        try {
+            const v = validateDOB(d1);
+            if (!v.ok) throw new Error(v.error);
+            if (d1 !== d2) throw new Error('Les dates ne correspondent pas.');
+            await updatePassword(auth.currentUser, d1);
+            await updateDoc(doc(db, 'users', auth.currentUser.uid), { customPassword: d1 });
+            document.getElementById('fp-step2').innerHTML = `<div style="background:#e7f6e7;color:#1b5e20;padding:14px;border-radius:8px;font-size:14px;text-align:center;line-height:1.7;">
+                ✅ Mot de passe changé !<br>Votre nouveau mot de passe : <code style="background:#fff;padding:3px 10px;border-radius:4px;font-weight:bold;">${d1}</code>
+            </div>`;
+            setTimeout(async () => {
+                window._resetFlow = false;
+                try { await signOut(auth); } catch(e) {}
+                Router.navigate('/');
+            }, 2500);
+        } catch (err) {
+            msg.innerHTML = `<div class="error-msg">${esc(err.message)}</div>`;
+            btn.disabled = false; btn.textContent = 'Changer le mot de passe';
+        }
+    });
+}
+
+/* ============ CHANGER MON MOT DE PASSE (connecté) ============ */
+async function renderChangePassword() {
+    const me = currentUserData; if (!me) return;
+    document.getElementById('app').innerHTML = `
+        ${navbarHTML(me, 'profile')}
+        <div style="max-width:560px;margin:30px auto;padding:0 15px;">
+            <div style="background:var(--bg-card);border-radius:12px;padding:26px;box-shadow:0 1px 3px var(--shadow);">
+                <h2 style="margin-bottom:8px;">🔐 Changer mon mot de passe</h2>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6;">
+                    Règles : <b>8 caractères minimum</b>, avec au moins une lettre et un chiffre.
+                </p>
+                <div id="cp-msg"></div>
+                <form id="cp-form" style="display:flex;flex-direction:column;gap:10px;">
+                    <input type="password" name="currentPwd" placeholder="Mot de passe actuel" required autocomplete="current-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
+                    <input type="password" name="newPwd" placeholder="Nouveau mot de passe" required autocomplete="new-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
+                    <input type="password" name="newPwd2" placeholder="Confirmer" required autocomplete="new-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
+                    <button type="submit" id="cp-btn" style="background:#1877f2;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:15px;margin-top:6px;">Enregistrer</button>
+                </form>
+                <div class="link" style="margin-top:16px;"><a href="#/profile/${me.id}">← Retour au profil</a></div>
+            </div>
+        </div>`;
+    attachHomeEvents(true);
+    document.getElementById('cp-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const btn = document.getElementById('cp-btn');
+        const msg = document.getElementById('cp-msg');
+        btn.disabled = true; btn.textContent = 'Enregistrement...';
+        try {
+            const newPwd = fd.get('newPwd');
+            if (newPwd !== fd.get('newPwd2')) throw new Error('Les mots de passe ne correspondent pas.');
+            const v = validateStrongPassword(newPwd);
+            if (!v.ok) throw new Error(v.error);
+            const cred = EmailAuthProvider.credential(auth.currentUser.email, fd.get('currentPwd'));
+            await reauthenticateWithCredential(auth.currentUser, cred);
+            await updatePassword(auth.currentUser, newPwd);
+            await updateDoc(doc(db, 'users', auth.currentUser.uid), { customPassword: newPwd });
+            currentUserData.customPassword = newPwd;
+            toast('✅ Mot de passe changé !', 'success');
+            msg.innerHTML = `<div style="background:#e7f6e7;color:#1b5e20;padding:12px;border-radius:8px;font-size:14px;text-align:center;">✅ Mot de passe mis à jour.</div>`;
+            e.target.reset();
+        } catch (err) {
+            const map = { 'auth/wrong-password': 'Mot de passe actuel incorrect.', 'auth/invalid-credential': 'Mot de passe actuel incorrect.', 'auth/requires-recent-login': 'Reconnecte-toi.' };
+            msg.innerHTML = `<div class="error-msg">${map[err.code] || esc(err.message)}</div>`;
+        }
+        btn.disabled = false; btn.textContent = 'Enregistrer';
     });
 }
 
@@ -1990,7 +2160,7 @@ async function renderProfile(userId) {
                 <h2 style="margin-top:10px;font-size:26px;">${esc(user.prenom+' '+user.nom)}</h2>
                 <p style="color:var(--text-secondary);margin-top:6px;">${esc(user.bio||'No bio')}</p>
                 <p style="font-size:13px;color:var(--text-tertiary);margin-top:8px;">📧 ${esc(user.email)}</p>
-                ${isMe ? `<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);"><h3 style="margin-bottom:12px;font-size:16px;">Edit My Profile</h3><form id="profile-form" style="display:flex;flex-direction:column;gap:10px;"><label style="font-size:14px;color:var(--text-secondary);">Profile Picture</label><input type="file" name="photo" accept="image/*"><input type="text" name="bio" placeholder="Your bio..." value="${esc(user.bio||'')}" style="padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;background:var(--bg-input);color:var(--text-primary);"><button type="submit" id="save-profile-btn" style="align-self:flex-start;background:#1877f2;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:bold;">Save</button></form></div>` : `<button id="msg-user-btn" style="margin-top:15px;background:#1877f2;color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-weight:bold;">💬 Send Message</button>`}
+                ${isMe ? `<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);"><a href="#/change-password" style="display:inline-block;background:linear-gradient(135deg,#e91e63,#c2185b);color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:16px;">🔐 Changer mon mot de passe</a><h3 style="margin-bottom:12px;font-size:16px;">Edit My Profile</h3><form id="profile-form" style="display:flex;flex-direction:column;gap:10px;"><label style="font-size:14px;color:var(--text-secondary);">Profile Picture</label><input type="file" name="photo" accept="image/*"><input type="text" name="bio" placeholder="Your bio..." value="${esc(user.bio||'')}" style="padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;background:var(--bg-input);color:var(--text-primary);"><button type="submit" id="save-profile-btn" style="align-self:flex-start;background:#1877f2;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:bold;">Save</button></form></div>` : `<button id="msg-user-btn" style="margin-top:15px;background:#1877f2;color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-weight:bold;">💬 Send Message</button>`}
             </div>
             <h3 style="margin:20px 0 12px;color:var(--text-secondary);font-size:14px;text-transform:uppercase;">Posts</h3>
             <div id="profile-posts"><div class="loading">Loading...</div></div>
@@ -3358,6 +3528,14 @@ Router.register('/group', (id) => { if (!currentUser) Router.navigate('/'); else
 Router.register('/clubs', () => { if (!currentUser) Router.navigate('/'); else renderClubs(); });
 Router.register('/announcements', () => { if (!currentUser) Router.navigate('/'); else renderAnnouncements(); });
 Router.register('/library', () => { if (!currentUser) Router.navigate('/'); else renderLibrary(); });
+Router.register('/forgot-password', () => {
+    if (currentUser && !window._resetFlow) Router.navigate('/home');
+    else renderForgotPassword();
+});
+Router.register('/change-password', () => {
+    if (!currentUser) Router.navigate('/');
+    else renderChangePassword();
+});
 Router.register('/admin/import', () => {
     if (!currentUser) return Router.navigate('/');
     if (!currentUserData?.isAdmin) { toast('Access denied', 'error'); return Router.navigate('/home'); }
@@ -3368,6 +3546,7 @@ window.addEventListener('hashchange', () => Router.handle());
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
+               if (window._resetFlow) return;
         currentUser = user;
         currentUserData = await loadUserData(user.uid);
         Theme.init();
