@@ -470,7 +470,7 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .announcements-filter.high.active{background:linear-gradient(135deg,#ff9800,#f57c00);}
 .announcements-filter.pinned.active{background:linear-gradient(135deg,#ffd700,#ff9800);color:#fff;}
 
-/* ADD MY SCHEDULE BUTTON */
+/* AJOUT DU BOUTON MY SCHEDULE */
 .announcements-filter.my-target {
     background: linear-gradient(135deg, #e91e63, #c2185b);
     color: #fff;
@@ -496,7 +496,7 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .announcement-pin-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:bold;padding:4px 10px;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9800);color:#fff;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 8px rgba(255,152,0,.35);}
 .announcement-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
 
-/* NEW TARGETING BADGES */
+/* NOUVEAUX BADGES DE CIBLAGE */
 .announcement-target-badges {
     display: flex;
     flex-wrap: wrap;
@@ -610,7 +610,7 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .btn-delete-book{background:#ffebe8;color:#d93025;}
 
 /* ============ MOBILE DRAWER MENU ============ */
-/* ============ PRETTY TIMETABLE BUTTON ============ */
+/* ============ JOLI BOUTON TIMETABLE ============ */
 .menu-item.timetable-item {
     background: linear-gradient(135deg, rgba(66, 183, 42, 0.15), rgba(24, 119, 242, 0.15));
     border-left: 3px solid #42b72a;
@@ -663,7 +663,7 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .mobile-drawer-logout:hover{background:#ffebe8;}
 .mobile-drawer-logout .icon{font-size:22px;width:30px;text-align:center;}
 
-/* ADDING MOBILE SEARCH BAR */
+/* AJOUT DE LA BARRE DE RECHERCHE MOBILE */
 .mobile-search-wrap { padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg-card); flex-shrink: 0; }
 
 @media (max-width:1100px){.container{grid-template-columns:240px 1fr;}.sidebar-right{display:none;}}
@@ -674,7 +674,7 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 @media (max-width:400px){.navbar .nav-icons button#theme-toggle-btn{display:none;}.mobile-bottom-nav .mbn-item span:not(.mbn-icon):not(.mbn-badge){font-size:10px;}.chat-msg{font-size:13.5px;}.post-actions button{font-size:12px;}.library-grid{grid-template-columns:repeat(2,1fr);gap:8px;padding:8px;}.book-title{font-size:12.5px;}.library-filter{padding:7px 10px;font-size:11.5px;}}
 @media (prefers-reduced-motion:reduce){.auth-page,.auth-page::after,.auth-box,.auth-box input,.auth-box button,.auth-logo-3d,.announcements-hero,.announcements-hero .hero-icon,.home-announcement-banner .hab-icon,.library-hero,.library-hero .hero-icon{animation:none !important;}}
 
-/* ============ ANNOUNCEMENT EDIT MODAL ============ */
+/* ============ MODAL D'ÉDITION D'ANNONCE ============ */
 .edit-ann-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
     display: none; align-items: center; justify-content: center; 
@@ -718,25 +718,25 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 <button id="install-btn">📱 Install App</button>
 <div id="chat-windows-container"></div>
 
-<!-- Window to Edit an Announcement -->
+<!-- Fenêtre pour Modifier une Annonce -->
 <div class="edit-ann-overlay" id="edit-ann-modal">
     <div class="edit-ann-modal">
-        <h3>✏️ Edit Announcement</h3>
+        <h3>✏️ Modifier l'annonce</h3>
         <form id="edit-ann-form">
             <input type="hidden" id="edit-ann-id">
-            <label>Title</label>
+            <label>Titre</label>
             <input type="text" id="edit-ann-title" required>
-            <label>Priority</label>
+            <label>Priorité</label>
             <select id="edit-ann-priority">
                 <option value="normal">📢 Normal</option>
                 <option value="high">⚠️ Important</option>
                 <option value="urgent">🚨 Urgent</option>
             </select>
-            <label>Content</label>
+            <label>Contenu</label>
             <textarea id="edit-ann-content" required></textarea>
             <div class="btn-row">
-                <button type="button" class="btn-cancel" id="edit-ann-cancel">Cancel</button>
-                <button type="submit" class="btn-save" id="edit-ann-save-btn">Save</button>
+                <button type="button" class="btn-cancel" id="edit-ann-cancel">Annuler</button>
+                <button type="submit" class="btn-save" id="edit-ann-save-btn">Enregistrer</button>
             </div>
         </form>
     </div>
@@ -881,22 +881,22 @@ const formatBytes = (bytes) => { if (!bytes) return ''; if (bytes < 1024) return
 function normalizeDOB(dob) {
     if (!dob) return '';
     
-    // 1. Clean possible time
+    // 1. Nettoyer l'heure éventuelle
     let cleanInput = String(dob).trim().split(/[\sT]/)[0];
     
-    // 2. Format with separators (/, -, .)
+    // 2. Format avec séparateurs (/, -, .)
     const parts = cleanInput.split(/[\/\-\.]/).filter(Boolean);
     if (parts.length === 3) {
         let year, month, day;
-        // If year is at the beginning (e.g. 1979/04/24)
+        // Si l'année est au début (ex: 1979/04/24)
         if (parts[0].length === 4) {
             year = parts[0]; 
             month = parseInt(parts[1]); 
             day = parseInt(parts[2]);
-            // SECURITY ADD: If month is > 12, swap it with day
+            // AJOUT DE SÉCURITÉ : Si le mois est > 12, on l'inverse avec le jour
             if (month > 12 && day <= 12) { let temp = month; month = day; day = temp; }
         } 
-        // If year is at the end (e.g. 24/04/1979)
+        // Si l'année est à la fin (ex: 24/04/1979)
         else if (parts[2].length === 4) {
             year = parts[2];
             let p1 = parseInt(parts[0]); let p2 = parseInt(parts[1]);
@@ -904,18 +904,18 @@ function normalizeDOB(dob) {
             else if (p2 > 12) { month = p1; day = p2; }
             else { day = p1; month = p2; }
         } 
-        // If 2-digit year (e.g. 24/04/79)
+        // Si l'année sur 2 chiffres (ex: 24/04/79)
         else {
             year = parseInt(parts[2]) > 30 ? '19' + parts[2] : '20' + parts[2];
             day = parseInt(parts[0]); 
             month = parseInt(parts[1]);
-            // SECURITY ADD
+            // AJOUT DE SÉCURITÉ
             if (month > 12 && day <= 12) { let temp = month; month = day; day = temp; }
         }
         return `${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`;
     }
 
-    // 3. Format 8 attached digits
+    // 3. Format 8 chiffres collés
     let str = cleanInput.replace(/\D/g, '');
     if (str.length === 8) {
         const isValidDate = (y, m, d) => {
@@ -939,29 +939,29 @@ function normalizeDOB(dob) {
     return str;
 }
 
-/* ============ DATE OF BIRTH VALIDATION ============ */
+/* ============ VALIDATION DATE DE NAISSANCE ============ */
 function validateDOB(d1) {
-    if (!/^\d{8}$/.test(d1)) return { ok: false, error: 'Invalid date. Format DD/MM/YYYY.' };
+    if (!/^\d{8}$/.test(d1)) return { ok: false, error: 'Date invalide. Format JJ/MM/AAAA.' };
     const y = parseInt(d1.slice(0, 4), 10), m = parseInt(d1.slice(4, 6), 10), d = parseInt(d1.slice(6, 8), 10);
-    if (y < 1960 || y > 2030) return { ok: false, error: "Year between 1960 and 2030." };
-    if (m < 1 || m > 12) return { ok: false, error: 'Month between 01 and 12.' };
-    if (d < 1 || d > 31) return { ok: false, error: 'Day between 01 and 31.' };
+    if (y < 1960 || y > 2030) return { ok: false, error: "Année entre 1960 et 2030." };
+    if (m < 1 || m > 12) return { ok: false, error: 'Mois entre 01 et 12.' };
+    if (d < 1 || d > 31) return { ok: false, error: 'Jour entre 01 et 31.' };
     const dt = new Date(y, m - 1, d);
-    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return { ok: false, error: "Non-existent date." };
-    if (dt > new Date()) return { ok: false, error: 'Date in the future.' };
+    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return { ok: false, error: "Date inexistante." };
+    if (dt > new Date()) return { ok: false, error: 'Date dans le futur.' };
     return { ok: true };
 }
 
-/* ============ PASSWORD VALIDATION ============ */
+/* ============ VALIDATION MOT DE PASSE ============ */
 function validateStrongPassword(pwd) {
-    if (!pwd || typeof pwd !== 'string') return { ok: false, error: 'Password required.' };
-    if (pwd.length < 8) return { ok: false, error: 'Minimum 8 characters.' };
-    if (pwd.length > 128) return { ok: false, error: 'Maximum 128 characters.' };
-    if (!/[a-zA-Z]/.test(pwd)) return { ok: false, error: 'Add at least one letter.' };
-    if (!/\d/.test(pwd)) return { ok: false, error: 'Add at least one number.' };
+    if (!pwd || typeof pwd !== 'string') return { ok: false, error: 'Mot de passe requis.' };
+    if (pwd.length < 8) return { ok: false, error: 'Minimum 8 caractères.' };
+    if (pwd.length > 128) return { ok: false, error: 'Maximum 128 caractères.' };
+    if (!/[a-zA-Z]/.test(pwd)) return { ok: false, error: 'Ajoute au moins une lettre.' };
+    if (!/\d/.test(pwd)) return { ok: false, error: 'Ajoute au moins un chiffre.' };
     if (currentUserData) {
         const dob = normalizeDOB(currentUserData.dateNaissance || '');
-        if (dob && normalizeDOB(pwd) === dob) return { ok: false, error: 'Different from your date of birth.' };
+        if (dob && normalizeDOB(pwd) === dob) return { ok: false, error: 'Différent de ta date de naissance.' };
     }
     return { ok: true };
 }
@@ -1015,17 +1015,20 @@ function attachLightboxListeners() {
     });
 }
 
-// ============ OFFICIAL FUNCTION: AUTO-PAUSE VIDEOS ============
+// ============ FONCTION OFFICIELLE : ARRÊT AUTOMATIQUE DES VIDÉOS ============
 function setupAutoPauseForVideos() {
     const videoIframes = document.querySelectorAll('.youtube-preview iframe');
     
     videoIframes.forEach(iframe => {
+        // On s'assure de ne pas ajouter l'événement plusieurs fois
         if (iframe.dataset.pauseListenerAttached) return;
         iframe.dataset.pauseListenerAttached = 'true';
 
         iframe.addEventListener('click', () => {
+            // On parcourt toutes les autres vidéos
             document.querySelectorAll('.youtube-preview iframe').forEach(otherIframe => {
                 if (otherIframe !== iframe) {
+                    // On envoie la commande officielle à l'API YouTube
                     otherIframe.contentWindow.postMessage(
                         '{"event":"command","func":"pauseVideo","args":""}', 
                         '*'
@@ -1407,7 +1410,7 @@ const Router = {
     async handle() {
         showLoading(); closeNotifPanel(); closeMobileDrawer();
         const hash = window.location.hash.replace(/^#/, '') || '/';
-        if (hash !== '/forgot-password' && window._resetFlow) {
+               if (hash !== '/forgot-password' && window._resetFlow) {
             window._resetFlow = false;
             signOut(auth).catch(() => {});
         }
@@ -1457,8 +1460,8 @@ function renderLogin() {
                 <input type="text" name="cardNumber" placeholder="Card Number" required maxlength="20" style="letter-spacing:1px;">
                 <input type="text" name="dateNaissance" placeholder="Password" required>
                 <button type="submit" id="login-btn">Sign In</button>
-                <div class="link" style="margin-top:14px;">
-                    <a href="#/forgot-password">Forgot password?</a>
+                                <div class="link" style="margin-top:14px;">
+                    <a href="#/forgot-password">Mot de passe oublié ?</a>
                 </div>
             </form>
         </div>
@@ -1478,7 +1481,7 @@ function renderLogin() {
         }
 
         const email = cardToEmail(cardNumber);
-        btn.disabled = true; 
+                btn.disabled = true; 
         btn.textContent = 'Signing in...';
         
         try { 
@@ -1503,35 +1506,35 @@ function renderLogin() {
     });
 }
 
-/* ============ FORGOT PASSWORD ============ */
+/* ============ MOT DE PASSE OUBLIÉ ============ */
 function renderForgotPassword() {
     window._resetFlow = true;
     document.getElementById('app').innerHTML = `<div class="auth-page">
         <div class="auth-logos-row"><div class="igee-logo-3d auth-logo-3d">${IGEE_LOGO_SVG}</div></div>
-        <div class="auth-slogan">Password Reset</div>
+        <div class="auth-slogan">Réinitialisation du mot de passe</div>
         <div class="auth-box" style="width:460px;">
-            <h2>🔑 Forgot Password</h2>
+            <h2>🔑 Mot de passe oublié</h2>
             <div id="fp-msg"></div>
             <div id="fp-step1">
                 <form id="fp-form">
-                    <input type="text" name="cardNumber" placeholder="Card Number" required maxlength="20" style="letter-spacing:1px;">
-                    <input type="text" name="nom" placeholder="Your last name" required>
-                    <button type="submit" id="fp-btn">Verify my identity</button>
+                    <input type="text" name="cardNumber" placeholder="Numéro de carte" required maxlength="20" style="letter-spacing:1px;">
+                    <input type="text" name="nom" placeholder="Votre nom de famille" required>
+                    <button type="submit" id="fp-btn">Vérifier mon identité</button>
                 </form>
             </div>
             <div id="fp-step2" style="display:none;">
                 <p style="font-size:13px;color:#65676b;margin-bottom:12px;text-align:center;line-height:1.6;">
-                    ✅ Identity verified: <b id="fp-name"></b><br>
-                    Choose your <b>new date of birth</b>.<br>
-                    <span style="font-size:12px;">It will become your backup password.</span>
+                    ✅ Identité vérifiée : <b id="fp-name"></b><br>
+                    Choisissez votre <b>nouvelle date de naissance</b>.<br>
+                    <span style="font-size:12px;">Elle deviendra votre mot de passe de secours.</span>
                 </p>
                 <form id="fp-form2">
-                    <input type="text" name="newDob" placeholder="New date (e.g. 15/03/2005)" required>
-                    <input type="text" name="newDob2" placeholder="Confirm date" required>
-                    <button type="submit" id="fp-btn2">Change password</button>
+                    <input type="text" name="newDob" placeholder="Nouvelle date (ex: 15/03/2005)" required>
+                    <input type="text" name="newDob2" placeholder="Confirmez la date" required>
+                    <button type="submit" id="fp-btn2">Changer le mot de passe</button>
                 </form>
             </div>
-            <div class="link"><a href="#/">← Back to login</a></div>
+            <div class="link"><a href="#/">← Retour à la connexion</a></div>
         </div>
     </div>`;
 
@@ -1542,12 +1545,12 @@ function renderForgotPassword() {
         const nom = fd.get('nom').trim().toLowerCase();
         const btn = document.getElementById('fp-btn');
         const msg = document.getElementById('fp-msg');
-        btn.disabled = true; btn.textContent = 'Verifying...';
+        btn.disabled = true; btn.textContent = 'Vérification...';
         try {
             const snap = await getDocs(query(collection(db, 'users'), where('cardNumber', '==', card)));
-            if (snap.empty) throw new Error('No account found.');
+            if (snap.empty) throw new Error('Aucun compte trouvé.');
             const u = { id: snap.docs[0].id, ...snap.docs[0].data() };
-            if ((u.nom || '').trim().toLowerCase() !== nom) throw new Error('Name does not match.');
+            if ((u.nom || '').trim().toLowerCase() !== nom) throw new Error('Le nom ne correspond pas.');
             const currentPwd = u.customPassword || normalizeDOB(u.dateNaissance);
             await signInWithEmailAndPassword(auth, cardToEmail(card), currentPwd);
             document.getElementById('fp-step1').style.display = 'none';
@@ -1556,7 +1559,7 @@ function renderForgotPassword() {
         } catch (err) {
             msg.innerHTML = `<div class="error-msg">${esc(err.message)}</div>`;
         }
-        btn.disabled = false; btn.textContent = 'Verify my identity';
+        btn.disabled = false; btn.textContent = 'Vérifier mon identité';
     });
 
     document.getElementById('fp-form2').addEventListener('submit', async (e) => {
@@ -1566,15 +1569,15 @@ function renderForgotPassword() {
         const d2 = normalizeDOB(fd.get('newDob2'));
         const btn = document.getElementById('fp-btn2');
         const msg = document.getElementById('fp-msg');
-        btn.disabled = true; btn.textContent = 'Changing...';
+        btn.disabled = true; btn.textContent = 'Changement...';
         try {
             const v = validateDOB(d1);
             if (!v.ok) throw new Error(v.error);
-            if (d1 !== d2) throw new Error('Dates do not match.');
+            if (d1 !== d2) throw new Error('Les dates ne correspondent pas.');
             await updatePassword(auth.currentUser, d1);
             await updateDoc(doc(db, 'users', auth.currentUser.uid), { customPassword: d1 });
             document.getElementById('fp-step2').innerHTML = `<div style="background:#e7f6e7;color:#1b5e20;padding:14px;border-radius:8px;font-size:14px;text-align:center;line-height:1.7;">
-                ✅ Password changed!<br>Your new password: <code style="background:#fff;padding:3px 10px;border-radius:4px;font-weight:bold;">${d1}</code>
+                ✅ Mot de passe changé !<br>Votre nouveau mot de passe : <code style="background:#fff;padding:3px 10px;border-radius:4px;font-weight:bold;">${d1}</code>
             </div>`;
             setTimeout(async () => {
                 window._resetFlow = false;
@@ -1583,30 +1586,30 @@ function renderForgotPassword() {
             }, 2500);
         } catch (err) {
             msg.innerHTML = `<div class="error-msg">${esc(err.message)}</div>`;
-            btn.disabled = false; btn.textContent = 'Change password';
+            btn.disabled = false; btn.textContent = 'Changer le mot de passe';
         }
     });
 }
 
-/* ============ CHANGE MY PASSWORD (logged in) ============ */
+/* ============ CHANGER MON MOT DE PASSE (connecté) ============ */
 async function renderChangePassword() {
     const me = currentUserData; if (!me) return;
     document.getElementById('app').innerHTML = `
         ${navbarHTML(me, 'profile')}
         <div style="max-width:560px;margin:30px auto;padding:0 15px;">
             <div style="background:var(--bg-card);border-radius:12px;padding:26px;box-shadow:0 1px 3px var(--shadow);">
-                <h2 style="margin-bottom:8px;">🔐 Change my password</h2>
+                <h2 style="margin-bottom:8px;">🔐 Changer mon mot de passe</h2>
                 <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6;">
-                    Rules: <b>8 characters minimum</b>, with at least one letter and one number.
+                    Règles : <b>8 caractères minimum</b>, avec au moins une lettre et un chiffre.
                 </p>
                 <div id="cp-msg"></div>
                 <form id="cp-form" style="display:flex;flex-direction:column;gap:10px;">
-                    <input type="password" name="currentPwd" placeholder="Current password" required autocomplete="current-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
-                    <input type="password" name="newPwd" placeholder="New password" required autocomplete="new-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
-                    <input type="password" name="newPwd2" placeholder="Confirm" required autocomplete="new-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
-                    <button type="submit" id="cp-btn" style="background:#1877f2;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:15px;margin-top:6px;">Save</button>
+                    <input type="password" name="currentPwd" placeholder="Mot de passe actuel" required autocomplete="current-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
+                    <input type="password" name="newPwd" placeholder="Nouveau mot de passe" required autocomplete="new-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
+                    <input type="password" name="newPwd2" placeholder="Confirmer" required autocomplete="new-password" style="padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:14px;outline:none;">
+                    <button type="submit" id="cp-btn" style="background:#1877f2;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:15px;margin-top:6px;">Enregistrer</button>
                 </form>
-                <div class="link" style="margin-top:16px;"><a href="#/profile/${me.id}">← Back to profile</a></div>
+                <div class="link" style="margin-top:16px;"><a href="#/profile/${me.id}">← Retour au profil</a></div>
             </div>
         </div>`;
     attachHomeEvents(true);
@@ -1615,25 +1618,32 @@ async function renderChangePassword() {
         const fd = new FormData(e.target);
         const btn = document.getElementById('cp-btn');
         const msg = document.getElementById('cp-msg');
-        btn.disabled = true; btn.textContent = 'Saving...';
+        btn.disabled = true; btn.textContent = 'Enregistrement...';
         try {
             const newPwd = fd.get('newPwd');
-            if (newPwd !== fd.get('newPwd2')) throw new Error('Passwords do not match.');
+            if (newPwd !== fd.get('newPwd2')) throw new Error('Les mots de passe ne correspondent pas.');
             const v = validateStrongPassword(newPwd);
             if (!v.ok) throw new Error(v.error);
-            const cred = EmailAuthProvider.credential(auth.currentUser.email, fd.get('currentPwd'));
-            await reauthenticateWithCredential(auth.currentUser, cred);
+                        let currentPwd = fd.get('currentPwd');
+            let cred;
+            try {
+                cred = EmailAuthProvider.credential(auth.currentUser.email, normalizeDOB(currentPwd));
+                await reauthenticateWithCredential(auth.currentUser, cred);
+            } catch (err1) {
+                cred = EmailAuthProvider.credential(auth.currentUser.email, currentPwd);
+                await reauthenticateWithCredential(auth.currentUser, cred);
+            }
             await updatePassword(auth.currentUser, newPwd);
             await updateDoc(doc(db, 'users', auth.currentUser.uid), { customPassword: newPwd });
             currentUserData.customPassword = newPwd;
-            toast('✅ Password changed!', 'success');
-            msg.innerHTML = `<div style="background:#e7f6e7;color:#1b5e20;padding:12px;border-radius:8px;font-size:14px;text-align:center;">✅ Password updated.</div>`;
+            toast('✅ Mot de passe changé !', 'success');
+            msg.innerHTML = `<div style="background:#e7f6e7;color:#1b5e20;padding:12px;border-radius:8px;font-size:14px;text-align:center;">✅ Mot de passe mis à jour.</div>`;
             e.target.reset();
         } catch (err) {
-            const map = { 'auth/wrong-password': 'Current password incorrect.', 'auth/invalid-credential': 'Current password incorrect.', 'auth/requires-recent-login': 'Please log in again.' };
+            const map = { 'auth/wrong-password': 'Mot de passe actuel incorrect.', 'auth/invalid-credential': 'Mot de passe actuel incorrect.', 'auth/requires-recent-login': 'Reconnecte-toi.' };
             msg.innerHTML = `<div class="error-msg">${map[err.code] || esc(err.message)}</div>`;
         }
-        btn.disabled = false; btn.textContent = 'Save';
+        btn.disabled = false; btn.textContent = 'Enregistrer';
     });
 }
 
@@ -1667,15 +1677,15 @@ async function renderAdminImport() {
                     <div id="import-results" style="margin-top:20px;"></div>
                 </div>
 
-                <!-- NEW BLOCK: UPDATE LEVEL, SPECIALTY AND GROUP -->
+                               <!-- NOUVEAU BLOC : METTRE A JOUR NIVEAU, SPECIALITE ET GROUPE -->
                 <div style="background:var(--bg-card);border-radius:12px;padding:24px;box-shadow:0 1px 3px var(--shadow);margin-top:20px;">
-                    <h3 style="margin-bottom:10px;">🎓 Update Level, Specialty & Group</h3>
+                    <h3 style="margin-bottom:10px;">🎓 Mettre à jour Niveau, Spécialité & Groupe</h3>
                     <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">
-                        Format: <b>Card Number | Level | Specialty | Group</b> (e.g. <code>222232490417 | M2 | COMPUTER | G1</code>)
+                        Format : <b>Numéro de carte | Niveau | Spécialité | Groupe</b> (ex: <code>222232490417 | M2 | COMPUTER | G1</code>)
                     </p>
                     <textarea id="update-all-data" placeholder="222232490417 | M2 | COMPUTER | G1&#10;222231353307 | M2 | COMPUTER | G2&#10;..." style="width:100%;min-height:150px;padding:12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:13px;background:var(--bg-input);color:var(--text-primary);outline:none;"></textarea>
                     <div style="margin-top:12px;">
-                        <button id="update-all-btn" style="background:linear-gradient(135deg,#ff9800,#f57c00);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;">🚀 Update (Level/Spec/Group)</button>
+                        <button id="update-all-btn" style="background:linear-gradient(135deg,#ff9800,#f57c00);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;">🚀 Mettre à jour (Niveau/Spé/Groupe)</button>
                     </div>
                     <div id="update-all-results" style="margin-top:20px;"></div>
                 </div>
@@ -1777,13 +1787,13 @@ async function runImport(raw) {
 }
 
 
-// NEW MAGIC FUNCTION: Mass update (Level + Specialty + Group)
+// NOUVELLE FONCTION MAGIQUE : Mise à jour de masse (Niveau + Spécialité + Groupe)
 async function updateAllMassively() {
     const raw = document.getElementById('update-all-data').value.trim();
-    if (!raw) return toast('Paste your data first', 'error');
+    if (!raw) return toast('Colle d\'abord tes données', 'error');
     
     const btn = document.getElementById('update-all-btn');
-    btn.disabled = true; btn.textContent = 'Updating...';
+    btn.disabled = true; btn.textContent = 'Mise à jour en cours...';
     
     const lines = raw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
     let successCount = 0;
@@ -1793,7 +1803,7 @@ async function updateAllMassively() {
     for (const line of lines) {
         const parts = line.split('|').map(s => s.trim());
         if (parts.length < 4) {
-            errors.push(`Line ignored (missing info): ${line}`);
+            errors.push(`Ligne ignorée (il manque des infos) : ${line}`);
             continue;
         }
         const cardNumber = parts[0];
@@ -1807,7 +1817,7 @@ async function updateAllMassively() {
             
             if (snap.empty) {
                 failCount++;
-                errors.push(`Student not found: ${cardNumber}`);
+                errors.push(`Étudiant introuvable : ${cardNumber}`);
                 continue;
             }
             
@@ -1821,24 +1831,24 @@ async function updateAllMassively() {
             
         } catch (err) {
             failCount++;
-            errors.push(`Error card ${cardNumber} : ${err.message}`);
+            errors.push(`Erreur carte ${cardNumber} : ${err.message}`);
         }
     }
 
-    btn.disabled = false; btn.textContent = '🚀 Update (Level/Spec/Group)';
+    btn.disabled = false; btn.textContent = '🚀 Mettre à jour (Niveau/Spé/Groupe)';
     
     document.getElementById('update-all-results').innerHTML = `
         <div style="background:linear-gradient(135deg,#42b72a,#369b23);color:#fff;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
-            ✅ ${successCount} student(s) updated successfully.
+            ✅ ${successCount} étudiant(s) mis à jour avec succès.
         </div>
         ${failCount > 0 ? `<div style="background:#ffebe8;color:#c92a2a;padding:14px 18px;border-radius:8px;margin-bottom:12px;">
-            ❌ ${failCount} failure(s):
+            ❌ ${failCount} échec(s) :
             <ul style="margin-top:8px;padding-left:20px;max-height:150px;overflow-y:auto;">
                 ${errors.map(e => `<li>${esc(e)}</li>`).join('')}
             </ul>
         </div>` : ''}
     `;
-    toast('Update complete!', 'success');
+    toast('Mise à jour terminée !', 'success');
 }
 
 /* ============ RENDER HOME ============ */
@@ -1868,7 +1878,7 @@ function loadPostsRealtime() {
     onSnapshot(q, (snap) => { if (snap.empty) { feed.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>No posts yet.</p></div>`; return; } renderPosts(snap.docs.map(d => ({ id:d.id, ...d.data() }))); });
 }
 
-// FIX FOR "??" BUG (Authors not found)
+// CORRECTION DU BUG DES "??" (Auteurs introuvables)
 async function renderPosts(posts) {
     const feed = document.getElementById('posts-feed'); if (!feed) return;
     
@@ -1880,10 +1890,10 @@ async function renderPosts(posts) {
                 if (s.exists()) {
                     authors[p.userId] = { id: p.userId, ...s.data() };
                 } else {
-                    authors[p.userId] = { prenom: 'Deleted', nom: 'User' };
+                    authors[p.userId] = { prenom: 'Utilisateur', nom: 'supprimé' };
                 }
             } catch (e) {
-                authors[p.userId] = { prenom: 'Deleted', nom: 'User' };
+                authors[p.userId] = { prenom: 'Utilisateur', nom: 'supprimé' };
             }
         }
     }
@@ -1893,7 +1903,7 @@ async function renderPosts(posts) {
     posts.forEach(p => loadCommentsRealtime(p.id));
     attachLightboxListeners();
     
-    // CALL FUNCTION TO STOP VIDEOS
+    // APPEL DE LA FONCTION POUR ARRÊTER LES VIDÉOS
     setupAutoPauseForVideos();
 }
 
@@ -2071,7 +2081,7 @@ async function renderSaved() {
     attachPostEvents(); posts.forEach(p => loadCommentsRealtime(p.id));
     attachLightboxListeners();
     
-    // ADD FOR VIDEOS HERE TOO
+    // AJOUT POUR LES VIDÉOS ICI AUSSI
     setupAutoPauseForVideos();
 }
 
@@ -2140,7 +2150,7 @@ function activityItemHTML(item, idx) {
     return `<div class="activity-item"><div class="act-icon-wrap"><img class="act-avatar" src="${avatar}"><span class="act-badge ${cls}">${badge}</span></div><div class="act-body"><div class="act-title">${title}<span class="type-label">${label}</span></div>${content?`<div class="act-content">${content}</div>`:''}<div class="act-meta"><span>🕐 ${relTime}</span>${meta.map(m=>`<span>${m}</span>`).join('')}</div><div class="act-actions"><button class="act-action-btn act-delete danger" data-id="${delId}" data-type="${type}">🗑️ Remove</button></div></div></div>`;
 }
 
-// FIX FOR "Loading..." BUG (Infinite posts)
+// CORRECTION DU BUG "Loading..." (Posts infinis)
 async function renderProfile(userId) {
     const me = currentUserData; if (!me) return;
     const isMe = userId === currentUser.uid;
@@ -2157,7 +2167,7 @@ async function renderProfile(userId) {
                 <h2 style="margin-top:10px;font-size:26px;">${esc(user.prenom+' '+user.nom)}</h2>
                 <p style="color:var(--text-secondary);margin-top:6px;">${esc(user.bio||'No bio')}</p>
                 <p style="font-size:13px;color:var(--text-tertiary);margin-top:8px;">📧 ${esc(user.email)}</p>
-                ${isMe ? `<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);"><a href="#/change-password" style="display:inline-block;background:linear-gradient(135deg,#e91e63,#c2185b);color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:16px;">🔐 Change my password</a><h3 style="margin-bottom:12px;font-size:16px;">Edit My Profile</h3><form id="profile-form" style="display:flex;flex-direction:column;gap:10px;"><label style="font-size:14px;color:var(--text-secondary);">Profile Picture</label><input type="file" name="photo" accept="image/*"><input type="text" name="bio" placeholder="Your bio..." value="${esc(user.bio||'')}" style="padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;background:var(--bg-input);color:var(--text-primary);"><button type="submit" id="save-profile-btn" style="align-self:flex-start;background:#1877f2;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:bold;">Save</button></form></div>` : `<button id="msg-user-btn" style="margin-top:15px;background:#1877f2;color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-weight:bold;">💬 Send Message</button>`}
+                ${isMe ? `<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);"><a href="#/change-password" style="display:inline-block;background:linear-gradient(135deg,#e91e63,#c2185b);color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-weight:bold;font-size:14px;margin-bottom:16px;">🔐 Changer mon mot de passe</a><h3 style="margin-bottom:12px;font-size:16px;">Edit My Profile</h3><form id="profile-form" style="display:flex;flex-direction:column;gap:10px;"><label style="font-size:14px;color:var(--text-secondary);">Profile Picture</label><input type="file" name="photo" accept="image/*"><input type="text" name="bio" placeholder="Your bio..." value="${esc(user.bio||'')}" style="padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;background:var(--bg-input);color:var(--text-primary);"><button type="submit" id="save-profile-btn" style="align-self:flex-start;background:#1877f2;color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:bold;">Save</button></form></div>` : `<button id="msg-user-btn" style="margin-top:15px;background:#1877f2;color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-weight:bold;">💬 Send Message</button>`}
             </div>
             <h3 style="margin:20px 0 12px;color:var(--text-secondary);font-size:14px;text-transform:uppercase;">Posts</h3>
             <div id="profile-posts"><div class="loading">Loading...</div></div>
@@ -2348,12 +2358,12 @@ async function renderGroupDetail(groupId) {
                 <div class="group-detail-card">
                     ${isClubGroup?'<div class="club-official-banner">🏆 OFFICIAL CLUB OF IGEE</div>':''}
                     <h1>${esc(g.name)}</h1>
-                    <div class="gr-meta-row"><span>${g.privacy==='private'?'🔒 Private Group':'🌐 Public Group'}</span><span>👥 ${members.length} member${members.length!==1?'s':''}</span><span>👑 Owner: ${esc(g.creatorName || 'Unknown')}</span></div>
+                    <div class="gr-meta-row"><span>${g.privacy==='private'?'🔒 Private Group':'🌐 Public Group'}</span><span>👥 ${members.length} member${members.length!==1?'s':''}</span><span>👑 Propriétaire : ${esc(g.creatorName || 'Inconnu')}</span></div>
                     ${g.description?`<div class="gr-desc">${esc(g.description)}</div>`:''}
                     <div class="gr-actions">
                         <button class="btn-join ${isMember?'joined':''}" id="join-group-btn">${isMember?'✓ Joined':(g.privacy==='private'?'🔒 Request to Join':'➕ Join Group')}</button>
                         
-                        ${canManage ? `<button class="btn-transfer" id="transfer-group-btn" style="background:#1877f2;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;">🔄 Transfer ownership</button>` : ''}
+                        ${canManage ? `<button class="btn-transfer" id="transfer-group-btn" style="background:#1877f2;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:8px;">🔄 Transférer la propriété</button>` : ''}
                         
                         ${canManage ? `<button class="btn-delete" id="delete-group-btn">🗑️ Delete Group</button>` : ''}
                     </div>
@@ -2387,21 +2397,21 @@ async function renderGroupDetail(groupId) {
     document.getElementById('transfer-group-btn')?.addEventListener('click', async () => {
         const eligibleMembers = members.filter(m => m.uid !== g.creatorId);
         if (eligibleMembers.length === 0) {
-            return toast('The club must have other members to transfer.', 'error');
+            return toast('Le club doit avoir d\'autres membres pour pouvoir transférer.', 'error');
         }
 
         const options = eligibleMembers.map(m => `<option value="${m.uid}">${esc(m.prenom + ' ' + m.nom)}</option>`).join('');
         
-        const data = await openFormModal('🔄 Transfer ownership', `
-            <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Choose the new owner of this club. You will lose management rights (unless you are an admin).</p>
-            <label>New owner *</label>
+        const data = await openFormModal('🔄 Transférer la propriété', `
+            <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Choisissez le nouveau propriétaire de ce club. Vous perdrez vos droits de gestion (sauf si vous êtes admin).</p>
+            <label>Nouveau propriétaire *</label>
             <select name="newOwner" required>
-                <option value="">-- Select a member --</option>
+                <option value="">-- Sélectionnez un membre --</option>
                 ${options}
             </select>
             <div class="btn-row">
-                <button type="button" class="btn-cancel">Cancel</button>
-                <button type="submit" class="btn-submit" style="background:#1877f2;">Confirm transfer</button>
+                <button type="button" class="btn-cancel">Annuler</button>
+                <button type="submit" class="btn-submit" style="background:#1877f2;">Confirmer le transfert</button>
             </div>
         `);
 
@@ -2415,10 +2425,10 @@ async function renderGroupDetail(groupId) {
                 creatorId: newOwner.uid,
                 creatorName: `${newOwner.prenom} ${newOwner.nom}`
             });
-            toast('Ownership transferred successfully! 🎉', 'success');
+            toast('Propriété transférée avec succès ! 🎉', 'success');
             renderGroupDetail(groupId); 
         } catch(err) {
-            toast('Transfer error: ' + err.message, 'error');
+            toast('Erreur lors du transfert : ' + err.message, 'error');
         }
     });
 }
@@ -2527,7 +2537,7 @@ function renderAnnouncementsList(filter) {
     const list = document.getElementById('announcements-list'); if (!list) return;
     let items = [..._allAnnouncements];
     
-    // --- "MY SCHEDULE" FILTER ---
+    // --- FILTRE "MY SCHEDULE" ---
     if (filter === 'my-target') {
         const myLevel = currentUserData.niveau || 'L1';
         const myGroup = currentUserData.groupe || '';
@@ -2558,7 +2568,7 @@ function renderAnnouncementsList(filter) {
         return;
     }
 
-    // ADDING VERIFICATION FOR YOUR ACCOUNT (999999999999@igee.local)
+    // AJOUT DE LA VÉRIFICATION POUR VOTRE COMPTE (999999999999@igee.local)
     const isAdmin = !!currentUserData.isAdmin || currentUserData.email === "999999999999@igee.local";
     
     list.innerHTML = items.map(a => {
@@ -2566,7 +2576,7 @@ function renderAnnouncementsList(filter) {
         const author = { prenom: a.creatorPrenom || 'IGEE', nom: a.creatorNom || 'Admin', photo: a.creatorPhoto };
         const avatar = author.photo || initialsAvatar(author.prenom, author.nom);
         
-        // --- TARGETING BADGES ---
+        // --- BADGES DE CIBLAGE ---
         let targetBadges = '';
         if (a.targetLevel) {
             let audienceText = a.targetLevel;
@@ -2582,9 +2592,9 @@ function renderAnnouncementsList(filter) {
             if (a.targetDay) scheduleText += a.targetDay;
             if (a.targetDate) {
                 const d = new Date(a.targetDate);
-                scheduleText += ` ${d.toLocaleDateString('en-GB')}`; 
+                scheduleText += ` ${d.toLocaleDateString('fr-FR')}`; 
             }
-            if (a.targetTime) scheduleText += ` at ${a.targetTime}`;
+            if (a.targetTime) scheduleText += ` à ${a.targetTime}`;
             targetBadges += `<span class="ann-target-badge schedule">📅 ${scheduleText}</span>`;
         }
 
@@ -2601,7 +2611,7 @@ function renderAnnouncementsList(filter) {
                 <span>🕐 ${timeAgo(a.createdAt)}</span>
                 ${isAdmin ? `<div class="announcement-actions-row">
                     <button class="announcement-pin-btn ${a.pinned ? 'active' : ''}" data-ann-pin="${a.id}" data-pin="${a.pinned ? '1' : '0'}">${a.pinned ? '📌 Unpin' : '📌 Pin'}</button>
-                    <button class="announcement-delete-btn" data-ann-edit="${a.id}" style="color:#1877f2; border-color:#1877f2;">✏️ Edit</button>
+                    <button class="announcement-delete-btn" data-ann-edit="${a.id}" style="color:#1877f2; border-color:#1877f2;">✏️ Modifier</button>
                     <button class="announcement-delete-btn" data-ann-del="${a.id}">🗑️ Delete</button>
                 </div>` : ''}
             </div>
@@ -2624,7 +2634,7 @@ function renderAnnouncementsList(filter) {
         });
     });
 
-    // EDIT BUTTON MANAGEMENT
+    // GESTION DU BOUTON MODIFIER
     list.querySelectorAll('[data-ann-edit]').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -2750,7 +2760,7 @@ async function createAnnouncement() {
     } catch(err) { toast('Error: ' + err.message, 'error'); }
 }
 
-/* ============ SAVE ANNOUNCEMENT EDIT ============ */
+/* ============ SAUVEGARDE DE LA MODIFICATION D'ANNONCE ============ */
 document.getElementById('edit-ann-cancel')?.addEventListener('click', () => {
     document.getElementById('edit-ann-modal').classList.remove('active');
 });
@@ -2763,10 +2773,10 @@ document.getElementById('edit-ann-form')?.addEventListener('submit', async (e) =
     const content = document.getElementById('edit-ann-content').value.trim();
     const priority = document.getElementById('edit-ann-priority').value;
     
-    if (!title || !content) return toast('Please fill in the title and content', 'error');
+    if (!title || !content) return toast('Veuillez remplir le titre et le contenu', 'error');
     
     btn.disabled = true;
-    btn.textContent = 'Saving...';
+    btn.textContent = 'Enregistrement...';
     
     try {
         await updateDoc(doc(db, 'announcements', id), {
@@ -2776,15 +2786,15 @@ document.getElementById('edit-ann-form')?.addEventListener('submit', async (e) =
             updatedAt: serverTimestamp()
         });
         
-        toast('✅ Announcement updated successfully!', 'success');
+        toast('✅ Annonce modifiée avec succès !', 'success');
         document.getElementById('edit-ann-modal').classList.remove('active');
         
     } catch (err) {
         console.error(err);
-        toast('Error: ' + err.message, 'error');
+        toast('Erreur : ' + err.message, 'error');
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Save';
+        btn.textContent = 'Enregistrer';
     }
 });
 
@@ -2870,7 +2880,7 @@ const PROMOTION_SUBJECTS = {
         { value: 'entrepreneurship',   label: 'EE382 - Entrepreneurship and business management', icon: '📊' }
     ],
     M1: [
-        // Codes EE402 à EE472
+        // Codes EE402 à EE472 (d'après votre capture)
         { value: 'linear_systems_2',   label: 'EE402 - Linear systems II',                        icon: '🎛️' },
         { value: 'nonlinear_sys',      label: 'EE403 - Nonlinear systems',                        icon: '🎛️' },
         { value: 'comm_1',             label: 'EE411 - Communications I',                         icon: '📡' },
@@ -2893,7 +2903,7 @@ const PROMOTION_SUBJECTS = {
         { value: 'numerical_methods',  label: 'EE472 - Numerical methods',                        icon: '🔢' }
     ],
     M2: [
-        // Codes EE511 à EE592
+        // Codes EE511 à EE592 (d'après votre capture)
         { value: 'adv_comm_theory',    label: 'EE511 - Advanced communication theory',            icon: '📡' },
         { value: 'microwaves',         label: 'EE512 - Microwaves',                               icon: '📡' },
         { value: 'radar_tv',           label: 'EE513 - Radar and television',                     icon: '📺' },
@@ -3048,18 +3058,21 @@ function renderLibraryList() {
     
     const itemsToShow = items.slice(0, booksToShow);
     
+    // 1. On prépare TOUT le HTML (livres + bouton) en une seule fois
     let html = itemsToShow.map(b => bookCardHTML(b)).join('');
     
     if (booksToShow < items.length) {
         html += `<div style="grid-column: 1 / -1; text-align: center; margin-top: 20px;">
             <button id="load-more-books-btn" style="padding: 12px 24px; background: var(--bg-card); color: #673ab7; border: 2px solid #673ab7; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s;">
-                ⬇️ Load more books
+                ⬇️ Charger plus de livres
             </button>
         </div>`;
     }
     
+    // 2. On injecte tout le HTML d'un seul coup
     grid.innerHTML = html;
     
+    // 3. On attache les clics après l'injection (ce qui ne casse plus les boutons)
     grid.querySelectorAll('.library-card').forEach((card) => {
         card.addEventListener('click', () => {
             const bookId = card.dataset.bookId;
@@ -3248,7 +3261,7 @@ function mobileDrawerHTML(me, active) {
             </div>
             <button class="mobile-drawer-close" id="mobile-drawer-close">✕</button>
         </div>
-        <!-- MOBILE SEARCH BAR -->
+        <!-- BARRE DE RECHERCHE MOBILE -->
         <div class="mobile-search-wrap">
             <div style="position: relative;">
                 <input type="text" id="mobile-search-input" placeholder="🔍 Search users..." style="width: 100%; padding: 10px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-input); color: var(--text-primary); font-size: 14px; outline: none;">
@@ -3341,7 +3354,7 @@ function sidebarLeftHTML(me, active) {
         <a href="#/clubs" class="menu-item clubs-item ${active==='clubs'?'active':''}"><span class="icon">🏆</span> <strong>Official Clubs</strong></a>
         <a href="#/announcements" class="menu-item ${active==='announcements'?'active':''}" style="${active==='announcements'?'background:rgba(24,119,242,.15);color:#1877f2;':''}"><span class="icon">📢</span> Announcements</a>
         ${me.isAdmin ? `<a href="#/admin/import" class="menu-item ${active==='admin'?'active':''}" style="${active==='admin'?'background:rgba(217,48,37,.15);color:#d93025;':''}"><span class="icon">👥</span> <strong>Import Users</strong></a>` : ''}
-        <!-- PRETTY TIMETABLE BUTTON -->
+                <!-- JOLI BOUTON TIMETABLE -->
         <a href="https://igeebook.univ-boumerdes.dz/timetable.html" target="_blank" class="menu-item timetable-item">
             <span class="icon">📅</span> <strong>Timetable</strong>
         </a>
@@ -3540,7 +3553,7 @@ window.addEventListener('hashchange', () => Router.handle());
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        if (window._resetFlow) return;
+               if (window._resetFlow) return;
         currentUser = user;
         currentUserData = await loadUserData(user.uid);
         Theme.init();
