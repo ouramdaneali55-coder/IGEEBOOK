@@ -1441,6 +1441,14 @@ window.handleSearchResultClick = (term, url) => {
     document.getElementById('search-dropdown')?.classList.remove('active');
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.value = '';
+};
+// NOUVELLE FONCTION À AJOUTER JUSTE EN DESSOUS DE setupGlobalSearch :
+window.handleSearchResultClick = (term, url) => {
+    SearchHistory.add(term);
+    location.hash = url;
+    document.getElementById('search-dropdown')?.classList.remove('active');
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
 };            });
 
             if (results.length === 0) {
