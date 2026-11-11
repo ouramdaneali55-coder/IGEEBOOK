@@ -1442,49 +1442,6 @@ window.handleSearchResultClick = (term, url) => {
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.value = '';
 };
-// NOUVELLE FONCTION À AJOUTER JUSTE EN DESSOUS DE setupGlobalSearch :
-window.handleSearchResultClick = (term, url) => {
-    SearchHistory.add(term);
-    location.hash = url;
-    document.getElementById('search-dropdown')?.classList.remove('active');
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) searchInput.value = '';
-};            });
-
-            if (results.length === 0) {
-                dropdown.innerHTML = '<div class="search-no-result">No users found</div>';
-                return;
-            }
-
-            dropdown.innerHTML = results.slice(0, 10).map(u => `
-                <div class="search-result-item" onclick="location.hash='#/profile/${u.id}'; document.getElementById('search-dropdown').classList.remove('active'); document.getElementById('search-input').value = '';">
-                    <img src="${u.photo || initialsAvatar(u.prenom, u.nom)}">
-                    <div class="sr-info">
-                        <div class="sr-name">${esc(u.prenom)} ${esc(u.nom)}</div>
-                        <div class="sr-role">${u.role === 'student' ? 'Student' : u.role === 'teacher' ? 'Teacher' : 'Staff'}</div>
-                    </div>
-                </div>
-            `).join('');
-
-        } catch (err) {
-            console.error("Search error:", err);
-            dropdown.innerHTML = '<div class="search-no-result">Error searching users</div>';
-        }
-    });
-
-    if (!window._globalSearchClickAttached) {
-        window._globalSearchClickAttached = true;
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-dropdown') && e.target.id !== 'search-input') {
-                document.getElementById('search-dropdown')?.classList.remove('active');
-            }
-            if (!e.target.closest('.mobile-search-wrap')) {
-                document.getElementById('mobile-search-dropdown')?.classList.remove('active');
-            }
-        });
-    }
-}
-
 let currentUser = null;
 let currentUserData = null;
 
