@@ -1040,8 +1040,32 @@ function setupAutoPauseForVideos() {
 }
 // =========================================================================
 
-const SearchHistory = { key:'igee_search_history', add(term){ if(!term||term.length<2)return; try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); h.unshift({term,at:Date.now()}); h=h.slice(0,30); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){} }, getAll(){try{return JSON.parse(localStorage.getItem(this.key)||'[]');}catch{return [];}}, remove(term){try{let h=JSON.parse(localStorage.getItem(this.key)||'[]'); h=h.filter(x=>x.term!==term); localStorage.setItem(this.key,JSON.stringify(h));}catch(e){}} };
-
+const SearchHistory = {
+    getKey() {
+        // Crée une clé unique pour chaque utilisateur connecté
+        return currentUser && currentUser.uid ? 'igee_search_history_' + currentUser.uid : 'igee_search_history_guest';
+    },
+    add(term){
+        if(!term || term.length < 2) return;
+        try{
+            let h = JSON.parse(localStorage.getItem(this.getKey()) || '[]');
+            h = h.filter(x => x.term !== term); // Évite les doublons
+            h.unshift({term, at: Date.now()});
+            h = h.slice(0, 30); // Garde les 30 dernières recherches
+            localStorage.setItem(this.getKey(), JSON.stringify(h));
+        } catch(e) { console.error(e); }
+    },
+    getAll(){
+        try { return JSON.parse(localStorage.getItem(this.getKey()) || '[]'); } catch { return []; }
+    },
+    remove(term){
+        try{
+            let h = JSON.parse(localStorage.getItem(this.getKey()) || '[]');
+            h = h.filter(x => x.term !== term);
+            localStorage.setItem(this.getKey(), JSON.stringify(h));
+        } catch(e) { console.error(e); }
+    }
+};
 function confirmDialog(title, text, okLabel = 'Delete') {
     return new Promise((resolve) => {
         const overlay = document.getElementById('confirm-modal');
@@ -1346,7 +1370,7 @@ function setupGlobalSearch() {
             return;
         }
         
-        SearchHistory.add(queryText);
+        // La ligne SearchHistory.add(queryText); a été SUPPRIMÉE ici
 
         dropdown.innerHTML = '<div class="search-no-result">Searching...</div>';
         dropdown.classList.add('active');
@@ -1365,6 +1389,59 @@ function setupGlobalSearch() {
                     results.push({ id: doc.id, ...data });
                 }
             });
+
+            if (results.length === 0) {
+                dropdown.innerHTML = '<div class="search-no-result">No users found</div>';
+                return;
+            }
+
+            dropdown.innerHTML = results.slice(0, 10).map(u => `
+                <div class="search-result-item" onclick="handleSearchResultClick('${esc(queryText)}', '#/profile/${u.id}')">
+                    <img src="${u.photo || initialsAvatar(u.prenom, u.nom)}">
+                    <div class="sr-info">
+                        <div class="sr-name">${esc(u.prenom)} ${esc(u.nom)}</div>
+                        <div class="sr-role">${u.role === 'student' ? 'Student' : u.role === 'teacher' ? 'Teacher' : 'Staff'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            console.error("Search error:", err);
+            dropdown.innerHTML = '<div class="search-no-result">Error searching users</div>';
+        }
+    });
+
+    // NOUVEAU : Sauvegarder seulement si on appuie sur Entrée
+    newSearchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const queryText = e.target.value.trim().toLowerCase();
+            if (queryText.length >= 2) {
+                SearchHistory.add(queryText);
+            }
+        }
+    });
+
+    if (!window._globalSearchClickAttached) {
+        window._globalSearchClickAttached = true;
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-dropdown') && e.target.id !== 'search-input') {
+                document.getElementById('search-dropdown')?.classList.remove('active');
+            }
+            if (!e.target.closest('.mobile-search-wrap')) {
+                document.getElementById('mobile-search-dropdown')?.classList.remove('active');
+            }
+        });
+    }
+}
+
+// NOUVELLE FONCTION À AJOUTER JUSTE EN DESSOUS DE setupGlobalSearch :
+window.handleSearchResultClick = (term, url) => {
+    SearchHistory.add(term);
+    location.hash = url;
+    document.getElementById('search-dropdown')?.classList.remove('active');
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+};            });
 
             if (results.length === 0) {
                 dropdown.innerHTML = '<div class="search-no-result">No users found</div>';
