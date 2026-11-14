@@ -1903,7 +1903,7 @@ function renderHome() {
             ${sidebarLeftHTML(me, 'home')}
             <div class="feed">
                 <div id="home-ann-banner-wrap"></div>
-                <div class="create-post"><form id="create-post-form"><textarea name="contenu" placeholder="What's on your mind, ${esc(me.prenom)}?" id="post-textarea"></textarea><div class="actions"><div class="left"><label class="file-btn" for="post-image">📷</label><input type="file" id="post-image" accept="image/*" style="display:none"><span class="file-name" id="file-name"></span></div><button type="submit" id="publish-btn">Post</button></div></form></div>
+                <div class="create-post"><form id="create-post-form"><textarea name="contenu" placeholder="What's on your mind, ${esc(me.prenom)}?" id="post-textarea"></textarea><div class="actions"><div class="left"><label class="file-btn" for="post-image">📷</label><input type="file" id="post-image" accept="image/*" style="display:none"><span class="file-name" id="file-name"></span><button type="button" id="link-ai-btn" style="background:none;border:none;font-size:20px;cursor:pointer;color:#4A90E2;margin-left:8px;transition:.2s;" title="Copier le texte et ouvrir DeepSeek">✨ IA</button></div><button type="submit" id="publish-btn">Post</button></div></form></div>
                 <div id="posts-feed"><div class="loading">Loading feed...</div></div>
             </div>
             ${sidebarRightHTML()}
@@ -3270,6 +3270,7 @@ async function openBookDetail(book) {
             <div class="book-detail-actions">
                 <a href="${book.pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn-read">📖 Read PDF</a>
                 <a href="${book.pdfUrl}" download="${esc(book.title)}.pdf" class="btn-download">⬇️ Download</a>
+                <button class="btn-read" id="book-ai-summary-btn" style="background:linear-gradient(135deg,#4A90E2,#1877F2); border:none; cursor:pointer; color:white;">✨ Résumer avec DeepSeek</button>
                 ${canDelete ? `<button class="btn-delete-book" id="book-delete-btn">🗑️ Delete</button>` : ''}
             </div>
         </div>
@@ -3281,6 +3282,18 @@ async function openBookDetail(book) {
     document.getElementById('book-detail-close-btn').onclick = close;
     modal.onclick = (e) => { if (e.target === modal) close(); };
     
+    // LOGIQUE DU BOUTON IA POUR LA BIBLIOTHÈQUE
+    document.getElementById('book-ai-summary-btn')?.addEventListener('click', async () => {
+        const prompt = `Fais un résumé clair et structuré (3 points max) de ce livre pour m'aider à réviser. Titre: "${book.title}", Auteur: "${book.author || 'Inconnu'}", Description: "${book.description || 'Aucune description fournie'}".`;
+        try {
+            await navigator.clipboard.writeText(prompt);
+            toast('Demande copiée ! Collez-la dans DeepSeek (Ctrl+V).', 'success');
+        } catch(e) {
+            toast('Erreur de copie.', 'error');
+        }
+        window.open('https://chat.deepseek.com/', '_blank');
+    });
+
     document.getElementById('book-delete-btn')?.addEventListener('click', async () => {
         const ok = await confirmDialog('Delete this book?', 'This action is irreversible.', 'Delete');
         if (!ok) return;
@@ -3436,6 +3449,27 @@ function attachHomeEvents(isMessages = false) {
     if (isMessages) return;
     const fileInput = document.getElementById('post-image');
     fileInput?.addEventListener('change', () => { document.getElementById('file-name').textContent = fileInput.files[0]?.name || ''; });
+    
+    // GESTION DU BOUTON LIEN AI (DeepSeek)
+    document.getElementById('link-ai-btn')?.addEventListener('click', async () => {
+        const textarea = document.getElementById('post-textarea');
+        const text = textarea.value.trim();
+        
+        if (text) {
+            try {
+                const promptPourDeepSeek = `Agis comme un expert en communication. Améliore ce texte pour le publier sur le réseau social de mon université (IGEE). Rends-le engageant, professionnel et aéré. Voici mon idée de base :\n\n"${text}"`;
+                await navigator.clipboard.writeText(promptPourDeepSeek);
+                toast('Texte copié ! Collez-le dans DeepSeek (Ctrl+V).', 'success');
+            } catch (err) {
+                toast('Erreur de copie. Copiez manuellement.', 'error');
+            }
+        } else {
+            toast('Ouvre DeepSeek pour générer une idée de post !', 'success');
+        }
+        
+        window.open('https://chat.deepseek.com/', '_blank');
+    });
+
     document.getElementById('create-post-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const textarea = document.getElementById('post-textarea');
