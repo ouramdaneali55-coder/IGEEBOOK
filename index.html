@@ -801,6 +801,29 @@ const firebaseConfig = {
 };
 const VAPID_KEY = "BKKFSH-sI6SIdAeKMdgy5-yhHMuJG56KF17o3xsJ4o6z7xIa4sKeOh40SWGbNtGONGC6j2gQcK01fR7VnhUupTI";
 
+/* =========================================
+   CONFIGURATION IA GEMINI
+========================================= */
+async function callGemini(prompt) {
+    if (!window.GEMINI_API_KEY) {
+        throw new Error("Veuillez configurer votre clé API Gemini dans le fichier config.js.");
+    }
+    
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Erreur de communication avec l'IA Gemini.");
+    }
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+}/* ========================================= */
+
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, query, where, orderBy, limit, onSnapshot, serverTimestamp, updateDoc, deleteDoc, arrayUnion, arrayRemove, increment, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -1903,7 +1926,7 @@ function renderHome() {
             ${sidebarLeftHTML(me, 'home')}
             <div class="feed">
                 <div id="home-ann-banner-wrap"></div>
-                <div class="create-post"><form id="create-post-form"><textarea name="contenu" placeholder="What's on your mind, ${esc(me.prenom)}?" id="post-textarea"></textarea><div class="actions"><div class="left"><label class="file-btn" for="post-image">📷</label><input type="file" id="post-image" accept="image/*" style="display:none"><span class="file-name" id="file-name"></span><button type="button" id="link-ai-btn" style="background:none;border:none;font-size:20px;cursor:pointer;color:#4A90E2;margin-left:8px;transition:.2s;" title="Copier le texte et ouvrir DeepSeek">✨ IA</button></div><button type="submit" id="publish-btn">Post</button></div></form></div>
+                <div class="create-post"><form id="create-post-form"><textarea name="contenu" placeholder="What's on your mind, ${esc(me.prenom)}?" id="post-textarea"></textarea><div class="actions"><div class="left"><label class="file-btn" for="post-image">📷</label><input type="file" id="post-image" accept="image/*" style="display:none"><span class="file-name" id="file-name"></span><button type="button" id="link-ai-btn" style="background:none;border:none;font-size:20px;cursor:pointer;color:#4A90E2;margin-left:8px;transition:.2s;" title="Améliorer avec Gemini">✨ IA</button></div><button type="submit" id="publish-btn">Post</button></div></form></div>
                 <div id="posts-feed"><div class="loading">Loading feed...</div></div>
             </div>
             ${sidebarRightHTML()}
@@ -3270,7 +3293,7 @@ async function openBookDetail(book) {
             <div class="book-detail-actions">
                 <a href="${book.pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn-read">📖 Read PDF</a>
                 <a href="${book.pdfUrl}" download="${esc(book.title)}.pdf" class="btn-download">⬇️ Download</a>
-                <button class="btn-read" id="book-ai-summary-btn" style="background:linear-gradient(135deg,#4A90E2,#1877F2); border:none; cursor:pointer; color:white;">✨ Résumer avec DeepSeek</button>
+                <button class="btn-read" id="book-ai-summary-btn" style="background:linear-gradient(135deg,#4A90E2,#1877F2); border:none; cursor:pointer; color:white;">✨ Résumer avec Gemini</button>
                 ${canDelete ? `<button class="btn-delete-book" id="book-delete-btn">🗑️ Delete</button>` : ''}
             </div>
         </div>
@@ -3282,16 +3305,34 @@ async function openBookDetail(book) {
     document.getElementById('book-detail-close-btn').onclick = close;
     modal.onclick = (e) => { if (e.target === modal) close(); };
     
-    // LOGIQUE DU BOUTON IA POUR LA BIBLIOTHÈQUE
-    document.getElementById('book-ai-summary-btn')?.addEventListener('click', async () => {
-        const prompt = `Fais un résumé clair et structuré (3 points max) de ce livre pour m'aider à réviser. Titre: "${book.title}", Auteur: "${book.author || 'Inconnu'}", Description: "${book.description || 'Aucune description fournie'}".`;
+    // LOGIQUE DU BOUTON IA POUR LA BIBLIOTHÈQUE (Gemini)
+    document.getElementById('book-ai-summary-btn')?.addEventListener('click', async (e) => {
+        const btn = e.target;
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⏳ Génération...';
+        
         try {
-            await navigator.clipboard.writeText(prompt);
-            toast('Demande copiée ! Collez-la dans DeepSeek (Ctrl+V).', 'success');
-        } catch(e) {
-            toast('Erreur de copie.', 'error');
+            const prompt = `Fais un résumé clair et structuré (3 points max) de ce livre pour m'aider à réviser. Titre: "${book.title}", Auteur: "${book.author || 'Inconnu'}", Description: "${book.description || 'Aucune description fournie'}".`;
+            const summary = await callGemini(prompt);
+            
+            // On affiche le résultat dans la petite fenêtre modale
+            const formModal = document.getElementById('form-modal');
+            const formContent = document.getElementById('form-content');
+            document.getElementById('form-title').textContent = '✨ Résumé par Gemini';
+            formContent.innerHTML = `
+                <div style="font-size: 15px; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap; margin-bottom: 20px;">${esc(summary)}</div>
+                <div class="btn-row"><button type="button" class="btn-cancel" id="close-ai-modal">Fermer</button></div>
+            `;
+            formModal.classList.add('active');
+            document.getElementById('close-ai-modal').onclick = () => formModal.classList.remove('active');
+
+        } catch (err) {
+            toast(err.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
         }
-        window.open('https://chat.deepseek.com/', '_blank');
     });
 
     document.getElementById('book-delete-btn')?.addEventListener('click', async () => {
@@ -3450,24 +3491,33 @@ function attachHomeEvents(isMessages = false) {
     const fileInput = document.getElementById('post-image');
     fileInput?.addEventListener('change', () => { document.getElementById('file-name').textContent = fileInput.files[0]?.name || ''; });
     
-    // GESTION DU BOUTON LIEN AI (DeepSeek)
+    // GESTION DU BOUTON LIEN AI (GEMINI DIRECT)
     document.getElementById('link-ai-btn')?.addEventListener('click', async () => {
         const textarea = document.getElementById('post-textarea');
         const text = textarea.value.trim();
         
-        if (text) {
-            try {
-                const promptPourDeepSeek = `Agis comme un expert en communication. Améliore ce texte pour le publier sur le réseau social de mon université (IGEE). Rends-le engageant, professionnel et aéré. Voici mon idée de base :\n\n"${text}"`;
-                await navigator.clipboard.writeText(promptPourDeepSeek);
-                toast('Texte copié ! Collez-le dans DeepSeek (Ctrl+V).', 'success');
-            } catch (err) {
-                toast('Erreur de copie. Copiez manuellement.', 'error');
-            }
-        } else {
-            toast('Ouvre DeepSeek pour générer une idée de post !', 'success');
+        if (!text) return toast('Écrivez une idée avant d\'utiliser l\'IA', 'error');
+
+        const btn = document.getElementById('link-ai-btn');
+        const originalText = textarea.value;
+        btn.disabled = true;
+        btn.textContent = '⏳';
+        textarea.disabled = true;
+        textarea.value = '✨ L\'IA réfléchit...';
+
+        try {
+            const prompt = `Agis comme un expert en communication. Améliore ce texte pour le publier sur le réseau social de mon université (IGEE). Rends-le engageant, professionnel et aéré. Voici mon idée de base :\n\n"${originalText}"`;
+            const improvedText = await callGemini(prompt);
+            textarea.value = improvedText;
+            toast('Post amélioré par Gemini ! ✨', 'success');
+        } catch (err) {
+            textarea.value = originalText;
+            toast(err.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '✨ IA';
+            textarea.disabled = false;
         }
-        
-        window.open('https://chat.deepseek.com/', '_blank');
     });
 
     document.getElementById('create-post-form')?.addEventListener('submit', async (e) => {
