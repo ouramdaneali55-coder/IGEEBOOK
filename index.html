@@ -284,7 +284,7 @@ a{text-decoration:none;color:inherit;}img{display:block;max-width:100%;}button{f
 .hover-card .hc-stats .lbl{color:var(--text-tertiary);font-size:11px;text-transform:uppercase;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
 .modal-overlay.active{display:flex;}
-.modal{background:var(--bg-card);color:var(--text-primary);border-radius:12px;padding:24px;width:380px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:popIn .25s ease;}
+.modal{background:var(--bg-card);color:var(--text-primary);border-radius:12px;padding:24px;width:380px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:popIn .25s ease; max-height: 85vh; overflow-y: auto;}
 .modal h3{margin-bottom:10px;font-size:18px;}
 .modal p{color:var(--text-secondary);margin-bottom:20px;font-size:14px;line-height:1.5;}
 .modal-btns{display:flex;gap:10px;}
@@ -2790,15 +2790,46 @@ async function createAnnouncement() {
             </div>
         </div>
 
-        <label>Content *</label>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <label style="margin:0;">Content *</label>
+            <button type="button" id="ai-translate-ann-btn" style="background:none; border:none; cursor:pointer; color:#1877f2; font-weight:bold; font-size:13px; display:flex; align-items:center; gap:4px;">✨ Traduire / Améliorer</button>
+        </div>
         <textarea name="content" placeholder="Write your announcement..." required></textarea>
         <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-primary);">
             <input type="checkbox" name="pinned" style="width:auto;margin:0;"> 📌 Pin at the top
         </label>
-        <div class="btn-row">
+                <div class="btn-row">
             <button type="button" class="btn-cancel">Cancel</button>
             <button type="submit" class="btn-submit">Publish</button>
-        </div>`);
+        </div>`, () => {
+            document.getElementById('ai-translate-ann-btn')?.addEventListener('click', async (e) => {
+                const textarea = document.querySelector('textarea[name="content"]');
+                const originalText = textarea.value.trim();
+                
+                if (!originalText) {
+                    return toast('Écrivez d\'abord votre annonce en français ou en arabe.', 'error');
+                }
+
+                const btn = e.target;
+                btn.disabled = true;
+                btn.textContent = '⏳ Traduction...';
+                textarea.disabled = true;
+
+                try {
+                    const prompt = `Agis comme un traducteur et rédacteur professionnel pour l'université. Traduis ce texte en anglais et améliore-le pour qu'il devienne une annonce officielle, formelle et claire. Voici le texte de base :\n\n"${originalText}"`;
+                    
+                    const improvedText = await callGemini(prompt);
+                    textarea.value = improvedText;
+                    toast('Texte traduit et amélioré par Gemini ! ✨', 'success');
+                } catch (err) {
+                    toast(err.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '✨ Traduire / Améliorer';
+                    textarea.disabled = false;
+                }
+            });
+        });
         
     if (!data || !data.title?.trim() || !data.content?.trim()) return;
     
